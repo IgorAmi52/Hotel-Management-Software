@@ -1,0 +1,45 @@
+{
+	"IgorAdmin": {
+		"name": "Alice",
+		"lastname": "Smith",
+		"sex": "Female",
+		"dateOfBirth": "1990-05-20",
+		"phoneNumber": "+1987654321",
+		"address": "456 Elm St, Town, Country",
+		"username": "alicesmith",
+		"password": "admin",
+		"lvlOfEdct": 4,
+		"yearsOfXp": 8,
+		"salary": 75000.50,
+		"role": "ADMIN"
+	},
+
+	"gileSss": {
+		"lvlOfEdct": 5,
+		"yearsOfXp": 5,
+		"salary": 0.0,
+		"name": "Igor",
+		"lastname": "Amidzic",
+		"sex": "Male",
+		"dateOfBirth": "2014-04-03",
+		"phoneNumber": "+381616562110",
+		"address": "Novi Sad",
+		"username": "gileSss",
+		"password": "gile",
+		"role": "AGENT"
+	},
+	"SofiAmi": {
+		"lvlOfEdct": 3,
+		"yearsOfXp": 3,
+		"salary": 0.0,
+		"name": "Sofija",
+		"lastname": "Amidzic",
+		"sex": "Male",
+		"dateOfBirth": "2014-04-17",
+		"phoneNumber": "+3816412312",
+		"address": "Veternik Novi Sad",
+		"username": "SofiAmi",
+		"password": "sofiami",
+		"role": "CLEANER"
+	}
+}
