@@ -1,7 +1,8 @@
-package com.frame;
+package com.frame.small;
 
 import javax.swing.JPanel;
 
+import com.frame.Panel;
 import com.models.Person;
 import com.service.ContainerService;
 import com.service.Holder;

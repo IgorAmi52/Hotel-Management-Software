@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import com.exceptions.*;
 import com.frame.LoginPanel;
 import com.frame.AdminMainPanel;
+import com.frame.AgentMainPanel;
 import com.frame.GuestMainPanel;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -33,22 +34,23 @@ public class AuthService {
 	    	JsonObject userObject = jsonObject.get(username).getAsJsonObject();
 	    	String pass = userObject.get("password").getAsString();
 	    	if(pass.equals(password)) {
-	    		 return getPersonType(userObject);	    	}
+	    		 return getPersonType(userObject);	    	
+	    	}
 	    }
-		
 		throw new BadLoginException("Username or password are incorect! Please try again."); 
 	}
 	
 	private static Person getPersonType(JsonObject userObject) {
 		String role = userObject.get("role").getAsString();
+		
 		if(role == Role.GUEST.toString()) {
-			
+		
 			return gson.fromJson(userObject, Guest.class);
 		}
 		return gson.fromJson(userObject, Staff.class);
 	}
 	
-	public static JComponent userRedirect(Person user) { //change name
+	public static JComponent userRedirect(Person user) { 
 		if(user == null) {
 			return new LoginPanel();
 		}
@@ -56,7 +58,7 @@ public class AuthService {
 			return new AdminMainPanel();
 		}
 		else if(user.getRole()==Role.AGENT) {
-			return new AdminMainPanel();
+			return new AgentMainPanel();
 		}
 		else if(user.getRole()==Role.CLEANER) {
 			return new AdminMainPanel();

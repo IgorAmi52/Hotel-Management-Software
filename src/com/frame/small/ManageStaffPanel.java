@@ -1,4 +1,4 @@
-package com.frame;
+package com.frame.small;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -10,7 +10,9 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
+import com.frame.Panel;
 import com.models.Staff;
 import com.service.ContainerService;
 import com.service.PersonService;
@@ -36,7 +38,9 @@ public class ManageStaffPanel extends JPanel implements Panel {
 			e1.printStackTrace();
 		} 
 
-         table = new JTable(new DefaultTableModel(staffArr, columnNames));
+        table = new JTable(staffArr, columnNames);
+        table.setOpaque(true);
+
         table.setSize(500, 50);
         table.setLocation(50, 100);
         table.setForeground(new Color(0, 0, 0));

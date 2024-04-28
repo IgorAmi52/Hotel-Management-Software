@@ -3,6 +3,7 @@ package com.service;
 import java.awt.Component;
 import java.awt.Container;
 import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -10,11 +11,17 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 public class ContainerService {
 	
 	public static int panelHeight = 1000;
 	public static int panelWidth = 550;
 	
+
+	private static  Properties p = new Properties();
 	public static void resetFields(Container container) {
         Component[] components = container.getComponents();
         for (Component component : components) {
@@ -37,5 +44,18 @@ public class ContainerService {
             }
         }
         return null; // Return null if no button is selected
+    }
+    
+    public static JDatePickerImpl getDatePicker() {
+    	  if(p.isEmpty()) {
+           p.put("text.today", "Today");
+           p.put("text.month", "Month");
+           p.put("text.year", "Year");
+    	  }
+    	  UtilDateModel model = new UtilDateModel();
+          JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+          JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+           
+          return datePicker;
     }
 }

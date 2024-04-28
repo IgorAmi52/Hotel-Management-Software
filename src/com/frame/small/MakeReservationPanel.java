@@ -1,4 +1,4 @@
-package com.frame;
+package com.frame.small;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -8,6 +8,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import com.frame.Panel;
 import com.models.enums.RoomType;
 import com.service.ContainerService;
 import com.service.DateLabelFormatter;
@@ -20,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import java.awt.Font;
@@ -44,7 +46,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		lblNewLabel.setBounds(72, 122, 92, 16);
 		add(lblNewLabel);
 		
-		String[] roomTypes = {"One single bed","Two single beds","One double-sized bed","Three single beds"};
+		String[] roomTypes = RoomType.getTypes();
 		JComboBox roomTypeBox = new JComboBox(roomTypes);
 		roomTypeBox.setBounds(191, 118, 228, 27);
 		add(roomTypeBox);
@@ -93,7 +95,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         
         makeReservationTable();
 	}
-	private void makeReservationTable() { //to be imnplemented
+	private void makeReservationTable() { //to be implemented
 		   Object[][] data = {
 	                {"John", 25, "Male"},
 	                {"Anna", 30, "Female"},
@@ -105,7 +107,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	        String[] columnNames = {"Name", "Age", "Gender"};
 
 	        // Create a table
-	        JTable table = new JTable(data, columnNames);
+	        JTable table = new JTable(new DefaultTableModel(data, columnNames));
 	        table.setForeground(new Color(0, 0, 0));
 	        JScrollPane scrollPane = new JScrollPane(table);
 	        

@@ -13,7 +13,6 @@
 		"salary": 75000.50,
 		"role": "ADMIN"
 	},
-
 	"gileSss": {
 		"lvlOfEdct": 5,
 		"yearsOfXp": 5,
@@ -27,19 +26,5 @@
 		"username": "gileSss",
 		"password": "gile",
 		"role": "AGENT"
-	},
-	"SofiAmi": {
-		"lvlOfEdct": 3,
-		"yearsOfXp": 3,
-		"salary": 0.0,
-		"name": "Sofija",
-		"lastname": "Amidzic",
-		"sex": "Male",
-		"dateOfBirth": "2014-04-17",
-		"phoneNumber": "+3816412312",
-		"address": "Veternik Novi Sad",
-		"username": "SofiAmi",
-		"password": "sofiami",
-		"role": "CLEANER"
 	}
 }

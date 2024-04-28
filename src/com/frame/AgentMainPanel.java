@@ -1,26 +1,22 @@
 package com.frame;
 
+
 import java.awt.Component;
 
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.frame.small.HomePanel;
-import com.frame.small.MakeReservationPanel;
-import com.service.ContainerService;
+import com.frame.small.RegisterGuestPanel;
 
-public class GuestMainPanel extends JTabbedPane {
+public class AgentMainPanel extends JTabbedPane {
 
-
-	public GuestMainPanel() {
-		super();
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
-		Panel homePanel = new HomePanel();
-		Panel reservationsPanel = new MakeReservationPanel();
-		addTab("Home", (Component)homePanel);
-		addTab("Reservations", (Component)reservationsPanel);
+	/**
+	 * Create the panel.
+	 */
+	public AgentMainPanel() {
+		Panel RegisterGuestPanel = new RegisterGuestPanel();
+		addTab("Register Guest", (Component)RegisterGuestPanel);
 		
 		addChangeListener(new ChangeListener() {
             @Override

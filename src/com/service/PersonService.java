@@ -29,7 +29,7 @@ public class PersonService {
 	    int arrLength = 0;
 	    for(String username: jsonObject.keySet()) {
 	     	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
-	      	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
+	      	if(!role.equals(Role.GUEST.getRole()) && !role.equals(Role.ADMIN.getRole())) {
 	      		arrLength++;
 	      	}
 	    }
@@ -37,7 +37,7 @@ public class PersonService {
 	    int i = 0;
 	    for(String username: jsonObject.keySet()) {
 	       	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
-	    	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
+	    	if(!role.equals(Role.GUEST.getRole()) && !role.equals(Role.ADMIN.getRole())) {
 	 
 	    		JsonObject staffObject = jsonObject.getAsJsonObject(username);
 	            String[] staff = {

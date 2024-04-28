@@ -78,9 +78,8 @@ public class LoginPanel extends JPanel implements Panel {
 						loginErrorLabel.setText(e1.getMessage()); //move to Auth Service
 					} catch (BadLoginException e2) {
 						loginErrorLabel.setText(e2.getMessage());
-						
 					}
-				; 
+				
 				}
 			}
 		});

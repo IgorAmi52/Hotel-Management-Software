@@ -1,0 +1,13 @@
+{
+	"rooms": {
+		"One bed":[],
+		"Two beds":[],
+		"One double bed":[],
+		"Three beds":[]
+	},
+	"additional services": {
+		"Breakfast":[],
+		"Lunch":[],
+		"Dinner":[]
+	}
+}
