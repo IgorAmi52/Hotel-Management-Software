@@ -3,47 +3,28 @@ package com.frame.small;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
-
 import com.frame.Panel;
 import com.models.Reservation;
 import com.models.enums.AdditionalServiceType;
-import com.models.enums.Role;
 import com.models.enums.RoomType;
 import com.service.ContainerService;
-import com.service.DateLabelFormatter;
 import com.service.Holder;
+import com.service.PricingService;
 import com.service.ReservationService;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-
 import javax.swing.JComboBox;
-import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Color;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class MakeReservationPanel extends JPanel implements Panel {
@@ -54,36 +35,37 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	private JCheckBox lunch;
 	private JCheckBox dinner;
 	private JLabel successLabel;
-	/**
-	 * Create the panel.
-	 */
+	private Object[][] resData;
+    private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","Comment"};
+    private JTable table;
+    
 	public MakeReservationPanel() {
 		super();
 		setLayout(null);
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		JLabel lblNewLabel = new JLabel("Room Type:");
-		lblNewLabel.setBounds(72, 122, 92, 16);
+		lblNewLabel.setBounds(484, 122, 92, 16);
 		add(lblNewLabel);
 		
 		roomTypeBox = new JComboBox(roomTypes);
-		roomTypeBox.setBounds(191, 118, 228, 27);
+		roomTypeBox.setBounds(652, 118, 228, 27);
 		add(roomTypeBox);
 
         JDatePickerImpl checkinDatePicker = ContainerService.getDatePicker();
         JDatePickerImpl checkoutDatePicker = ContainerService.getDatePicker();
         
-        checkinDatePicker.setBounds(191, 176, 228, 29);
-        checkoutDatePicker.setBounds(191, 227, 228, 29);
+        checkinDatePicker.setBounds(191, 122, 228, 29);
+        checkoutDatePicker.setBounds(191, 182, 228, 29);
         add(checkinDatePicker);
         add(checkoutDatePicker);
         
         JLabel lblNewLabel_1 = new JLabel("Check-in Date:");
-        lblNewLabel_1.setBounds(72, 182, 103, 16);
+        lblNewLabel_1.setBounds(73, 122, 103, 16);
         add(lblNewLabel_1);
         
         JLabel lblNewLabel_2 = new JLabel("Check-out Date:");
-        lblNewLabel_2.setBounds(72, 232, 118, 16);
+        lblNewLabel_2.setBounds(73, 182, 118, 16);
         add(lblNewLabel_2);
         
         JLabel lblNewLabel_3 = new JLabel("Request new Reservation:");
@@ -94,13 +76,13 @@ public class MakeReservationPanel extends JPanel implements Panel {
 
         breakfast = new JCheckBox("Breakfast");
         breakfast.setSize(100, 20);
-        breakfast.setLocation(64, 287);
+        breakfast.setLocation(497, 180);
         lunch = new JCheckBox("Lunch");
         lunch.setSize(100, 20);
-        lunch.setLocation(194, 287);
+        lunch.setLocation(663, 180);
         dinner = new JCheckBox("Dinner");
         dinner.setSize(100, 20);
-        dinner.setLocation(319, 287);
+        dinner.setLocation(801, 180);
     
         add(breakfast);
         add(lunch);
@@ -114,8 +96,9 @@ public class MakeReservationPanel extends JPanel implements Panel {
         add(successLabel);
         
         JButton requestReservationButton = new JButton("Request a Reservation");
+        requestReservationButton.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
         
-        requestReservationButton.setBounds(58, 330, 361, 29);
+        requestReservationButton.setBounds(73, 258, 428, 43);
         add(requestReservationButton);
         
         requestReservationButton.addActionListener(new ActionListener() {
@@ -131,6 +114,9 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		try {
         			ReservationService.requestReservation(reservation);
         			ContainerService.resetFields(MakeReservationPanel.this);
+        			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+        			table.setModel(new DefaultTableModel(resData, columnNames));
+        			successLabel.setText("");
         			successLabel.setText("Reservation was successfully submited!");
 				} catch (Exception e2) {
 					e2.printStackTrace();
@@ -166,34 +152,36 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	    }
 	
 	private void makeReservationTable() { //to be implemented
-		   Object[][] data = {
-	                {"John", 25, "Male"},
-	                {"Anna", 30, "Female"},
-	                {"Mike", 35, "Male"},
-	                {"Emily", 28, "Female"}
-	        };
-
-	        // Column names
-	        String[] columnNames = {"Name", "Age", "Gender"};
-
-	        // Create a table
-	        JTable table = new JTable(new DefaultTableModel(data, columnNames));
+		
+		    try {
+				resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        table = new JTable(new DefaultTableModel(resData, columnNames));
 	        table.setForeground(new Color(0, 0, 0));
 	        JScrollPane scrollPane = new JScrollPane(table);
 	        
-	        scrollPane.setBounds(583, 121, 400, 200);
+	        scrollPane.setBounds(73, 392, 807, 176);
 	        add(scrollPane);
 	        
-	        JLabel lblNewLabel_3_1 = new JLabel("Your Reservations: (To be inp.)");
-	        lblNewLabel_3_1.setHorizontalAlignment(SwingConstants.LEFT);
-	        lblNewLabel_3_1.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-	        lblNewLabel_3_1.setBounds(583, 58, 347, 29);
-	        add(lblNewLabel_3_1);
+	        JLabel lblNewLabel_4 = new JLabel("Your Reservations:");
+	        lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+	        lblNewLabel_4.setBounds(73, 331, 221, 30);
+	        add(lblNewLabel_4);
 	        
 	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
+		try {
+			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		table.setModel(new DefaultTableModel(resData, columnNames));
 		successLabel.setText("");
 	}
 }

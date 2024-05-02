@@ -10,7 +10,7 @@ public class Holder {
 	
 	private Person user;
 	public Frame frame;
-	private JPanel[] panels; //to be impleemented
+	private JPanel[] panels; //to be impleemented for hashing
 	
 	
 	private Holder(Frame frame) {

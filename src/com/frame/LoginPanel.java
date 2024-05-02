@@ -35,7 +35,7 @@ public class LoginPanel extends JPanel implements Panel {
 		super();
 
 		setLayout(null);
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		JLabel usernameLabel = new JLabel("Username:");
 		usernameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		usernameLabel.setBounds(30, 58, 90, 29);
