@@ -129,7 +129,11 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					e1.printStackTrace();
 					return;
 				}
-        		Pricing pricing = new Pricing(ServiceType.getByAssociatedValue(addTypeBox.getSelectedItem().toString()),price,fromAddDatePicker.getJFormattedTextField().getText(),toAddDatePicker.getJFormattedTextField().getText());
+				ServiceType serviceType = ServiceType.getByAssociatedValue(addTypeBox.getSelectedItem().toString());
+				String fromDate = fromAddDatePicker.getJFormattedTextField().getText();
+				String toDate = toAddDatePicker.getJFormattedTextField().getText();
+				
+        		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		
         		try {
         			PricingService.addPricing(pricing, false);
@@ -220,7 +224,10 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					e1.printStackTrace();
 					return;
 				}
-        		Pricing pricing = new Pricing(ServiceType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString()),price,fromRoomDatePicker.getJFormattedTextField().getText(),toRoomDatePicker.getJFormattedTextField().getText());
+				ServiceType serviceType = ServiceType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
+				String fromDate = fromRoomDatePicker.getJFormattedTextField().getText();
+				String toDate = toRoomDatePicker.getJFormattedTextField().getText();
+        		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		
         		try {
         			PricingService.addPricing(pricing, true);

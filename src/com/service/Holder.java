@@ -12,7 +12,6 @@ public class Holder {
 	public Frame frame;
 	private JPanel[] panels; //to be impleemented for hashing
 	
-	
 	private Holder(Frame frame) {
 		this.frame = frame;
 	}
