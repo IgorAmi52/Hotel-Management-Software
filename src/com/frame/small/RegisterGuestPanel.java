@@ -131,8 +131,6 @@ public class RegisterGuestPanel extends JPanel implements Panel {
         successLabel.setBounds(84, 17, 825, 16);
         add(successLabel);
         
-      
-   
         registerButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         

@@ -20,8 +20,8 @@ public class ContainerService {
 	public static int panelHeight = 650;
 	public static int panelWidth = 1000;
 	
-
 	private static  Properties p = new Properties();
+	
 	public static void resetFields(Container container) {
         Component[] components = container.getComponents();
         for (Component component : components) {

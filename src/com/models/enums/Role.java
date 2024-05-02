@@ -12,7 +12,7 @@ public enum Role {
 	}
     public static Role getByAssociatedValue(String value) {
         for (Role enumValue : values()) {
-            if (enumValue.getRole() == value) {
+            if (enumValue.getRole().equals(value)) {
                 return enumValue;
             }
         }

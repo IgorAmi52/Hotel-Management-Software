@@ -19,4 +19,13 @@ public enum RoomType {
 		}
 		return values;
 	}
+	public static RoomType getByAssociatedValue(String value) {
+		for(RoomType enumValue : values()) {
+			if(enumValue.getType().equals(value)) {
+				return enumValue;
+			}
+		}
+        throw new IllegalArgumentException("No enum value found for associated value: " + value);
+
+	}
 }

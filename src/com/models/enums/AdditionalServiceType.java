@@ -20,5 +20,13 @@ public enum AdditionalServiceType {
 		}
 		return values;
 	}
+	public static AdditionalServiceType getByAssociatedValue(String value) {
+		for(AdditionalServiceType enumValue : values()) {
+			if(enumValue.getService().equals(value)) {
+				return enumValue;
+			}
+		}
+        throw new IllegalArgumentException("No enum value found for associated value: " + value);
 
+	}
 }

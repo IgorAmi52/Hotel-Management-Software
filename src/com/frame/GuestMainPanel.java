@@ -21,7 +21,6 @@ public class GuestMainPanel extends JTabbedPane {
 		Panel reservationsPanel = new MakeReservationPanel();
 		addTab("Home", (Component)homePanel);
 		addTab("Reservations", (Component)reservationsPanel);
-		
 		addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
