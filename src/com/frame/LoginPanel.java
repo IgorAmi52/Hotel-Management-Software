@@ -38,23 +38,23 @@ public class LoginPanel extends JPanel implements Panel {
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		JLabel usernameLabel = new JLabel("Username:");
 		usernameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		usernameLabel.setBounds(30, 58, 90, 29);
+		usernameLabel.setBounds(171, 146, 90, 29);
 		add(usernameLabel);
 		
 		JLabel passwordLabel = new JLabel("Password:");
 		passwordLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		passwordLabel.setBounds(30, 113, 90, 29);
+		passwordLabel.setBounds(171, 220, 90, 29);
 		add(passwordLabel);
 		
 		usernameField = new JTextField();
 		usernameField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		usernameField.setBounds(132, 58, 439, 29);
+		usernameField.setBounds(306, 141, 439, 39);
 		add(usernameField);
 		usernameField.setColumns(10);
 		
 		passwordField = new JPasswordField();
 		passwordField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		passwordField.setBounds(132, 113, 439, 29);
+		passwordField.setBounds(306, 215, 439, 39);
 		add(passwordField);
 		
 		loginErrorLabel = new JLabel("");

@@ -76,10 +76,10 @@ public class MakeReservationPanel extends JPanel implements Panel {
 
         breakfast = new JCheckBox("Breakfast");
         breakfast.setSize(100, 20);
-        breakfast.setLocation(497, 180);
+        breakfast.setLocation(476, 180);
         lunch = new JCheckBox("Lunch");
         lunch.setSize(100, 20);
-        lunch.setLocation(663, 180);
+        lunch.setLocation(644, 180);
         dinner = new JCheckBox("Dinner");
         dinner.setSize(100, 20);
         dinner.setLocation(801, 180);
