@@ -19,7 +19,7 @@ public class PersonService {
 	
 	public static String[][] getStaff() throws IOException {
 
-		reader = new FileReader(Holder.getProjectPath()+"/src/com/database/users.json");
+		reader = new FileReader("data/users.json");
 	
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 	
@@ -29,7 +29,7 @@ public class PersonService {
 	    int arrLength = 0;
 	    for(String username: jsonObject.keySet()) {
 	     	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
-	      	if(!role.equals(Role.GUEST.getRole()) && !role.equals(Role.ADMIN.getRole())) {
+	      	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
 	      		arrLength++;
 	      	}
 	    }
@@ -37,14 +37,15 @@ public class PersonService {
 	    int i = 0;
 	    for(String username: jsonObject.keySet()) {
 	       	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
-	    	if(!role.equals(Role.GUEST.getRole()) && !role.equals(Role.ADMIN.getRole())) {
+	    	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
 	 
 	    		JsonObject staffObject = jsonObject.getAsJsonObject(username);
+	    		
 	            String[] staff = {
 	            		staffObject.get("username").getAsString(),
 	            		staffObject.get("name").getAsString(),
 	            		staffObject.get("lastname").getAsString(),
-	            		staffObject.get("role").getAsString(),
+	            		Role.valueOf(role).getRole(),
 	            		staffObject.get("sex").getAsString(),
 	            		staffObject.get("dateOfBirth").getAsString(),
 	            		staffObject.get("phoneNumber").getAsString(),
@@ -59,13 +60,13 @@ public class PersonService {
 
 	public static void deleteUser(String username) throws IOException {
 	
-		reader = new FileReader(Holder.getProjectPath()+"/src/com/database/users.json");
+		reader = new FileReader("data/users.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 	
 	    jsonObject.remove(username);
 	    
-	    writer = new FileWriter(Holder.getProjectPath()+"/src/com/database/users.json");
+	    writer = new FileWriter("data/users.json");
 	    writer.write(new Gson().toJson(jsonObject));
 	    writer.close();
 	}

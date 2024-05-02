@@ -38,7 +38,7 @@ public class RegisterGuestPanel extends JPanel implements Panel {
 	public RegisterGuestPanel() {
 		super();
 		setLayout(null);
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		JLabel nameLabel = new JLabel("First Name:");
 		nameLabel.setBounds(84, 56, 87, 16);
 		add(nameLabel);
@@ -61,7 +61,7 @@ public class RegisterGuestPanel extends JPanel implements Panel {
 		sexLabel.setBounds(403, 56, 61, 16);
 		add(sexLabel);
 		
-		String [] sexes = {"Male","Female","Other"};
+		String [] sexes = {"Male","Female","Never"};
 		JComboBox sexBox = new JComboBox(sexes);
 	    sexBox.setBounds(476, 52, 119, 27);
 	    add(sexBox);
@@ -123,8 +123,6 @@ public class RegisterGuestPanel extends JPanel implements Panel {
         errorLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 13));
         errorLabel.setBounds(193, 321, 634, 16);
         add(errorLabel);
-        
-        String[] roles = {Role.AGENT.toString(),Role.CLEANER.toString(),Role.ADMIN.toString()};
         
         JLabel successLabel = new JLabel("");
         successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));

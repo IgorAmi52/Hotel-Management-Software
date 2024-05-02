@@ -10,4 +10,12 @@ public enum Role {
 	public String getRole() {
 		return role;
 	}
+    public static Role getByAssociatedValue(String value) {
+        for (Role enumValue : values()) {
+            if (enumValue.getRole() == value) {
+                return enumValue;
+            }
+        }
+        throw new IllegalArgumentException("No enum value found for associated value: " + value);
+    }
 }

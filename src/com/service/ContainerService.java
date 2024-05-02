@@ -17,8 +17,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 public class ContainerService {
 	
-	public static int panelHeight = 1000;
-	public static int panelWidth = 550;
+	public static int panelHeight = 650;
+	public static int panelWidth = 1000;
 	
 
 	private static  Properties p = new Properties();

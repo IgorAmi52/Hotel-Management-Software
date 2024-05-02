@@ -17,7 +17,6 @@ public class App {
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
-		System.out.println(Role.ADMIN.getRole().getClass());
 		
 		Holder holder = Holder.getInstance();
 		

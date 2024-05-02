@@ -8,6 +8,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.frame.small.RegisterGuestPanel;
+import com.service.ContainerService;
 
 public class AgentMainPanel extends JTabbedPane {
 
@@ -16,6 +17,7 @@ public class AgentMainPanel extends JTabbedPane {
 	 */
 	public AgentMainPanel() {
 		Panel RegisterGuestPanel = new RegisterGuestPanel();
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		addTab("Register Guest", (Component)RegisterGuestPanel);
 		
 		addChangeListener(new ChangeListener() {

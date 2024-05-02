@@ -3,6 +3,7 @@ package com.frame.small;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -14,6 +15,7 @@ import com.service.ContainerService;
 import com.service.DateLabelFormatter;
 
 import javax.swing.JLabel;
+import javax.swing.JList;
 
 import java.util.Properties;
 
@@ -27,7 +29,11 @@ import javax.swing.table.JTableHeader;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Color;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -40,7 +46,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	public MakeReservationPanel() {
 		super();
 		setLayout(null);
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		JLabel lblNewLabel = new JLabel("Room Type:");
 		lblNewLabel.setBounds(72, 122, 92, 16);
@@ -81,11 +87,26 @@ public class MakeReservationPanel extends JPanel implements Panel {
         lblNewLabel_3.setHorizontalAlignment(SwingConstants.LEFT);
         lblNewLabel_3.setBounds(72, 58, 347, 29);
         add(lblNewLabel_3);
-        
+
+        JCheckBox Breakfast = new JCheckBox("Breakfast");
+        Breakfast.setSize(100, 20);
+        Breakfast.setLocation(64, 287);
+        JCheckBox Lunch = new JCheckBox("Lunch");
+        Lunch.setSize(100, 20);
+        Lunch.setLocation(194, 287);
+        JCheckBox Dinner = new JCheckBox("Dinner");
+        Dinner.setSize(100, 20);
+        Dinner.setLocation(319, 287);
+
+        // Add checkboxes to the frame
+        add(Breakfast);
+        add(Lunch);
+        add(Dinner);
+
         
         JButton btnNewButton = new JButton("Request a Reservation");
 
-        btnNewButton.setBounds(58, 295, 361, 29);
+        btnNewButton.setBounds(58, 330, 361, 29);
         add(btnNewButton);
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -114,7 +135,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	        scrollPane.setBounds(583, 121, 400, 200);
 	        add(scrollPane);
 	        
-	        JLabel lblNewLabel_3_1 = new JLabel("Your Reservations:");
+	        JLabel lblNewLabel_3_1 = new JLabel("Your Reservations: (To be inp.)");
 	        lblNewLabel_3_1.setHorizontalAlignment(SwingConstants.LEFT);
 	        lblNewLabel_3_1.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 	        lblNewLabel_3_1.setBounds(583, 58, 347, 29);
@@ -126,5 +147,4 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		ContainerService.resetFields(this);
 		
 	}
-
 }

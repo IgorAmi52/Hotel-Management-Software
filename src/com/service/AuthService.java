@@ -25,7 +25,7 @@ public class AuthService {
 	
 	public static Person login(String username, String password) throws IOException, BadLoginException { 
 	
-		FileReader reader = new FileReader(Holder.getProjectPath()+"/src/com/database/users.json"); 
+		FileReader reader = new FileReader("data/users.json"); 
 		
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 	    reader.close();
@@ -43,6 +43,7 @@ public class AuthService {
 	private static Person getPersonType(JsonObject userObject) {
 		String role = userObject.get("role").getAsString();
 		
+
 		if(role == Role.GUEST.toString()) {
 		
 			return gson.fromJson(userObject, Guest.class);
@@ -51,6 +52,7 @@ public class AuthService {
 	}
 	
 	public static JComponent userRedirect(Person user) { 
+
 		if(user == null) {
 			return new LoginPanel();
 		}
@@ -66,14 +68,14 @@ public class AuthService {
 		return new GuestMainPanel();
 	}
 	public static void registerUser(Person user) throws IOException {
-		FileReader reader = new FileReader(Holder.getProjectPath()+"/src/com/database/users.json");
+		FileReader reader = new FileReader("data/users.json");
 		
 		Gson gson = new Gson();
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 	    reader.close();
 	    
 	    jsonObject.add(user.getUserName(), user.getJson());
-	    FileWriter writer = new FileWriter(Holder.getProjectPath()+"/src/com/database/users.json");
+	    FileWriter writer = new FileWriter("data/users.json");
 	    writer.write(new Gson().toJson(jsonObject));
 	    writer.close();
 	}

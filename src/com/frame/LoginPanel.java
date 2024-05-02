@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 import com.service.AuthService;
 import com.service.ContainerService;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import com.exceptions.*;
+import com.models.Person;
 public class LoginPanel extends JPanel implements Panel {
 	
 	private JTextField usernameField;
@@ -68,23 +70,40 @@ public class LoginPanel extends JPanel implements Panel {
 		
 		
 		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(true) {
-					Holder holder = Holder.getInstance();
-					try {
-						holder.setUser(AuthService.login(usernameField.getText(), new String(passwordField.getPassword())));
+		    public void actionPerformed(ActionEvent e) {
+		    	loginButton.setEnabled(false);
+		        final String username = usernameField.getText();
+		        final char[] password = passwordField.getPassword();
+		  
+		       // Create and execute the SwingWorker
+		        SwingWorker<Person, Void> loginWorker = new SwingWorker<Person, Void>() {
+		            @Override
+		            protected Person doInBackground() throws Exception {
+		                
+		                return AuthService.login(username, new String(password));
+		            }
 
-					} catch (IOException e1) {
-						loginErrorLabel.setText(e1.getMessage()); //move to Auth Service
-					} catch (BadLoginException e2) {
-						loginErrorLabel.setText(e2.getMessage());
-					}
-				
-				}
-			}
+		            @Override
+		            protected void done() {
+		                try {
+		                    // Get the result of the background operation
+		                    Person user = get();	
+		  
+		                    Holder.getInstance().setUser(user);
+		                } catch (Exception e) {
+		                    Throwable ex = e.getCause();
+		                    if (ex instanceof BadLoginException || ex instanceof IOException) {
+		                        loginErrorLabel.setText(ex.getMessage());
+		                    } else {     
+		                        ex.printStackTrace(); // Handle other exceptions
+		                    }
+		                    loginButton.setEnabled(true);
+		                }
+		            }
+		        };
+		        loginWorker.execute();
+		    }
 		});
-
-		
 	}
 
 	@Override

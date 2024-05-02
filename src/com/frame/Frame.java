@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import com.models.Person;
+import com.service.ContainerService;
 import com.service.Holder;
 
 public class Frame extends JFrame {
@@ -26,8 +27,7 @@ public class Frame extends JFrame {
 		setTitle("Hotel Managment App");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 550);
-		
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);		
 	}
 	public void setPanel(JComponent component) {
 		removePanel();

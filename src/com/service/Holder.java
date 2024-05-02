@@ -12,7 +12,6 @@ public class Holder {
 	public Frame frame;
 	private JPanel[] panels; //to be impleemented
 	
-	private static String path = "/Users/sergej/eclipse-workspace/hotel-oop"; //make it dinamically
 	
 	private Holder(Frame frame) {
 		this.frame = frame;
@@ -29,9 +28,6 @@ public class Holder {
 	}
 	public Person getUser() {
 		return this.user;
-	}
-	public static String getProjectPath() {
-		return path;
 	}
 
 }

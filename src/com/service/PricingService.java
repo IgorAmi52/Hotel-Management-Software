@@ -8,18 +8,24 @@ import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.models.Pricing;
 
 public class PricingService {
 	
 	private static Gson gson = new Gson();
 	private static FileReader reader;
 	private static FileWriter writer;
-	
-	public static String[][] getRoomPricing() throws IOException {
+
+	public static String[][] getPricing(Boolean isRoom) throws IOException {
 		
-		reader = new FileReader(Holder.getProjectPath()+"/src/com/database/pricing.json");
+		reader = new FileReader("data/pricing.json");
+		String entity = "additionals";
 		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject("rooms");
+		if(isRoom) {
+			entity = "rooms";
+		}
+		
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject(entity);
 		reader.close();
 		
 		int arrLength = 0;
@@ -34,25 +40,52 @@ public class PricingService {
 		for(String type: jsonObject.keySet()) {
 			
 			JsonArray arrayOfPrices = jsonObject.get(type).getAsJsonArray();
-			String [] priceArr = new String[4];
 			
+			if(arrayOfPrices.size()==0) {
+				continue;
+			}
 			for(int i = 0; i< arrayOfPrices.size();i++) {
+				String [] priceArr = new String[4];
 				JsonObject priceObject = arrayOfPrices.get(i).getAsJsonObject();
 				
-				String roomType = priceObject.get("type").getAsString();
+				String addType = type;
 				String price = priceObject.get("price").getAsString();
-				String fromDate = priceObject.get("from").getAsString();
-				String toDate = priceObject.get("to").getAsString();
+				String fromDate = priceObject.get("fromDate").getAsString();
+				String toDate = priceObject.get("toDate").getAsString();
 				
-				priceArr[0] = roomType;
+				priceArr[0] = addType;
 				priceArr[1] = price;
 				priceArr[2] = fromDate;
 				priceArr[3] = toDate;
+				
+				ret[itt] = priceArr;
+				itt++;
 			}
-			ret[itt] = priceArr;
-			itt++;
-
 		}
 		return ret;
 	}
+	public static void addPricing(Pricing pricing, Boolean isRoom) throws IOException {
+		reader = new FileReader("data/pricing.json");
+		
+		String entity = "additionals";
+		
+		if(isRoom) {
+			entity = "rooms";
+		}
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+
+		String service = pricing.getType().getService();
+		JsonArray arr = jsonObject.getAsJsonObject(entity).getAsJsonArray(service);
+
+		arr.add(pricing.getJson());
+		
+		jsonObject.getAsJsonObject(entity).add(service, arr);
+		
+		FileWriter writer = new FileWriter("data/pricing.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+		
+	}
+
 }

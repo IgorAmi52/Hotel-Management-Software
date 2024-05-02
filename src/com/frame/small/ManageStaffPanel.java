@@ -29,7 +29,7 @@ public class ManageStaffPanel extends JPanel implements Panel {
 	
 	public ManageStaffPanel() {
 		setLayout(null);
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		try {
 			staffArr = PersonService.getStaff();

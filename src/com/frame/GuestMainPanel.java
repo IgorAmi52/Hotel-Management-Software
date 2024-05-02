@@ -16,7 +16,7 @@ public class GuestMainPanel extends JTabbedPane {
 
 	public GuestMainPanel() {
 		super();
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		Panel homePanel = new HomePanel();
 		Panel reservationsPanel = new MakeReservationPanel();
 		addTab("Home", (Component)homePanel);

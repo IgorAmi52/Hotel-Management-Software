@@ -21,7 +21,7 @@ public class AdminMainPanel extends JTabbedPane {
 
 	public AdminMainPanel() {
 		super();
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		Panel homePanel = new HomePanel();
 		Panel registerStaffPanel = new RegisterStaffPanel();
 		Panel registerGuestPanel = new RegisterGuestPanel();

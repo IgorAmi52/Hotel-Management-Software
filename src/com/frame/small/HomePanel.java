@@ -23,7 +23,7 @@ public class HomePanel extends JPanel implements Panel {
 		super();
 		
 		setLayout(null);
-		setSize(ContainerService.panelHeight,ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		Holder holder = Holder.getInstance();
 		Person user = holder.getUser();

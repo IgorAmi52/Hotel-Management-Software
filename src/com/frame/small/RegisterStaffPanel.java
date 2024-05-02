@@ -52,7 +52,7 @@ public class RegisterStaffPanel extends JPanel implements Panel {
 	 */
 	public RegisterStaffPanel() {
 		setLayout(null);
-		setSize(ContainerService.panelHeight, ContainerService.panelWidth);
+		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		JLabel nameLabel = new JLabel("First Name:");
 		nameLabel.setBounds(84, 56, 87, 16);
 		add(nameLabel);
@@ -75,7 +75,7 @@ public class RegisterStaffPanel extends JPanel implements Panel {
 		sexLabel.setBounds(403, 56, 61, 16);
 		add(sexLabel);
 		
-		String [] sexes = {"Male","Female","Other"};
+		String [] sexes = {"Male","Female","Never"};
 		JComboBox sexBox = new JComboBox(sexes);
 	    sexBox.setBounds(476, 52, 119, 27);
 	    add(sexBox);
@@ -184,12 +184,12 @@ public class RegisterStaffPanel extends JPanel implements Panel {
         		try {
 					yearsOfXp = Integer.parseInt(yearsOfXpField.getText());
 					lvlOfEdct = Integer.parseInt(lvlOfEdctField.getText());
-				} catch (Exception e2) {
+				} catch (NumberFormatException e2) {
 					errorLabel.setText("Years Of Experience and level of Education fields must be numbers!");
 					return;
 				}
 
-        		Staff user = new Staff(nameField.getText(), lastnameField.getText(), sexBox.getSelectedItem().toString(), datePicker.getJFormattedTextField().getText(), phoneField.getText(), addressField.getText(), usernameField.getText(), passwordField.getText(), lvlOfEdct, yearsOfXp, Role.valueOf(roleBox.getSelectedItem().toString()));
+        		Staff user = new Staff(nameField.getText(), lastnameField.getText(), sexBox.getSelectedItem().toString(), datePicker.getJFormattedTextField().getText(), phoneField.getText(), addressField.getText(), usernameField.getText(), passwordField.getText(), lvlOfEdct, yearsOfXp, Role.getByAssociatedValue(roleBox.getSelectedItem().toString()));
         		try {
 					AuthService.registerUser(user);
 					ContainerService.resetFields(RegisterStaffPanel.this);

@@ -10,12 +10,12 @@ public class Reservation {
 	private RoomType roomType;
 	private  String roomID;
 	private  String guestID;
-	private String[] addServices;
+	private AdditonalService[] addServices;
 	private double price;
 	
 	private ReservationStatus status = ReservationStatus.PENDING;
 	
-	public Reservation(String checkInDate, String checkOutDate, RoomType roomType, String[] addServices) {
+	public Reservation(String checkInDate, String checkOutDate, RoomType roomType, AdditonalService[] addServices) {
 		this.checkInDate = checkInDate;
 		this.checkOutDate = checkOutDate;
 		this.roomType = roomType;
