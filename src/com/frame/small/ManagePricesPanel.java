@@ -6,10 +6,10 @@ import javax.swing.JTable;
 
 import com.frame.Panel;
 import com.models.Pricing;
-import com.models.enums.AdditionalServiceType;
+
 import com.models.enums.Role;
 import com.models.enums.RoomType;
-import com.models.enums.ServiceType;
+
 import com.service.ContainerService;
 import com.service.PricingService;
 import com.service.RoomService;

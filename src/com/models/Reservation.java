@@ -2,7 +2,6 @@ package com.models;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.models.enums.AdditionalServiceType;
 import com.models.enums.ReservationStatus;
 import com.models.enums.RoomType;
 
@@ -13,12 +12,12 @@ public class Reservation {
 	private RoomType roomType;
 	private  String roomID;
 	private  String guestID;
-	private AdditionalServiceType[] addServices;
+	private String[] addServices;
 	private double price;
 	private String comment = "";
 	private ReservationStatus status = ReservationStatus.PENDING;
 	
-	public Reservation(String checkInDate, String checkOutDate, RoomType roomType, AdditionalServiceType[] addServices, String guestID) {
+	public Reservation(String checkInDate, String checkOutDate, RoomType roomType, String[] addServices, String guestID) {
 		this.checkInDate = checkInDate;
 		this.checkOutDate = checkOutDate;
 		this.roomType = roomType;
@@ -43,8 +42,8 @@ public class Reservation {
 		jsonObject.addProperty("comment", comment);
 		jsonObject.addProperty("roomType", roomType.getType());
 		JsonArray serviceArray = new JsonArray();
-		for(AdditionalServiceType service : addServices) {
-			serviceArray.add(service.getService());
+		for(String service : addServices) {
+			serviceArray.add(service);
 		}
 		jsonObject.add("addServices", serviceArray);
 		

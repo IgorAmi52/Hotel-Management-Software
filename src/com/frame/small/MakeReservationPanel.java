@@ -3,42 +3,51 @@ package com.frame.small;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
+
+import java.awt.Component;
+import java.awt.FlowLayout;
+
 import org.jdatepicker.impl.JDatePickerImpl;
 import com.frame.Panel;
 import com.models.Reservation;
-import com.models.enums.AdditionalServiceType;
 import com.models.enums.RoomType;
 import com.service.ContainerService;
 import com.service.Holder;
 import com.service.PricingService;
 import com.service.ReservationService;
+import com.service.RoomService;
 
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Color;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class MakeReservationPanel extends JPanel implements Panel {
 	
 	private JComboBox roomTypeBox;
 	private String[] roomTypes = RoomType.getTypes();
-	private JCheckBox breakfast;
-	private JCheckBox lunch;
-	private JCheckBox dinner;
+	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
 	private JLabel successLabel;
 	private Object[][] resData;
     private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","Comment"};
     private JTable table;
-    
+    private String[] addServiceArr;
 	public MakeReservationPanel() {
 		super();
 		setLayout(null);
@@ -49,9 +58,31 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		add(lblNewLabel);
 		
 		roomTypeBox = new JComboBox(roomTypes);
-		roomTypeBox.setBounds(652, 118, 228, 27);
+		roomTypeBox.setBounds(650, 118, 228, 27);
 		add(roomTypeBox);
+		
+        JLabel lblNewLabel_5 = new JLabel("Additionals:");
+        lblNewLabel_5.setBounds(484, 182, 92, 16);
+        add(lblNewLabel_5);
+        
+        addServiceArr = RoomService.getAddServicesArr();
+        
+        for (int i = 0; i < addServiceArr.length; i++) {
+        	addCheckBoxes.add(new JCheckBox(addServiceArr[i]));
+        }
+        JPanel checkBoxPanel = new JPanel(new GridLayout(0,1));
+        for(int i = 0; i < addCheckBoxes.size(); i++) {
+        	checkBoxPanel.add(addCheckBoxes.get(i));
+        }
+  
+        checkBoxPanel.setLocation(650, 182);
+        JScrollPane addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        addScrollPane.setSize(228, 80);
+        addScrollPane.setLocation(650, 182);
 
+        add(addScrollPane);
+        
+        
         JDatePickerImpl checkinDatePicker = ContainerService.getDatePicker();
         JDatePickerImpl checkoutDatePicker = ContainerService.getDatePicker();
         
@@ -73,21 +104,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         lblNewLabel_3.setHorizontalAlignment(SwingConstants.LEFT);
         lblNewLabel_3.setBounds(72, 58, 347, 29);
         add(lblNewLabel_3);
-
-        breakfast = new JCheckBox("Breakfast");
-        breakfast.setSize(100, 20);
-        breakfast.setLocation(476, 180);
-        lunch = new JCheckBox("Lunch");
-        lunch.setSize(100, 20);
-        lunch.setLocation(644, 180);
-        dinner = new JCheckBox("Dinner");
-        dinner.setSize(100, 20);
-        dinner.setLocation(801, 180);
     
-        add(breakfast);
-        add(lunch);
-        add(dinner);
-        
         successLabel = new JLabel("");
         successLabel.setHorizontalAlignment(SwingConstants.CENTER);
         successLabel.setForeground(new Color(0, 183, 28));
@@ -98,7 +115,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         JButton requestReservationButton = new JButton("Request a Reservation");
         requestReservationButton.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
         
-        requestReservationButton.setBounds(73, 258, 428, 43);
+        requestReservationButton.setBounds(73, 258, 370, 43);
         add(requestReservationButton);
         
         requestReservationButton.addActionListener(new ActionListener() {
@@ -106,7 +123,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		String checkInDate = checkinDatePicker.getJFormattedTextField().getText();
         		String checkOutDate = checkoutDatePicker.getJFormattedTextField().getText();
         		RoomType roomType = RoomType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
-        		AdditionalServiceType[] addServiceArr = getSelectedAddServices();
+        		String[] addServiceArr = getSelectedValues(addCheckBoxes);
         		String guestID = Holder.getInstance().getUser().getUserName();
     
         		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr,guestID);
@@ -124,33 +141,17 @@ public class MakeReservationPanel extends JPanel implements Panel {
 				}
         	}
         });
-        
         makeReservationTable();
 	}
-	
-	   private AdditionalServiceType[] getSelectedAddServices() {
-		   
-		   int length = 0;
-		   if(breakfast.isSelected()) {length++;}
-		   if(lunch.isSelected()) {length++;}
-		   if(dinner.isSelected()) {length++;}
-		   AdditionalServiceType[] selectedValues = new AdditionalServiceType[length];
-		   int i = 0;
-		   if(breakfast.isSelected()) {
-			   selectedValues[i] =AdditionalServiceType.getByAssociatedValue(breakfast.getText());  
-			   i++;
-		   }
-		   if(lunch.isSelected()) {
-			   selectedValues[i] =AdditionalServiceType.getByAssociatedValue(lunch.getText());  
-			   i++;
-		   }
-		   if(dinner.isSelected()) {
-			   selectedValues[i] =AdditionalServiceType.getByAssociatedValue(dinner.getText());  
-			   i++;
-		   }
-	       return selectedValues;
-	    }
-	
+	public String[] getSelectedValues(ArrayList<JCheckBox> addList) {
+		  List<String> selectedValues = new ArrayList<>();
+		  for (JCheckBox checkBox : addList) {
+		    if (checkBox.isSelected()) {
+		      selectedValues.add(checkBox.getText());
+		    }
+		  }
+		  return selectedValues.toArray(new String[0]);
+		}
 	private void makeReservationTable() { //to be implemented
 		
 		    try {
@@ -170,18 +171,19 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	        lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 	        lblNewLabel_4.setBounds(73, 331, 221, 30);
 	        add(lblNewLabel_4);
-	        
+	       
 	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
 			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+			addServiceArr = RoomService.getAddServicesArr();
+			table.setModel(new DefaultTableModel(resData, columnNames));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		table.setModel(new DefaultTableModel(resData, columnNames));
 		successLabel.setText("");
 	}
 }

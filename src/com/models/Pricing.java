@@ -1,7 +1,6 @@
 package com.models;
 
 import com.google.gson.JsonObject;
-import com.models.enums.ServiceType;
 
 public class Pricing {
 	
