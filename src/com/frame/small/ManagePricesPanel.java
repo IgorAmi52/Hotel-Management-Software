@@ -2,6 +2,7 @@ package com.frame.small;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 
 import com.frame.Panel;
@@ -18,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 import javax.swing.table.DefaultTableModel;
 
@@ -33,6 +35,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class ManagePricesPanel extends JPanel implements Panel {
+	
+	private JLabel successLabel;
 	private JTextField roomPriceLabel;
 	private JTextField addPriceLabel;
 	private final String[] bedColumnNames = { "Room Type","Price","From","To" };
@@ -50,6 +54,13 @@ public class ManagePricesPanel extends JPanel implements Panel {
 		setLayout(null);
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
+	    successLabel = new JLabel("");
+	    successLabel.setForeground(new Color(3, 198, 6));
+	    successLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+	    successLabel.setBounds(6, 26, 988, 16);
+	    add(successLabel);
+	    
 		roomPricingDiv();
 		addPricingDiv();
 	}
@@ -59,19 +70,11 @@ public class ManagePricesPanel extends JPanel implements Panel {
 		lblNewLabel.setBounds(30, 279, 266, 26);
 		add(lblNewLabel);
 		
-	
-	
 	    JLabel lblNewLabel_1 = new JLabel("Service type:");
 	    lblNewLabel_1.setBounds(70, 330, 97, 16);
 	    add(lblNewLabel_1);
-	    
-	   
-	    if(RoomService.getAddServicesArr().length != 0) {
-			addTypeBox = new JComboBox(RoomService.getAddServicesArr());
-	    }
-	    else {
-	    	addTypeBox = new JComboBox(new String[0]);
-	    }
+
+		addTypeBox = new JComboBox(RoomService.getAddServicesArr());
 		addTypeBox.setBounds(202, 330, 161, 27);
 	    add(addTypeBox);
 	    
@@ -118,10 +121,6 @@ public class ManagePricesPanel extends JPanel implements Panel {
         extrasScrollPane.setBounds(394, 348, 600, 177);
         add(extrasScrollPane);
         
-        JButton deleteAddPricingButton = new JButton("Delete Pricing");
-        deleteAddPricingButton.setBounds(877, 300, 117, 29);
-        add(deleteAddPricingButton);
-        
         JButton addAddPriceButton = new JButton("Add Pricing");
         addAddPriceButton.setBounds(70, 490, 306, 29);
         add(addAddPriceButton);
@@ -142,15 +141,16 @@ public class ManagePricesPanel extends JPanel implements Panel {
 				String toDate = toAddDatePicker.getJFormattedTextField().getText();
 				
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
-        		
         		try {
+        			ContainerService.resetFields(ManagePricesPanel.this);
         			PricingService.addPricing(pricing);
+        			addArr = PricingService.getPricing(false);
+        			extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
+        			successLabel.setText("Service price successfully added!");
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
        
-        		reset();
-        		
         	}
         });
     
@@ -239,12 +239,14 @@ public class ManagePricesPanel extends JPanel implements Panel {
         		
         		try {
         			PricingService.addPricing(pricing);
+        			ContainerService.resetFields(ManagePricesPanel.this);
+        			bedArr = PricingService.getPricing(true);
+        			bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
+        			successLabel.setText("Bed price successfully added!");
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
-       
-        		reset();
-        		
+
         	}
         });
         
@@ -261,6 +263,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 			addTypeBox.removeAllItems();
 			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(RoomService.getAddServicesArr());
 			addTypeBox.setModel(model);
+			successLabel.setText("");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
