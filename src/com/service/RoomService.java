@@ -37,7 +37,7 @@ public class RoomService {
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 		
-		jsonObject.get("rooms").getAsJsonArray().add(room.getJson());
+		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
 		int nextID = getNextRoomID()+1;
 		jsonObject.addProperty("next ID", nextID);
 		
@@ -53,34 +53,41 @@ public class RoomService {
 		
 		JsonObject roomObj = room.getJson();
 		
-		jsonObject.getAsJsonArray("rooms").remove(roomObj);
+		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).remove(room.getID());
 		
 		writer = new FileWriter("data/rooms.json");
 		writer.write(new Gson().toJson(jsonObject));
 		writer.close();
 		
 	}
+
 	public static String[][] getRooms() throws IOException{
 		reader = new FileReader("data/rooms.json");
 		
 
-		JsonArray jsonArr = gson.fromJson(reader, JsonObject.class).getAsJsonArray("rooms");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject("rooms");
 		reader.close();
-
-		if(jsonArr.size()==0) {
-			return new String[0][3];
+		
+		int arrLength = 0;
+		for(String type: jsonObject.keySet()) {
+			for(String ID: jsonObject.getAsJsonObject(type).keySet()) {
+				arrLength++;
+			}
 		}
+		if(arrLength==0) {
+			return new String[0][4];
+		}
+		String[][] ret = new String[arrLength][];
 		
-		String[][] ret = new String[jsonArr.size()][];
-		
-		for(int i = 0; i < jsonArr.size(); i++) {
-			JsonObject roomJson = jsonArr.get(i).getAsJsonObject();
-			String roomType = roomJson.get("type").getAsString();
-			String roomID =  roomJson.get("ID").getAsString();
-			String status = roomJson.get("status").getAsString();
-			String[] room = {roomType,roomID,status};
-			
-			ret[i] = room;
+		int i = 0;
+		for(String type: jsonObject.keySet()) {
+			JsonObject typeObject = jsonObject.getAsJsonObject(type);
+			for(String ID: typeObject.keySet()) {
+				String status = typeObject.getAsJsonObject(ID).get("status").getAsString();
+				String [] roomArr = {type,ID,status};
+				ret[i]= roomArr;
+				i++;
+			}
 		}
 		return ret;
 	}
@@ -131,7 +138,6 @@ public class RoomService {
 	public static String[][] getAddServices() throws IOException{
 	reader = new FileReader("data/addServices.json");
 		
-
 		JsonArray jsonArr = gson.fromJson(reader, JsonObject.class).getAsJsonArray("services");
 		
 		reader.close();
@@ -145,4 +151,20 @@ public class RoomService {
 		}
 		return ret;
 	}
+	public static String[] getAddServicesArr() {
+		String[][] addMatrix;
+		try {
+			addMatrix = getAddServices();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new String[0];
+		}
+		
+		String[] ret = new String[addMatrix.length];
+		
+		for(int i = 0; i < addMatrix.length;i++) {
+			ret[i]= addMatrix[i][0];
+		}
+		return ret;
+ 	}
 }

@@ -20,10 +20,13 @@ public class Room {
 	}
 	public JsonObject getJson() {
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("type", type.getType());
-		jsonObject.addProperty("status", status.getStatus());
-		jsonObject.addProperty("ID", ID);
-		
+		jsonObject.addProperty("status", status.getStatus());	
 		return jsonObject;
+	}
+	public String getType() {
+		return type.getType();
+	}
+	public String getID() {
+		return String.valueOf(ID);
 	}
 }

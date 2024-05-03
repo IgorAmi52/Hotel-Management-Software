@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.Pricing;
+import com.models.enums.RoomType;
 
 public class PricingService {
 	
@@ -19,69 +20,105 @@ public class PricingService {
 	public static String[][] getPricing(Boolean isRoom) throws IOException {
 		
 		reader = new FileReader("data/pricing.json");
-		String entity = "additionals";
-		
-		if(isRoom) {
-			entity = "rooms";
-		}
-		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject(entity);
+	
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 		
 		int arrLength = 0;
+		
 		for(String type: jsonObject.keySet()) {
-			arrLength+= jsonObject.get(type).getAsJsonArray().size();
+			if(isRoom) {
+				try {
+					RoomType.getByAssociatedValue(type).getClass();
+					arrLength+= jsonObject.getAsJsonArray(type).size();
+				} catch (Exception e) {
+					// not a roomType
+				}
+			}
+			else {
+				try {
+					RoomType.getByAssociatedValue(type).getClass();
+				} catch (Exception e) {
+					arrLength+= jsonObject.getAsJsonArray(type).size();
+				}
+			}		
 		}
-		if(arrLength==0) {
+		
+	
+		if(arrLength==0) { //if no items still
 			return new String[0][4];
 		}
 		String[][] ret = new String[arrLength][];
 		int itt = 0;
 		for(String type: jsonObject.keySet()) {
+			if(isRoom) {
+				try {
+					RoomType.getByAssociatedValue(type).getClass();
+					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
+					for(int i = 0; i < roomsArr.size(); i++) {
+						
+						String [] priceArr = new String[4];
+						JsonObject priceObject = roomsArr.get(i).getAsJsonObject();
 			
-			JsonArray arrayOfPrices = jsonObject.get(type).getAsJsonArray();
+						String price = priceObject.get("price").getAsString();
+						String fromDate = priceObject.get("fromDate").getAsString();
+						String toDate = priceObject.get("toDate").getAsString();
+						priceArr[0] = type;
+						priceArr[1] = price;
+						priceArr[2] = fromDate;
+						priceArr[3] = toDate;
+						
+						ret[itt] = priceArr;
+						itt++;
+					}
+				} catch (Exception e) {
+					// not a roomType
+				}
+			}
+			else {
+				try {
+					RoomType.getByAssociatedValue(type).getClass();
+				} catch (Exception e) {
+					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
+					for(int i = 0; i < roomsArr.size(); i++) {
+						
+						String [] priceArr = new String[4];
+						JsonObject priceObject = roomsArr.get(i).getAsJsonObject();
 			
-			if(arrayOfPrices.size()==0) {
-				continue;
-			}
-			for(int i = 0; i< arrayOfPrices.size();i++) {
-				String [] priceArr = new String[4];
-				JsonObject priceObject = arrayOfPrices.get(i).getAsJsonObject();
-				
-				String addType = type;
-				String price = priceObject.get("price").getAsString();
-				String fromDate = priceObject.get("fromDate").getAsString();
-				String toDate = priceObject.get("toDate").getAsString();
-				
-				priceArr[0] = addType;
-				priceArr[1] = price;
-				priceArr[2] = fromDate;
-				priceArr[3] = toDate;
-				
-				ret[itt] = priceArr;
-				itt++;
-			}
+						String price = priceObject.get("price").getAsString();
+						String fromDate = priceObject.get("fromDate").getAsString();
+						String toDate = priceObject.get("toDate").getAsString();
+						priceArr[0] = type;
+						priceArr[1] = price;
+						priceArr[2] = fromDate;
+						priceArr[3] = toDate;
+						
+						ret[itt] = priceArr;
+						itt++;
+					}
+				}
+			}		
 		}
 		return ret;
 	}
-	public static void addPricing(Pricing pricing, Boolean isRoom) throws IOException {
+	public static void addPricing(Pricing pricing) throws IOException {
+
 		reader = new FileReader("data/pricing.json");
-		
-		String entity = "additionals";
-		
-		if(isRoom) {
-			entity = "rooms";
-		}
+
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 
-		String service = pricing.getType().getService();
-		JsonArray arr = jsonObject.getAsJsonObject(entity).getAsJsonArray(service);
-
+		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
+		
+		if(arr==null) {
+			arr = new JsonArray();
+			jsonObject.add(pricing.getType(), arr);
+		}
+		
 		arr.add(pricing.getJson());
 		
-		jsonObject.getAsJsonObject(entity).add(service, arr);
-		
+		jsonObject.add(pricing.getType(), arr);
+
 		FileWriter writer = new FileWriter("data/pricing.json");
 		writer.write(new Gson().toJson(jsonObject));
 		writer.close();

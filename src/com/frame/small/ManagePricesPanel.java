@@ -12,6 +12,7 @@ import com.models.enums.RoomType;
 import com.models.enums.ServiceType;
 import com.service.ContainerService;
 import com.service.PricingService;
+import com.service.RoomService;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,7 +43,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	private JTable extrasTable;
 	private JScrollPane bedScrollPane;
 	private JScrollPane extrasScrollPane;
-	
+	private JComboBox addTypeBox;
 	public ManagePricesPanel() {
 		
 		super();
@@ -63,7 +65,13 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	    lblNewLabel_1.setBounds(70, 330, 97, 16);
 	    add(lblNewLabel_1);
 	    
-		JComboBox addTypeBox = new JComboBox(AdditionalServiceType.getTypes());
+	   
+	    if(RoomService.getAddServicesArr().length != 0) {
+			addTypeBox = new JComboBox(RoomService.getAddServicesArr());
+	    }
+	    else {
+	    	addTypeBox = new JComboBox(new String[0]);
+	    }
 		addTypeBox.setBounds(202, 330, 161, 27);
 	    add(addTypeBox);
 	    
@@ -129,14 +137,14 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					e1.printStackTrace();
 					return;
 				}
-				ServiceType serviceType = ServiceType.getByAssociatedValue(addTypeBox.getSelectedItem().toString());
+				String serviceType = (addTypeBox.getSelectedItem().toString());
 				String fromDate = fromAddDatePicker.getJFormattedTextField().getText();
 				String toDate = toAddDatePicker.getJFormattedTextField().getText();
 				
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		
         		try {
-        			PricingService.addPricing(pricing, false);
+        			PricingService.addPricing(pricing);
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -224,13 +232,13 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					e1.printStackTrace();
 					return;
 				}
-				ServiceType serviceType = ServiceType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
+				String serviceType = (roomTypeBox.getSelectedItem().toString());
 				String fromDate = fromRoomDatePicker.getJFormattedTextField().getText();
 				String toDate = toRoomDatePicker.getJFormattedTextField().getText();
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		
         		try {
-        			PricingService.addPricing(pricing, true);
+        			PricingService.addPricing(pricing);
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -250,6 +258,10 @@ public class ManagePricesPanel extends JPanel implements Panel {
 			bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
 			addArr = PricingService.getPricing(false);
 			extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
+			addTypeBox.removeAllItems();
+			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(RoomService.getAddServicesArr());
+			addTypeBox.setModel(model);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace(); // add error message

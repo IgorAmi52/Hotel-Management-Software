@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
 
@@ -60,7 +62,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    add(roomTypeBox);
 	    
 	    JLabel lblNewLabel_2 = new JLabel("Will add additional specifications of the room ");
-	    lblNewLabel_2.setBounds(288, 257, 291, 16);
+	    lblNewLabel_2.setBounds(355, 144, 291, 16);
 	    add(lblNewLabel_2);
 	    
 	    JButton addRoomButton = new JButton("Add Room");
@@ -86,6 +88,41 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    addRoomButton.setBounds(30, 200, 301, 29);
 	    add(addRoomButton);
 	    
+	    JButton deleteRoomButton = new JButton("Delete");
+
+        deleteRoomButton.setEnabled(false);
+        deleteRoomButton.setBounds(515, 300, 129, 29);
+        add(deleteRoomButton);
+        
+        deleteRoomButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		RoomType type = RoomType.getByAssociatedValue((String)roomTable.getValueAt(roomTable.getSelectedRow(), 0));
+        		int ID =Integer.parseInt((String)roomTable.getValueAt(roomTable.getSelectedRow(), 1));
+        		try {
+					RoomService.deleteRoom(new Room(type, ID));
+					roomArr = RoomService.getRooms();
+					roomTable.setModel(new DefaultTableModel(roomArr,roomColumnNames));
+					successLabel.setText("Room deleted!");
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+        	}
+        });
+    
+	    roomTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = roomTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	deleteRoomButton.setEnabled(true);
+                    }
+                    else {
+                    	deleteRoomButton.setEnabled(false);
+                    }
+                }
+            }
+        });
 	    JLabel lblNewLabel_3 = new JLabel("Hotel rooms:");
 	    lblNewLabel_3.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 	    lblNewLabel_3.setBounds(30, 298, 115, 26);
@@ -95,15 +132,16 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    successLabel.setForeground(new Color(3, 198, 6));
 	    successLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-	    successLabel.setBounds(154, 26, 546, 16);
+	    successLabel.setBounds(6, 26, 988, 16);
 	    add(successLabel);
 	    
 	    JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-	    separator.setBounds(660, 0, 20, 650);
+	    separator.setBounds(655, 80, 20, 650);
 
 	    // Add the separator to the panel
 	    add(separator);
 	    
+	    // service part
 	    JLabel lblNewLabel_4 = new JLabel("Add new Service:");
 	    lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 	    lblNewLabel_4.setBounds(679, 70, 182, 38);
@@ -114,13 +152,13 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    add(lblNewLabel_5);
 	    
 	    serviceNameField = new JTextField();
-	    serviceNameField.setBounds(765, 139, 177, 26);
+	    serviceNameField.setBounds(765, 139, 215, 26);
 	    add(serviceNameField);
 	    serviceNameField.setColumns(10);
 	    
 	    JButton addAddService = new JButton("Add Service");
 	
-	    addAddService.setBounds(679, 200, 263, 29);
+	    addAddService.setBounds(679, 200, 301, 29);
 	    add(addAddService);
 	    
 	    JLabel lblNewLabel_6 = new JLabel("Additional Services:");
@@ -136,9 +174,44 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    addServiceTable.setForeground(new Color(0, 0, 0));
 	    addServiceScrollPane = new JScrollPane(addServiceTable);
 	    addServiceScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	    addServiceScrollPane.setBounds(679, 354, 301, 177);
+	    addServiceScrollPane.setBounds(679, 354, 315, 177);
         add(addServiceScrollPane);
         
+        JButton deleteAddButton = new JButton("Delete");
+        deleteAddButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String name = (String)addServiceTable.getValueAt(addServiceTable.getSelectedRow(), 0);
+        		try {
+					RoomService.deleteAddService(name);
+					addServiceArr = RoomService.getAddServices();
+					addServiceTable.setModel(new DefaultTableModel(addServiceArr,addServiceColumnNames));
+					successLabel.setText("Service deleted!");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
+        deleteAddButton.setEnabled(false);
+        deleteAddButton.setBounds(863, 300, 129, 29);
+        add(deleteAddButton);
+        
+        addServiceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = addServiceTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	deleteAddButton.setEnabled(true);
+                    }
+                    else {
+                    	deleteAddButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+
 	    addRoomButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		RoomType roomType = RoomType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());

@@ -7,10 +7,10 @@ public class Pricing {
 	
 	private String fromDate;
 	private String toDate;	
-	private ServiceType type;
+	private String type;
 	private Double price;
 	
-	public Pricing(ServiceType type, Double price, String fromDate, String toDate) {
+	public Pricing(String type, Double price, String fromDate, String toDate) {
 		this.type = type;
 		this.price = price;
 		this.fromDate = fromDate;
@@ -24,7 +24,7 @@ public class Pricing {
 		
 		return jsonObject;
 	}
-	public ServiceType getType() {
+	public String getType() {
 		return type;
 	}
 }
