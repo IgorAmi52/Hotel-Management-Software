@@ -3,7 +3,7 @@ package com.frame.small;
 import javax.swing.JPanel;
 
 import com.frame.Panel;
-import com.models.Person;
+import com.models.User;
 import com.service.ContainerService;
 import com.service.Holder;
 
@@ -26,7 +26,7 @@ public class HomePanel extends JPanel implements Panel {
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		Holder holder = Holder.getInstance();
-		Person user = holder.getUser();
+		User user = holder.getUser();
 		JLabel lblNewLabel = new JLabel("Welcome "+user.getFullName());
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);

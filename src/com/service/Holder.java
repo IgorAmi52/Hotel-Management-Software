@@ -2,13 +2,13 @@ package com.service;
 
 import javax.swing.JPanel;
 import com.frame.Frame;
-import com.models.Person;
+import com.models.User;
 
 public class Holder {
 	
 	private static Holder instance;
 	
-	private Person user;
+	private User user;
 	public Frame frame;
 	private JPanel[] panels; //to be impleemented for hashing
 	
@@ -21,11 +21,11 @@ public class Holder {
 		}
 		return instance;
 	}
-	public void setUser(Person user) {
+	public void setUser(User user) {
 		this.user = user;
 		frame.setPanel(AuthService.userRedirect(user));
 	}
-	public Person getUser() {
+	public User getUser() {
 		return this.user;
 	}
 

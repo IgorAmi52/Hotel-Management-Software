@@ -15,7 +15,7 @@ import com.frame.GuestMainPanel;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.Guest;
-import com.models.Person;
+import com.models.User;
 import com.models.Staff;
 import com.models.enums.Role;
 
@@ -23,7 +23,7 @@ public class AuthService {
 	
 	private static Gson gson = new Gson();
 	
-	public static Person login(String username, String password) throws IOException, BadLoginException { 
+	public static User login(String username, String password) throws IOException, BadLoginException { 
 	
 		FileReader reader = new FileReader("data/users.json"); 
 		
@@ -34,13 +34,13 @@ public class AuthService {
 	    	JsonObject userObject = jsonObject.get(username).getAsJsonObject();
 	    	String pass = userObject.get("password").getAsString();
 	    	if(pass.equals(password)) {
-	    		 return getPersonType(userObject);	    	
+	    		 return getUserType(userObject);	    	
 	    	}
 	    }
 		throw new BadLoginException("Username or password are incorect! Please try again."); 
 	}
 	
-	private static Person getPersonType(JsonObject userObject) {
+	private static User getUserType(JsonObject userObject) {
 		String role = userObject.get("role").getAsString();
 		
 
@@ -51,7 +51,7 @@ public class AuthService {
 		return gson.fromJson(userObject, Staff.class);
 	}
 	
-	public static JComponent userRedirect(Person user) { 
+	public static JComponent userRedirect(User user) { 
 
 		if(user == null) {
 			return new LoginPanel();
@@ -67,7 +67,7 @@ public class AuthService {
 		}
 		return new GuestMainPanel();
 	}
-	public static void registerUser(Person user) throws IOException {
+	public static void registerUser(User user) throws IOException {
 		FileReader reader = new FileReader("data/users.json");
 		
 		Gson gson = new Gson();

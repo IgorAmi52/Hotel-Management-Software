@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.models.Person;
+import com.models.User;
 import com.models.Reservation;
 
 public class ReservationService {
@@ -31,7 +31,7 @@ public class ReservationService {
 		writer.close();
 		
 	}
-	public static String[][] getReservationsGuest(Person user) throws IOException{
+	public static String[][] getReservationsGuest(User user) throws IOException{
 		
 		reader = new FileReader("data/reservations.json");
 	

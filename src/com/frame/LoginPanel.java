@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import com.exceptions.*;
-import com.models.Person;
+import com.models.User;
 public class LoginPanel extends JPanel implements Panel {
 	
 	private JTextField usernameField;
@@ -76,9 +76,9 @@ public class LoginPanel extends JPanel implements Panel {
 		        final char[] password = passwordField.getPassword();
 		  
 		       // Create and execute the SwingWorker
-		        SwingWorker<Person, Void> loginWorker = new SwingWorker<Person, Void>() {
+		        SwingWorker<User, Void> loginWorker = new SwingWorker<User, Void>() {
 		            @Override
-		            protected Person doInBackground() throws Exception {
+		            protected User doInBackground() throws Exception {
 		                
 		                return AuthService.login(username, new String(password));
 		            }
@@ -87,7 +87,7 @@ public class LoginPanel extends JPanel implements Panel {
 		            protected void done() {
 		                try {
 		                    // Get the result of the background operation
-		                    Person user = get();	
+		                    User user = get();	
 		  
 		                    Holder.getInstance().setUser(user);
 		                } catch (Exception e) {
