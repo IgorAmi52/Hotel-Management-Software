@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.enums.Role;
 
-public class PersonService {
+public class UserService {
 	
 	private static Gson gson = new Gson();
 	private static FileReader reader;

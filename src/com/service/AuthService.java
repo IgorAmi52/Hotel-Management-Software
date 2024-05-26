@@ -42,10 +42,8 @@ public class AuthService {
 	
 	private static User getUserType(JsonObject userObject) {
 		String role = userObject.get("role").getAsString();
-		
 
-		if(role == Role.GUEST.toString()) {
-		
+		if(role.equals(Role.GUEST.toString())) {
 			return gson.fromJson(userObject, Guest.class);
 		}
 		return gson.fromJson(userObject, Staff.class);

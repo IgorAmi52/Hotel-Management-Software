@@ -42,7 +42,9 @@ public class ReservationService {
 		
 		for(String status: jsonObject.keySet()) {
 			for(JsonElement res: jsonObject.getAsJsonArray(status)) {
-				if(((JsonObject)res).get("guestID").getAsString().equals(user.getUserName())) { // if reservation from our guest
+				JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
+				String resUsername = resGuest.get("username").getAsString();
+				if(resUsername.equals(user.getUserName())) { // if reservation from our guest
 					count++;
 				}
 			}
@@ -53,8 +55,10 @@ public class ReservationService {
 		String[][] ret = new String[count][];
 		int i = 0;
 		for(String status: jsonObject.keySet()) {
-			for(JsonElement res: jsonObject.getAsJsonArray(status)) {
-				if(((JsonObject)res).get("guestID").getAsString().equals(user.getUserName())) { 
+			for(JsonElement res: jsonObject.getAsJsonArray(status)) {				
+				JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
+				String resUsername = resGuest.get("username").getAsString();
+				if(resUsername.equals(user.getUserName())) { 
 					
 					JsonObject resObj = (JsonObject)res;
 					

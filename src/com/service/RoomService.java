@@ -60,6 +60,34 @@ public class RoomService {
 		writer.close();
 		
 	}
+	public static void addRoomType(String type)throws IOException{
+		reader = new FileReader("data/rooms.json");
+		
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		jsonObject.get("roomTypes").getAsJsonArray().add(type);
+		writer = new FileWriter("data/rooms.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+		
+	}
+	public static String[] getRoomTypes() throws IOException {
+		reader = new FileReader("data/rooms.json");
+		
+
+		JsonArray jsonArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("roomTypes");
+		reader.close();
+		
+        String[] roomTypes = new String[jsonArray.size()];
+
+        // Iterate through the JsonArray and populate the String array
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonElement element = jsonArray.get(i);
+            roomTypes[i] = element.getAsString();
+        }
+        return roomTypes;
+	}
 
 	public static String[][] getRooms() throws IOException{
 		reader = new FileReader("data/rooms.json");

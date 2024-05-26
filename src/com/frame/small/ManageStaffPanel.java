@@ -15,7 +15,7 @@ import javax.swing.table.JTableHeader;
 import com.frame.Panel;
 import com.models.Staff;
 import com.service.ContainerService;
-import com.service.PersonService;
+import com.service.UserService;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -32,7 +32,7 @@ public class ManageStaffPanel extends JPanel implements Panel {
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		try {
-			staffArr = PersonService.getStaff();
+			staffArr = UserService.getStaff();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -73,7 +73,7 @@ public class ManageStaffPanel extends JPanel implements Panel {
         	public void actionPerformed(ActionEvent e) {
         		String username = (String)table.getValueAt(table.getSelectedRow(), 0);
         		try {
-					PersonService.deleteUser(username);
+					UserService.deleteUser(username);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -87,7 +87,7 @@ public class ManageStaffPanel extends JPanel implements Panel {
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			staffArr = PersonService.getStaff();
+			staffArr = UserService.getStaff();
 			table.setModel(new DefaultTableModel(staffArr, columnNames));
 		} catch (IOException e) {
 			/// print the error on screen

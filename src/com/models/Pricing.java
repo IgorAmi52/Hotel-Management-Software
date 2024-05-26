@@ -1,5 +1,6 @@
 package com.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class Pricing {
@@ -16,10 +17,10 @@ public class Pricing {
 		this.toDate = toDate;
 	}
 	public JsonObject getJson() {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("fromDate", fromDate);
-		jsonObject.addProperty("toDate", toDate);
-		jsonObject.addProperty("price", price);
+		
+		Gson gson = new Gson();
+        String jsonString = gson.toJson(Pricing.this);
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
 		
 		return jsonObject;
 	}

@@ -1,1 +1,77 @@
-{"Pending":[{"checkInDate":"2024-05-16","checkOutDate":"2024-05-24","price":0.0,"guestID":"guest","comment":"","roomType":"Two beds","addServices":["Dinner","Spa"]},{"checkInDate":"2024-05-05","checkOutDate":"2024-05-24","price":0.0,"guestID":"Guest","comment":"","roomType":"One double bed","addServices":["Breakfast","Lunch","Spa"]},{"checkInDate":"2024-05-16","checkOutDate":"2024-05-30","price":0.0,"guestID":"Guest","comment":"","roomType":"Two beds","addServices":["Breakfast"]}],"Confirmed":[],"Rejected":[],"Cancelled":[],"Error":[]}
+{
+	"Pending": [
+		{
+			"checkInDate": "2024-05-06",
+			"checkOutDate": "2024-05-11",
+			"roomType": "ONE_BED",
+			"guest": {
+				"role": "GUEST",
+				"name": "Igor",
+				"lastname": "Amidzic",
+				"sex": "Male",
+				"dateOfBirth": "2024-05-09",
+				"phoneNumber": "+3911",
+				"address": "Novi SAd",
+				"username": "Guest1",
+				"password": "guest"
+			},
+			"addServices": [
+			],
+			"price": 0.0,
+			"comment": "",
+			"status": "PENDING"
+		},
+		{
+			"checkInDate": "2024-05-16",
+			"checkOutDate": "2024-05-04",
+			"roomType": "ONE_BED",
+			"guest": {
+				"role": "GUEST",
+				"name": "Marko",
+				"lastname": "Sladojevic",
+				"sex": "Male",
+				"dateOfBirth": "2020-05-27",
+				"phoneNumber": "+3812312",
+				"address": "Novi Sad",
+				"username": "Guest",
+				"password": "guest"
+			},
+			"addServices": [
+			],
+			"price": 0.0,
+			"comment": "",
+			"status": "PENDING"
+		},
+		{
+			"checkInDate": "2024-05-10",
+			"checkOutDate": "2024-05-24",
+			"roomType": "ONE_DOUBLE_BED",
+			"guest": {
+				"role": "GUEST",
+				"name": "Marko",
+				"lastname": "Sladojevic",
+				"sex": "Male",
+				"dateOfBirth": "2020-05-27",
+				"phoneNumber": "+3812312",
+				"address": "Novi Sad",
+				"username": "Guest",
+				"password": "guest"
+			},
+			"addServices": [
+				"Breakfast",
+				"Lunch"
+			],
+			"price": 0.0,
+			"comment": "",
+			"status": "PENDING"
+		}
+	],
+	"Confirmed": [
+	],
+	"Rejected": [
+	],
+	"Cancelled": [
+	],
+	"Error": [
+	]
+}

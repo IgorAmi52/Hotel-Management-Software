@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 
 import org.jdatepicker.impl.JDatePickerImpl;
 import com.frame.Panel;
+import com.models.Guest;
 import com.models.Reservation;
 import com.models.enums.RoomType;
 import com.service.ContainerService;
@@ -109,7 +110,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         successLabel.setHorizontalAlignment(SwingConstants.CENTER);
         successLabel.setForeground(new Color(0, 183, 28));
         successLabel.setFont(new Font("KufiStandardGK", Font.PLAIN, 17));
-        successLabel.setBounds(191, 21, 476, 25);
+        successLabel.setBounds(268, 20, 476, 25);
         add(successLabel);
         
         JButton requestReservationButton = new JButton("Request a Reservation");
@@ -123,10 +124,11 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		String checkInDate = checkinDatePicker.getJFormattedTextField().getText();
         		String checkOutDate = checkoutDatePicker.getJFormattedTextField().getText();
         		RoomType roomType = RoomType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
+
         		String[] addServiceArr = getSelectedValues(addCheckBoxes);
-        		String guestID = Holder.getInstance().getUser().getUserName();
+        		Guest guest = (Guest) Holder.getInstance().getUser();
     
-        		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr,guestID);
+        		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
         	
         		try {
         			ReservationService.requestReservation(reservation);

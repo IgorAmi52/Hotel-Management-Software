@@ -57,11 +57,19 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    lblNewLabel_1.setBounds(30, 144, 97, 16);
 	    add(lblNewLabel_1);
 	    
-		JComboBox roomTypeBox = new JComboBox(RoomType.getTypes());
+		JComboBox roomTypeBox = new JComboBox();
+		try {
+			for(String type: RoomService.getRoomTypes()) {
+				roomTypeBox.addItem(type);
+			}
+		    
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		roomTypeBox.setBounds(139, 140, 192, 27);
 	    add(roomTypeBox);
-	    
-	    JLabel lblNewLabel_2 = new JLabel("Will add additional specifications of the room ");
+    JLabel lblNewLabel_2 = new JLabel("Will add additional specifications of the room ");
 	    lblNewLabel_2.setBounds(355, 144, 291, 16);
 	    add(lblNewLabel_2);
 	    
@@ -96,7 +104,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
         
         deleteRoomButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		RoomType type = RoomType.getByAssociatedValue((String)roomTable.getValueAt(roomTable.getSelectedRow(), 0));
+        		String type = (String)roomTable.getValueAt(roomTable.getSelectedRow(), 0);
         		int ID =Integer.parseInt((String)roomTable.getValueAt(roomTable.getSelectedRow(), 1));
         		try {
 					RoomService.deleteRoom(new Room(type, ID));
@@ -214,7 +222,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 
 	    addRoomButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		RoomType roomType = RoomType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
+	    		String roomType = roomTypeBox.getSelectedItem().toString();
 	    		try {
 					int roomID = RoomService.getNextRoomID();
 					Room room = new Room(roomType, roomID);

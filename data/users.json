@@ -1,1 +1,38 @@
-{"Admin":{"name":"Alice","lastname":"Smith","sex":"Female","dateOfBirth":"1990-05-20","phoneNumber":"+1987654321","address":"456 Elm St, Town, Country","username":"alicesmith","password":"admin","lvlOfEdct":4,"yearsOfXp":8,"salary":75000.50,"role":"ADMIN"},"Guest":{"name":"Marko","lastname":"Sladojevic","sex":"Male","dateOfBirth":"2020-05-27","phoneNumber":"+3812312","address":"Novi Sad","username":"Guest","password":"guest","role":"GUEST"}}
+{
+	"Admin": {
+		"name": "Alice",
+		"lastname": "Smith",
+		"sex": "Female",
+		"dateOfBirth": "1990-05-20",
+		"phoneNumber": "+1987654321",
+		"address": "456 Elm St, Town, Country",
+		"username": "alicesmith",
+		"password": "admin",
+		"lvlOfEdct": 4,
+		"yearsOfXp": 8,
+		"salary": 75000.50,
+		"role": "ADMIN"
+	},
+	"Guest": {
+		"name": "Marko",
+		"lastname": "Sladojevic",
+		"sex": "Male",
+		"dateOfBirth": "2020-05-27",
+		"phoneNumber": "+3812312",
+		"address": "Novi Sad",
+		"username": "Guest",
+		"password": "guest",
+		"role": "GUEST"
+	},
+	"Guest1": {
+		"role": "GUEST",
+		"name": "Igor",
+		"lastname": "Amidzic",
+		"sex": "Male",
+		"dateOfBirth": "2024-05-09",
+		"phoneNumber": "+3911",
+		"address": "Novi SAd",
+		"username": "Guest1",
+		"password": "guest"
+	}
+}
