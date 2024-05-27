@@ -10,7 +10,7 @@ import javax.swing.event.ChangeListener;
 
 import com.frame.small.HomePanel;
 import com.frame.small.ManagePricesPanel;
-import com.frame.small.ManageRoomsPanel;
+import com.frame.small.ManageServicesPanel;
 import com.frame.small.ManageStaffPanel;
 import com.frame.small.RegisterGuestPanel;
 import com.frame.small.RegisterStaffPanel;
@@ -28,14 +28,14 @@ public class AdminMainPanel extends JTabbedPane {
 		Panel registerGuestPanel = new RegisterGuestPanel();
 		Panel manageStaffPanel = new ManageStaffPanel();
 		Panel managePricesPanel = new ManagePricesPanel();
-		Panel manageRoomsPanel =  new ManageRoomsPanel();
+		Panel manageServicePanel =  new ManageServicesPanel();
 		
 		addTab("Home", (Component) homePanel);
 		addTab("Register Staff",(Component)  registerStaffPanel);
 		addTab("Register Guest",(Component) registerGuestPanel);
 		addTab("Manage Staff",(Component)  manageStaffPanel);
 		addTab("Manage Pricing",(Component)  managePricesPanel);
-		addTab("Manage Rooms",(Component)  manageRoomsPanel);
+		addTab("Manage Service/Rooms",(Component)  manageServicePanel);
 		addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

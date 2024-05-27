@@ -36,8 +36,15 @@ public class RoomService {
 		
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
-		
-		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+        if (jsonObject.getAsJsonObject("rooms").has(room.getType())) {
+            // Room type exists, add the new room to the existing type
+        	jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+        } else {
+            // Room type does not exist, create a new room type and add the room
+            JsonObject newRoomType = new JsonObject();
+            newRoomType.add(room.getID(), room.getJson());
+            jsonObject.getAsJsonObject("rooms").add(room.getType(), newRoomType);
+        }
 		int nextID = getNextRoomID()+1;
 		jsonObject.addProperty("next ID", nextID);
 		
@@ -72,14 +79,53 @@ public class RoomService {
 		writer.close();
 		
 	}
-	public static String[] getRoomTypes() throws IOException {
+	public static String[][] getRoomTypes() throws IOException {
 		reader = new FileReader("data/rooms.json");
 		
 
 		JsonArray jsonArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("roomTypes");
 		reader.close();
 		
-        String[] roomTypes = new String[jsonArray.size()];
+        String[][] roomTypes = new String[jsonArray.size()][];
+
+        // Iterate through the JsonArray and populate the String array
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonElement element = jsonArray.get(i);
+            String [] roomType = {element.getAsString()};
+            roomTypes[i] = roomType;
+        }
+        return roomTypes;
+	}
+	public static void deleteRoomType(String name) throws IOException {
+		
+		reader = new FileReader("data/rooms.json");
+		JsonObject jsonObj = gson.fromJson(reader, JsonObject.class);
+		JsonArray jsonArr = jsonObj.getAsJsonArray("roomTypes");
+		reader.close();
+		
+		for(int i = 0; i < jsonArr.size(); i++) {
+			JsonElement element = jsonArr.get(i);
+	        String elementString = element.getAsString();
+	        
+	        if (elementString.equals(name)) {
+	        	jsonObj.getAsJsonArray("roomTypes").remove(element);
+	          break;
+	        }
+		}
+		
+		writer = new FileWriter("data/rooms.json");
+		writer.write(new Gson().toJson(jsonObj));
+		writer.close();
+	}
+	
+	public static String[] getRoomTypesArr() throws IOException {
+		reader = new FileReader("data/rooms.json");
+		
+
+		JsonArray jsonArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("roomTypes");
+		reader.close();
+		
+        String[]roomTypes = new String[jsonArray.size()];
 
         // Iterate through the JsonArray and populate the String array
         for (int i = 0; i < jsonArray.size(); i++) {

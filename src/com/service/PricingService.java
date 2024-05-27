@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,23 +29,16 @@ public class PricingService {
 		
 		for(String type: jsonObject.keySet()) {
 			if(isRoom) {
-				try {
-					RoomType.getByAssociatedValue(type).getClass();
+				if(Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
 					arrLength+= jsonObject.getAsJsonArray(type).size();
-				} catch (Exception e) {
-					// not a roomType
 				}
 			}
 			else {
-				try {
-					RoomType.getByAssociatedValue(type).getClass();
-				} catch (Exception e) {
-					arrLength+= jsonObject.getAsJsonArray(type).size();
-				}
-			}		
+				if(!Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
+					arrLength+= jsonObject.getAsJsonArray(type).size();}				
+				}		
 		}
 		
-	
 		if(arrLength==0) { //if no items still
 			return new String[0][4];
 		}
@@ -52,8 +46,7 @@ public class PricingService {
 		int itt = 0;
 		for(String type: jsonObject.keySet()) {
 			if(isRoom) {
-				try {
-					RoomType.getByAssociatedValue(type).getClass();
+				if(Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
 					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
 					for(int i = 0; i < roomsArr.size(); i++) {
 						
@@ -71,14 +64,11 @@ public class PricingService {
 						ret[itt] = priceArr;
 						itt++;
 					}
-				} catch (Exception e) {
-					// not a roomType
 				}
+
 			}
 			else {
-				try {
-					RoomType.getByAssociatedValue(type).getClass();
-				} catch (Exception e) {
+				if(!Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
 					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
 					for(int i = 0; i < roomsArr.size(); i++) {
 						

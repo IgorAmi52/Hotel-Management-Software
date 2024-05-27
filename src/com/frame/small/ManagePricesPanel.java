@@ -48,6 +48,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	private JScrollPane bedScrollPane;
 	private JScrollPane extrasScrollPane;
 	private JComboBox addTypeBox;
+	private JComboBox roomTypeBox;
 	public ManagePricesPanel() {
 		
 		super();
@@ -166,8 +167,16 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	    JLabel lblNewLabel_1 = new JLabel("Room type:");
 	    lblNewLabel_1.setBounds(70, 70, 97, 16);
 	    add(lblNewLabel_1);
-	    
-		JComboBox roomTypeBox = new JComboBox(RoomType.getTypes());
+
+	    roomTypeBox = new JComboBox<String>(new String[] {"No rooms"});
+	    try {
+	    	roomTypeBox.removeAllItems();
+			for(String type: RoomService.getRoomTypesArr()) {
+				roomTypeBox.addItem(type);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		roomTypeBox.setBounds(202, 70, 161, 27);
 	    add(roomTypeBox);
 	    
@@ -263,6 +272,10 @@ public class ManagePricesPanel extends JPanel implements Panel {
 			addTypeBox.removeAllItems();
 			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(RoomService.getAddServicesArr());
 			addTypeBox.setModel(model);
+	    	roomTypeBox.removeAllItems();
+			for(String type: RoomService.getRoomTypesArr()) {
+				roomTypeBox.addItem(type);
+			}
 			successLabel.setText("");
 			
 		} catch (IOException e) {

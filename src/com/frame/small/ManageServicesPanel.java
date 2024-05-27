@@ -29,59 +29,60 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import java.awt.Component;
 
-public class ManageRoomsPanel extends JPanel implements Panel {
+public class ManageServicesPanel extends JPanel implements Panel {
 
 	private static final long serialVersionUID = 1L;
 	private JTable roomTable;
+	private JTable roomTypeTable;
 	private JTable addServiceTable;
 	private JScrollPane roomScrollPane;
+	private JScrollPane roomTypeScrollPane;
 	private JScrollPane addServiceScrollPane;
 	private JLabel successLabel;
 	private final String[] roomColumnNames = {"Type","Number","Status"};
-	private final String[] addServiceColumnNames = {"Name"};
+	
+	private final String[] columnNames = {"Name"};
 	private String[][] roomArr = {};
+	private String[][] roomTypeArr = {};
 	private String[][] addServiceArr = {};
 	private JTextField serviceNameField;
-	public ManageRoomsPanel() {
+	private JTextField roomTypeField;
+	public ManageServicesPanel() {
 		super();
 		setLayout(null);
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		JLabel lblNewLabel = new JLabel("Add new Room:");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		lblNewLabel.setBounds(30, 76, 199, 26);
+		lblNewLabel.setBounds(32, 137, 199, 26);
 		add(lblNewLabel);
 		
 	    JLabel lblNewLabel_1 = new JLabel("Room type:");
-	    lblNewLabel_1.setBounds(30, 144, 97, 16);
+	    lblNewLabel_1.setBounds(30, 205, 97, 16);
 	    add(lblNewLabel_1);
 	    
-		JComboBox roomTypeBox = new JComboBox();
+	    
+		JComboBox<String> roomTypeBox = new JComboBox<String>(new String[] {"No rooms"});
 		try {
-			for(String type: RoomService.getRoomTypes()) {
+			roomTypeBox.removeAllItems();
+			roomTypeArr = RoomService.getRoomTypes();
+			for(String type: RoomService.getRoomTypesArr()) {
 				roomTypeBox.addItem(type);
 			}
-		    
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		roomTypeBox.setBounds(139, 140, 192, 27);
-	    add(roomTypeBox);
-    JLabel lblNewLabel_2 = new JLabel("Will add additional specifications of the room ");
-	    lblNewLabel_2.setBounds(355, 144, 291, 16);
-	    add(lblNewLabel_2);
-	    
-	    JButton addRoomButton = new JButton("Add Room");
-	    
-	    try {
 			roomArr = RoomService.getRooms();
 	    	addServiceArr = RoomService.getAddServices();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		roomTypeBox.setBounds(138, 201, 192, 27);
+	    add(roomTypeBox);
+	    
+	    JButton addRoomButton = new JButton("Add Room");
+	    
         roomTable = new JTable(roomArr, roomColumnNames);
         roomTable.setOpaque(true);
 
@@ -90,16 +91,16 @@ public class ManageRoomsPanel extends JPanel implements Panel {
         roomTable.setForeground(new Color(0, 0, 0));
         roomScrollPane = new JScrollPane(roomTable);
         roomScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        roomScrollPane.setBounds(30, 354, 614, 177);
+        roomScrollPane.setBounds(30, 391, 391, 177);
         add(roomScrollPane);
         
-	    addRoomButton.setBounds(30, 200, 301, 29);
+	    addRoomButton.setBounds(30, 251, 301, 29);
 	    add(addRoomButton);
 	    
 	    JButton deleteRoomButton = new JButton("Delete");
 
         deleteRoomButton.setEnabled(false);
-        deleteRoomButton.setBounds(515, 300, 129, 29);
+        deleteRoomButton.setBounds(31, 350, 129, 29);
         add(deleteRoomButton);
         
         deleteRoomButton.addActionListener(new ActionListener() {
@@ -144,7 +145,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    add(successLabel);
 	    
 	    JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-	    separator.setBounds(655, 80, 20, 650);
+	    separator.setBounds(710, 119, 20, 607);
 
 	    // Add the separator to the panel
 	    add(separator);
@@ -152,29 +153,29 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    // service part
 	    JLabel lblNewLabel_4 = new JLabel("Add new Service:");
 	    lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-	    lblNewLabel_4.setBounds(679, 70, 182, 38);
+	    lblNewLabel_4.setBounds(731, 131, 182, 38);
 	    add(lblNewLabel_4);
 	    
 	    JLabel lblNewLabel_5 = new JLabel("Name:");
-	    lblNewLabel_5.setBounds(679, 144, 61, 16);
+	    lblNewLabel_5.setBounds(731, 205, 61, 16);
 	    add(lblNewLabel_5);
 	    
 	    serviceNameField = new JTextField();
-	    serviceNameField.setBounds(765, 139, 215, 26);
+	    serviceNameField.setBounds(804, 200, 190, 26);
 	    add(serviceNameField);
 	    serviceNameField.setColumns(10);
 	    
 	    JButton addAddService = new JButton("Add Service");
 	
-	    addAddService.setBounds(679, 200, 301, 29);
+	    addAddService.setBounds(731, 251, 267, 29);
 	    add(addAddService);
 	    
 	    JLabel lblNewLabel_6 = new JLabel("Additional Services:");
 	    lblNewLabel_6.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-	    lblNewLabel_6.setBounds(679, 292, 182, 38);
+	    lblNewLabel_6.setBounds(731, 292, 253, 38);
 	    add(lblNewLabel_6);
 	    
-	    addServiceTable = new JTable(roomArr, roomColumnNames);
+	    addServiceTable = new JTable(addServiceArr, columnNames);
 	    addServiceTable.setOpaque(true);
 
 	    addServiceTable.setSize(500, 50);
@@ -182,28 +183,75 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    addServiceTable.setForeground(new Color(0, 0, 0));
 	    addServiceScrollPane = new JScrollPane(addServiceTable);
 	    addServiceScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	    addServiceScrollPane.setBounds(679, 354, 315, 177);
+	    addServiceScrollPane.setBounds(727, 391, 267, 177);
         add(addServiceScrollPane);
         
         JButton deleteAddButton = new JButton("Delete");
-        deleteAddButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		String name = (String)addServiceTable.getValueAt(addServiceTable.getSelectedRow(), 0);
-        		try {
-					RoomService.deleteAddService(name);
-					addServiceArr = RoomService.getAddServices();
-					addServiceTable.setModel(new DefaultTableModel(addServiceArr,addServiceColumnNames));
-					successLabel.setText("Service deleted!");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-        	}
-        });
+
         deleteAddButton.setEnabled(false);
-        deleteAddButton.setBounds(863, 300, 129, 29);
+        deleteAddButton.setBounds(731, 350, 129, 29);
         add(deleteAddButton);
         
+        JSeparator separator_1 = new JSeparator(SwingConstants.VERTICAL);
+        separator_1.setBounds(422, 119, 20, 579);
+        add(separator_1);
+        
+        JLabel lblNewLabel_2 = new JLabel("Add new Room type:");
+        lblNewLabel_2.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        lblNewLabel_2.setBounds(436, 139, 233, 23);
+        add(lblNewLabel_2);
+        
+        JLabel lblNewLabel_7 = new JLabel("Room Type:");
+        lblNewLabel_7.setBounds(436, 205, 86, 16);
+        add(lblNewLabel_7);
+        
+        roomTypeField = new JTextField();
+        roomTypeField.setBounds(516, 200, 182, 26);
+        add(roomTypeField);
+        roomTypeField.setColumns(10);
+        
+        JButton addRoomTypeButton = new JButton("Add Room Type");
+ 
+        addRoomTypeButton.setBounds(436, 251, 262, 29);
+        add(addRoomTypeButton);
+        
+        JLabel lblNewLabel_8 = new JLabel("Room Types:");
+        lblNewLabel_8.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        lblNewLabel_8.setBounds(436, 301, 140, 21);
+        add(lblNewLabel_8);
+        
+        JButton deleteRoomTypeButton = new JButton("Delete");
+
+        deleteRoomTypeButton.setEnabled(false);
+        deleteRoomTypeButton.setBounds(436, 350, 117, 29);
+        add(deleteRoomTypeButton);
+        
+	    roomTypeTable = new JTable(roomTypeArr, columnNames);
+	    roomTypeTable.setOpaque(true);
+
+	    roomTypeTable.setSize(500, 50);
+	    roomTypeTable.setLocation(50, 100);
+	    roomTypeTable.setForeground(new Color(0, 0, 0));
+	    roomTypeScrollPane = new JScrollPane(roomTypeTable);
+	    roomTypeScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	    roomTypeScrollPane.setBounds(436, 391, 267, 177);
+        add(roomTypeScrollPane);
+        
+        roomTypeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = roomTypeTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	deleteRoomTypeButton.setEnabled(true);
+                    }
+                    else {
+                    	deleteRoomTypeButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+
         addServiceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -219,7 +267,38 @@ public class ManageRoomsPanel extends JPanel implements Panel {
             }
         });
 
-
+        deleteRoomTypeButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String name = (String)roomTypeTable.getValueAt(roomTypeTable.getSelectedRow(), 0);
+        		try {
+					RoomService.deleteRoomType(name);
+					roomTypeArr = RoomService.getRoomTypes();
+					roomTypeBox.removeAllItems();
+					for(String type: RoomService.getRoomTypesArr()) {
+						roomTypeBox.addItem(type);
+					}
+					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
+					successLabel.setText("Room Type deleted!");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
+        deleteAddButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String name = (String)addServiceTable.getValueAt(addServiceTable.getSelectedRow(), 0);
+        		try {
+					RoomService.deleteAddService(name);
+					addServiceArr = RoomService.getAddServices();
+					addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
+					successLabel.setText("Service deleted!");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
 	    addRoomButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		String roomType = roomTypeBox.getSelectedItem().toString();
@@ -227,7 +306,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 					int roomID = RoomService.getNextRoomID();
 					Room room = new Room(roomType, roomID);
 					RoomService.addRoom(room);
-					ContainerService.resetFields(ManageRoomsPanel.this);
+					ContainerService.resetFields(ManageServicesPanel.this);
 					roomArr = RoomService.getRooms();
 					roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));
 					successLabel.setText("New Room was successfully added!");
@@ -239,15 +318,34 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 	    		
 	    	}
 	    });
-	    
+       addRoomTypeButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String newType = roomTypeField.getText();
+        		try {
+					RoomService.addRoomType(newType);
+					roomTypeArr = RoomService.getRoomTypes();
+					roomTypeBox.removeAllItems();
+					for(String type: RoomService.getRoomTypesArr()) {
+						roomTypeBox.addItem(type);
+					}
+					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
+	        		successLabel.setText("New Room Type was successfully added!");
+	        		roomTypeField.setText("");
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+        	}
+        });
         addAddService.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		String name = serviceNameField.getText();
 	    		try {
 					RoomService.addAddService(name);
 					addServiceArr = RoomService.getAddServices();
-					addServiceTable.setModel(new DefaultTableModel(addServiceArr,addServiceColumnNames));
+					addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
 					successLabel.setText("New Service was successfully added!");
+					serviceNameField.setText("");
+
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -266,7 +364,7 @@ public class ManageRoomsPanel extends JPanel implements Panel {
 			e.printStackTrace();
 		}
 		roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));
-		addServiceTable.setModel(new DefaultTableModel(addServiceArr,addServiceColumnNames));
+		addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
 		successLabel.setText("");
 	}
 }

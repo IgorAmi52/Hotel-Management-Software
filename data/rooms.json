@@ -1,28 +1,28 @@
 {
-	"next ID": 12,
+	"next ID": 4,
 	"rooms": {
-		"One bed": {
-			"9": {
-				"status": "Available"
-			}
-		},
-		"Two beds": {
-			"3": {
-				"status": "Available"
-			}
-		},
-		"One double bed": {
-			"4": {
-				"status": "Available"
+		"Two bedded": {
+			"1": {
+				"type": "Two bedded",
+				"status": "AVAILABLE",
+				"ID": 1
 			},
-			"11": {
-				"status": "Available"
+			"2": {
+				"type": "Two bedded",
+				"status": "AVAILABLE",
+				"ID": 2
 			}
 		},
-		"Three beds": {
-			"5": {
-				"status": "Available"
+		"Three bedded": {
+			"3": {
+				"type": "Three bedded",
+				"status": "AVAILABLE",
+				"ID": 3
 			}
 		}
-	}
+	},
+	"roomTypes": [
+		"Two bedded",
+		"Three bedded"
+	]
 }
