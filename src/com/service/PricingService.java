@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.Pricing;
-import com.models.enums.RoomType;
 
 public class PricingService {
 	
@@ -90,6 +89,26 @@ public class PricingService {
 			}		
 		}
 		return ret;
+	}
+	public static void deletePricing(Pricing pricing) throws IOException{
+		reader = new FileReader("data/pricing.json");
+
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject current = arr.get(i).getAsJsonObject();
+            Pricing currentPricing = gson.fromJson(current, Pricing.class);
+
+            if (currentPricing.equals(pricing)) {
+                arr.remove(i);
+                break;
+            }
+        }
+        jsonObject.add(pricing.getType(), arr);
+        writer = new FileWriter("data/pricing.json");
+        writer.write(gson.toJson(jsonObject));
+        writer.close();
 	}
 	public static void addPricing(Pricing pricing) throws IOException {
 

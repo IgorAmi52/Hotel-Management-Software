@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.enums.RoomStatus;
-import com.models.enums.RoomType;
 
 public class Room {
 	private String type;

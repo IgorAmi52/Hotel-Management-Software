@@ -9,7 +9,6 @@ import com.frame.Panel;
 import com.models.Pricing;
 
 import com.models.enums.Role;
-import com.models.enums.RoomType;
 
 import com.service.ContainerService;
 import com.service.PricingService;
@@ -20,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 import javax.swing.table.DefaultTableModel;
 
@@ -58,7 +59,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	    successLabel = new JLabel("");
 	    successLabel.setForeground(new Color(3, 198, 6));
 	    successLabel.setHorizontalAlignment(SwingConstants.CENTER);
-	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 	    successLabel.setBounds(6, 26, 988, 16);
 	    add(successLabel);
 	    
@@ -104,13 +105,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
         add(fromAddDatePicker);
         add(toAddDatePicker);
         
-        try {
-			addArr = PricingService.getPricing(false);  // add error message
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+   
         extrasTable = new JTable(addArr, addColumnNames);
         extrasTable.setOpaque(true);
 
@@ -119,12 +114,18 @@ public class ManagePricesPanel extends JPanel implements Panel {
         extrasTable.setForeground(new Color(0, 0, 0));
         extrasScrollPane = new JScrollPane(extrasTable);
         extrasScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        extrasScrollPane.setBounds(394, 348, 600, 177);
+        extrasScrollPane.setBounds(388, 333, 600, 177);
         add(extrasScrollPane);
         
         JButton addAddPriceButton = new JButton("Add Pricing");
         addAddPriceButton.setBounds(70, 490, 306, 29);
         add(addAddPriceButton);
+        
+        JButton deleteAddPricingButton = new JButton("Delete Pricing");
+
+        deleteAddPricingButton.setEnabled(false);
+        deleteAddPricingButton.setBounds(877, 295, 117, 29);
+        add(deleteAddPricingButton);
         
         addAddPriceButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -154,7 +155,37 @@ public class ManagePricesPanel extends JPanel implements Panel {
        
         	}
         });
-    
+        extrasTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = extrasTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	deleteAddPricingButton.setEnabled(true);
+                    }
+                    else {
+                    	deleteAddPricingButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+        deleteAddPricingButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String type = (String)extrasTable.getValueAt(extrasTable.getSelectedRow(), 0);
+        		Double price = Double.parseDouble((String)extrasTable.getValueAt(extrasTable.getSelectedRow(), 1));
+        		String from = (String)extrasTable.getValueAt(extrasTable.getSelectedRow(), 2);
+        		String to = (String)extrasTable.getValueAt(extrasTable.getSelectedRow(), 3);
+        		Pricing pricing = new Pricing(type, price, from, to);
+        		try {
+					PricingService.deletePricing(pricing);
+					addArr = PricingService.getPricing(false);  
+					extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
+					successLabel.setText("Extras Pricing succesfully deleted!");
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+        	}
+        });
 	}
 	private void roomPricingDiv() {
 		JLabel lblNewLabel = new JLabel("Add Room Pricing:");
@@ -169,14 +200,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	    add(lblNewLabel_1);
 
 	    roomTypeBox = new JComboBox<String>(new String[] {"No rooms"});
-	    try {
-	    	roomTypeBox.removeAllItems();
-			for(String type: RoomService.getRoomTypesArr()) {
-				roomTypeBox.addItem(type);
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+
 		roomTypeBox.setBounds(202, 70, 161, 27);
 	    add(roomTypeBox);
 	    
@@ -205,13 +229,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
         add(fromRoomDatePicker);
         add(toRoomDatePicker);
         
-        try {
-			bedArr = PricingService.getPricing(true);  // add error message
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+
         bedTable = new JTable(bedArr, bedColumnNames);
         bedTable.setOpaque(true);
 
@@ -220,16 +238,19 @@ public class ManagePricesPanel extends JPanel implements Panel {
         bedTable.setForeground(new Color(0, 0, 0));
         bedScrollPane = new JScrollPane(bedTable);
         bedScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        bedScrollPane.setBounds(394, 88, 600, 177);
+        bedScrollPane.setBounds(388, 73, 600, 177);
         add(bedScrollPane);
         
         JButton deleteRoomPricingButton = new JButton("Delete Pricing");
+        deleteRoomPricingButton.setEnabled(false);
+
         deleteRoomPricingButton.setBounds(877, 40, 117, 29);
         add(deleteRoomPricingButton);
         
         JButton addRoomPriceButton = new JButton("Add Pricing");
         addRoomPriceButton.setBounds(70, 236, 306, 29);
         add(addRoomPriceButton);
+        
         addRoomPriceButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//validation 
@@ -258,7 +279,37 @@ public class ManagePricesPanel extends JPanel implements Panel {
 
         	}
         });
-        
+        bedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = bedTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	deleteRoomPricingButton.setEnabled(true);
+                    }
+                    else {
+                    	deleteRoomPricingButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+        deleteRoomPricingButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String type = (String)bedTable.getValueAt(bedTable.getSelectedRow(), 0);
+        		Double price = Double.parseDouble((String)bedTable.getValueAt(bedTable.getSelectedRow(), 1));
+        		String from = (String)bedTable.getValueAt(bedTable.getSelectedRow(), 2);
+        		String to = (String)bedTable.getValueAt(bedTable.getSelectedRow(), 3);
+        		Pricing pricing = new Pricing(type, price, from, to);
+        		try {
+					PricingService.deletePricing(pricing);
+					bedArr = PricingService.getPricing(true);  
+					bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
+					successLabel.setText("Bed Pricing succesfully deleted!");
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+        	}
+        });
 	}
 	
 	@Override

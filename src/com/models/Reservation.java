@@ -4,13 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.enums.ReservationStatus;
-import com.models.enums.RoomType;
 
 public class Reservation {
 	
 	private String checkInDate;
 	private String checkOutDate;
-	private RoomType roomType;
+	private String roomType;
 	private  Room room;
 	private  Guest guest;
 	private String[] addServices;
@@ -18,7 +17,7 @@ public class Reservation {
 	private String comment = "";
 	private ReservationStatus status = ReservationStatus.PENDING;
 	
-	public Reservation(String checkInDate, String checkOutDate, RoomType roomType, String[] addServices, Guest guest) {
+	public Reservation(String checkInDate, String checkOutDate, String roomType, String[] addServices, Guest guest) {
 		this.checkInDate = checkInDate;
 		this.checkOutDate = checkOutDate;
 		this.roomType = roomType;

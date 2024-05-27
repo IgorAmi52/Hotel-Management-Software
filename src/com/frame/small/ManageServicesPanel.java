@@ -8,7 +8,6 @@ import javax.swing.ScrollPaneConstants;
 
 import com.frame.Panel;
 import com.models.Room;
-import com.models.enums.RoomType;
 import com.service.ContainerService;
 import com.service.Holder;
 import com.service.ReservationService;

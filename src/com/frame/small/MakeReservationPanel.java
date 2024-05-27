@@ -12,7 +12,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import com.frame.Panel;
 import com.models.Guest;
 import com.models.Reservation;
-import com.models.enums.RoomType;
 import com.service.ContainerService;
 import com.service.Holder;
 import com.service.PricingService;
@@ -42,7 +41,7 @@ import java.awt.event.ActionEvent;
 public class MakeReservationPanel extends JPanel implements Panel {
 	
 	private JComboBox roomTypeBox;
-	private String[] roomTypes = RoomType.getTypes();
+	private String[] roomTypes;
 	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
 	private JLabel successLabel;
 	private Object[][] resData;
@@ -58,6 +57,11 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		lblNewLabel.setBounds(484, 122, 92, 16);
 		add(lblNewLabel);
 		
+		try {
+			roomTypes = RoomService.getRoomTypesArr();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		roomTypeBox = new JComboBox(roomTypes);
 		roomTypeBox.setBounds(650, 118, 228, 27);
 		add(roomTypeBox);
@@ -123,7 +127,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         	public void actionPerformed(ActionEvent e) {
         		String checkInDate = checkinDatePicker.getJFormattedTextField().getText();
         		String checkOutDate = checkoutDatePicker.getJFormattedTextField().getText();
-        		RoomType roomType = RoomType.getByAssociatedValue(roomTypeBox.getSelectedItem().toString());
+        		String roomType =roomTypeBox.getSelectedItem().toString();
 
         		String[] addServiceArr = getSelectedValues(addCheckBoxes);
         		Guest guest = (Guest) Holder.getInstance().getUser();
