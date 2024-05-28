@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.models.Guest;
+import com.models.User;
 import com.models.enums.Role;
 
 public class UserService {
@@ -69,5 +71,15 @@ public class UserService {
 	    writer = new FileWriter("data/users.json");
 	    writer.write(new Gson().toJson(jsonObject));
 	    writer.close();
+	}
+	
+	public static Guest getGuest(String username) throws IOException{
+		reader = new FileReader("data/users.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		Guest guest = gson.fromJson(jsonObject.getAsJsonObject(username), Guest.class);
+		
+		return guest;
 	}
 }

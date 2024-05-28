@@ -1,7 +1,7 @@
 package com.models.enums;
 
 public enum ReservationStatus {
-	PENDING("Pending"),CONFIRMED("Confirmed"),REJECTED("Rejected"),CANCELED("Canceled"),ERROR("Error");
+	PENDING("Pending"),CONFIRMED("Confirmed"),REJECTED("Rejected"),CANCELED("Canceled");
 
 	private final String status;
 	ReservationStatus(String status) {

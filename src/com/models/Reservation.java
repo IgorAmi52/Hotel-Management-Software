@@ -33,6 +33,9 @@ public class Reservation {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	public void setRoom(Room room) {
+		this.room = room;
+	}
 	public String getStatus() {
 		return status.getStatus();
 	}
@@ -44,6 +47,15 @@ public class Reservation {
         String jsonString = gson.toJson(Reservation.this);
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);	
 		return jsonObject;
+	}
+	public String getRoomType() {
+		return this.roomType;
+	}
+	public String getCheckInDate() {
+		return this.checkInDate;
+	}
+	public String getCheckOutDate() {
+		return this.checkOutDate;
 	}
 	 @Override
 	    public boolean equals(Object o) {

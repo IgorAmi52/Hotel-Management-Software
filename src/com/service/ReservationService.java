@@ -4,15 +4,22 @@ import java.io.Console;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
+import com.exceptions.NoRoomAvailableException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.User;
 import com.models.enums.ReservationStatus;
+import com.models.enums.Role;
 import com.models.Pricing;
 import com.models.Reservation;
+import com.models.Room;
 
 public class ReservationService {
 	
@@ -34,7 +41,7 @@ public class ReservationService {
 		writer.close();
 		
 	}
-	public static String[][] getReservationsGuest(User user) throws IOException{
+	public static String[][] getReservations(User user) throws IOException{
 		
 		reader = new FileReader("data/reservations.json");
 	
@@ -42,12 +49,17 @@ public class ReservationService {
 		reader.close();
 		
 		int count = 0;
-		
+		Role role = user.getRole();
 		for(String status: jsonObject.keySet()) {
 			for(JsonElement res: jsonObject.getAsJsonArray(status)) {
-				JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
-				String resUsername = resGuest.get("username").getAsString();
-				if(resUsername.equals(user.getUserName())) { // if reservation from our guest
+				if(role == Role.GUEST) {
+					JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
+					String resUsername = resGuest.get("username").getAsString();
+					if(resUsername.equals(user.getUserName())) { // if reservation from our guest
+						count++;
+					}
+				}
+				else {
 					count++;
 				}
 			}
@@ -61,7 +73,7 @@ public class ReservationService {
 			for(JsonElement res: jsonObject.getAsJsonArray(status)) {				
 				JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
 				String resUsername = resGuest.get("username").getAsString();
-				if(resUsername.equals(user.getUserName())) { 
+				if(resUsername.equals(user.getUserName()) || role != Role.GUEST) { 
 					
 					JsonObject resObj = (JsonObject)res;
 					
@@ -69,6 +81,9 @@ public class ReservationService {
 					String checkInDate = resObj.get("checkInDate").getAsString();
 				    String checkOutDate = resObj.get("checkOutDate").getAsString();
 			        String comment = resObj.get("comment").getAsString();
+			        if (role!=Role.GUEST) {
+			        	comment = resUsername;
+			        }
 			        String price = resObj.get("price").getAsString();
 			        String addServices = String.join(", ", gson.fromJson(resObj.get("addServices"), String[].class));
 			        
@@ -101,6 +116,63 @@ public class ReservationService {
         }
         jsonObject.add("Pending", arrPending);
         jsonObject.add("Cancelled", arrCancelled);
+        writer = new FileWriter("data/reservations.json");
+        writer.write(gson.toJson(jsonObject));
+        writer.close();
+	}
+	public static void proccessReservation(Reservation reservation) throws IOException, NoRoomAvailableException{
+		reader = new FileReader("data/rooms.json");
+
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		JsonObject roomsObject = jsonObject.getAsJsonObject("rooms");
+		
+		if (!roomsObject.has(reservation.getRoomType())){
+			throw new NoRoomAvailableException("No room of this type exists currently!");
+		}
+		JsonObject typeObject = roomsObject.getAsJsonObject(reservation.getRoomType());
+		Set<String> ids = typeObject.keySet();
+		
+		
+		reader = new FileReader("data/reservations.json");
+		jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
+		JsonArray pendingArr = jsonObject.getAsJsonArray("Pending");
+		reader.close();
+		
+		
+		for(int i = 0; i < confirmedArr.size();i++) {
+			JsonObject currentReservation = confirmedArr.get(i).getAsJsonObject();
+			Room currentRoom = gson.fromJson(currentReservation.getAsJsonObject("room"), Room.class);
+			
+			if(ids.contains(currentRoom.getID())) {
+				String start1 = currentReservation.get("checkInDate").getAsString();
+				String end1 = currentReservation.get("checkOutDate").getAsString();
+				String start2 = reservation.getCheckInDate();
+				String end2  = reservation.getCheckOutDate();
+				
+				if(DateLabelFormatter.checkIntervalOverlap(start1, end1, start2, end2)) {
+					ids.remove(currentRoom.getID());
+				}
+			}		
+		}
+		if(ids.isEmpty()) {
+			throw new NoRoomAvailableException("No room of this type is available in that period!");
+		}
+		for(int i=0;i<pendingArr.size();i++) {
+			Reservation currentReservation = gson.fromJson(pendingArr.get(i), Reservation.class);
+			if(reservation.equals(currentReservation)) {
+				pendingArr.remove(i);
+				break;
+			}
+		}
+
+		List<String> idsList = new ArrayList<>(ids);
+		Room room = gson.fromJson(roomsObject.getAsJsonObject(reservation.getRoomType()).getAsJsonObject(idsList.get(0)), Room.class);
+		reservation.setRoom(room);
+		confirmedArr.add(reservation.getJson());
+        jsonObject.add("Pending", pendingArr);
+        jsonObject.add("Confirmed", confirmedArr);
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();

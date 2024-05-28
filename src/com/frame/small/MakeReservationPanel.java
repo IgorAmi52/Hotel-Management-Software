@@ -148,7 +148,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) { // If a row is selected
                     	String status = (String) table.getValueAt(selectedRow, 4);
-                    	if (status.equals("Pending")){
+                    	if (status.equals(ReservationStatus.PENDING.getStatus())){
                         	cancelReservationButton.setEnabled(true);
                     	}
                     }
@@ -171,7 +171,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         	    try {
 					ReservationService.cancelReservation(cancelReservation);
 					successLabel.setText("Reservation cancelled successfully!");
-					resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+					resData = ReservationService.getReservations(Holder.getInstance().getUser());
 					table.setModel(new DefaultTableModel(resData, columnNames));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -193,7 +193,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		try {
         			ReservationService.requestReservation(reservation);
         			ContainerService.resetFields(MakeReservationPanel.this);
-        			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+        			resData = ReservationService.getReservations(Holder.getInstance().getUser());
         			table.setModel(new DefaultTableModel(resData, columnNames));
         			successLabel.setText("");
         			successLabel.setText("Reservation was successfully submited!");
@@ -225,7 +225,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 			for (String type: roomTypes) {
 				roomTypeBox.addItem(type);
 			}
-			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+			resData = ReservationService.getReservations(Holder.getInstance().getUser());
 			addServiceArr = RoomService.getAddServicesArr();
 			table.setModel(new DefaultTableModel(resData, columnNames));
 		} catch (IOException e) {

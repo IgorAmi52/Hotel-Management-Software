@@ -23,7 +23,6 @@
 		"address": "Novi Sad",
 		"username": "Guest",
 		"password": "guest"
-
 	},
 	"Guest1": {
 		"role": "GUEST",
@@ -35,5 +34,19 @@
 		"address": "Novi SAd",
 		"username": "Guest1",
 		"password": "guest"
+	},
+	"Agent": {
+		"lvlOfEdct": 3,
+		"yearsOfXp": 4,
+		"salary": 0.0,
+		"role": "AGENT",
+		"name": "Sofija",
+		"lastname": "Amidzic",
+		"sex": "Female",
+		"dateOfBirth": "2024-05-08",
+		"phoneNumber": "+391421",
+		"address": "Novi Sad",
+		"username": "Agent",
+		"password": "agent"
 	}
 }
