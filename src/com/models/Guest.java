@@ -2,6 +2,7 @@ package com.models;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -29,5 +30,17 @@ public class Guest extends Person implements User{
 		// TODO Auto-generated method stub
 		return this.role;
 	}
+	   @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (o == null || getClass() != o.getClass()) return false;
+	        if (!super.equals(o)) return false;
+	        Guest guest = (Guest) o;
+	        return role == guest.role;
+	    }
 
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(super.hashCode(), role);
+	    }
 }

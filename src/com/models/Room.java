@@ -1,5 +1,6 @@
 package com.models;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -31,4 +32,18 @@ public class Room {
 	public String getID() {
 		return String.valueOf(ID);
 	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return ID == room.ID &&
+                Objects.equals(type, room.type) &&
+                status == room.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, status, ID);
+    }
 }

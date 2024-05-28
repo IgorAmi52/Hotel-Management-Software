@@ -6,9 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.User;
+import com.models.enums.ReservationStatus;
+import com.models.Pricing;
 import com.models.Reservation;
 
 public class ReservationService {
@@ -77,5 +80,29 @@ public class ReservationService {
 			}
 		}
 		return ret;
+	}
+	public static void cancelReservation(Reservation reservation) throws IOException {
+		reader = new FileReader("data/reservations.json");
+
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		JsonArray arrPending = jsonObject.getAsJsonArray("Pending");
+		JsonArray arrCancelled = jsonObject.getAsJsonArray("Cancelled");
+        for (int i = 0; i < arrPending.size(); i++) {
+            JsonObject current = arrPending.get(i).getAsJsonObject();
+            Reservation currentReservation = gson.fromJson(current, Reservation.class);
+            
+            if (currentReservation.equals(reservation)) {
+            	arrPending.remove(i);
+                reservation.cancelReservation();
+                arrCancelled.add(reservation.getJson());
+                break;
+            }
+        }
+        jsonObject.add("Pending", arrPending);
+        jsonObject.add("Cancelled", arrCancelled);
+        writer = new FileWriter("data/reservations.json");
+        writer.write(gson.toJson(jsonObject));
+        writer.close();
 	}
 }

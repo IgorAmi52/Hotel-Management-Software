@@ -12,6 +12,9 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import com.frame.Panel;
 import com.models.Guest;
 import com.models.Reservation;
+import com.models.User;
+import com.models.enums.ReservationStatus;
+import com.models.enums.RoomStatus;
 import com.service.ContainerService;
 import com.service.Holder;
 import com.service.PricingService;
@@ -23,6 +26,8 @@ import javax.swing.JList;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -40,8 +45,8 @@ import java.awt.event.ActionEvent;
 
 public class MakeReservationPanel extends JPanel implements Panel {
 	
-	private JComboBox roomTypeBox;
-	private String[] roomTypes;
+	private JComboBox<String> roomTypeBox;
+	private String[] roomTypes = {"temp"};
 	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
 	private JLabel successLabel;
 	private Object[][] resData;
@@ -55,13 +60,8 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		
 		JLabel lblNewLabel = new JLabel("Room Type:");
 		lblNewLabel.setBounds(484, 122, 92, 16);
-		add(lblNewLabel);
-		
-		try {
-			roomTypes = RoomService.getRoomTypesArr();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		add(lblNewLabel); 
+
 		roomTypeBox = new JComboBox(roomTypes);
 		roomTypeBox.setBounds(650, 118, 228, 27);
 		add(roomTypeBox);
@@ -122,7 +122,63 @@ public class MakeReservationPanel extends JPanel implements Panel {
         
         requestReservationButton.setBounds(73, 258, 370, 43);
         add(requestReservationButton);
+		
+        table = new JTable(new DefaultTableModel(resData, columnNames));
+        table.setForeground(new Color(0, 0, 0));
+        JScrollPane scrollPane = new JScrollPane(table);
         
+        scrollPane.setBounds(73, 373, 807, 200);
+        add(scrollPane);
+        
+        JLabel lblNewLabel_4 = new JLabel("Your Reservations:");
+        lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        lblNewLabel_4.setBounds(73, 331, 221, 30);
+        add(lblNewLabel_4);
+        
+        JButton cancelReservationButton = new JButton("Cancel Reservation");
+
+        cancelReservationButton.setEnabled(false);
+        cancelReservationButton.setBounds(668, 335, 210, 29);
+        add(cancelReservationButton);
+        
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	String status = (String) table.getValueAt(selectedRow, 4);
+                    	if (status.equals("Pending")){
+                        	cancelReservationButton.setEnabled(true);
+                    	}
+                    }
+                    else {
+                    	cancelReservationButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+        cancelReservationButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	    int selectedRow = table.getSelectedRow();
+        	    String roomType = (String) table.getValueAt(selectedRow, 0);
+        	    String checkInDate = (String) table.getValueAt(selectedRow, 1);
+        	    String checkOutDate = (String) table.getValueAt(selectedRow, 2);
+        	    String[] addServices = ((String) table.getValueAt(selectedRow, 3)).split(", ");
+        	    Guest guest =(Guest) Holder.getInstance().getUser();
+        	    Reservation cancelReservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
+        	    
+        	    try {
+					ReservationService.cancelReservation(cancelReservation);
+					successLabel.setText("Reservation cancelled successfully!");
+					resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
+					table.setModel(new DefaultTableModel(resData, columnNames));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
         requestReservationButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		String checkInDate = checkinDatePicker.getJFormattedTextField().getText();
@@ -147,7 +203,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 				}
         	}
         });
-        makeReservationTable();
+
 	}
 	public String[] getSelectedValues(ArrayList<JCheckBox> addList) {
 		  List<String> selectedValues = new ArrayList<>();
@@ -158,31 +214,17 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		  }
 		  return selectedValues.toArray(new String[0]);
 		}
-	private void makeReservationTable() { //to be implemented
-		
-		    try {
-				resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        table = new JTable(new DefaultTableModel(resData, columnNames));
-	        table.setForeground(new Color(0, 0, 0));
-	        JScrollPane scrollPane = new JScrollPane(table);
-	        
-	        scrollPane.setBounds(73, 392, 807, 176);
-	        add(scrollPane);
-	        
-	        JLabel lblNewLabel_4 = new JLabel("Your Reservations:");
-	        lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-	        lblNewLabel_4.setBounds(73, 331, 221, 30);
-	        add(lblNewLabel_4);
-	       
-	}
+
+	
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
+			roomTypes = RoomService.getRoomTypesArr();
+			roomTypeBox.removeAllItems();
+			for (String type: roomTypes) {
+				roomTypeBox.addItem(type);
+			}
 			resData = ReservationService.getReservationsGuest(Holder.getInstance().getUser());
 			addServiceArr = RoomService.getAddServicesArr();
 			table.setModel(new DefaultTableModel(resData, columnNames));

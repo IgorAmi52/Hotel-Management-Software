@@ -14,6 +14,7 @@
 		"role": "ADMIN"
 	},
 	"Guest": {
+		"role": "GUEST",
 		"name": "Marko",
 		"lastname": "Sladojevic",
 		"sex": "Male",
@@ -21,8 +22,8 @@
 		"phoneNumber": "+3812312",
 		"address": "Novi Sad",
 		"username": "Guest",
-		"password": "guest",
-		"role": "GUEST"
+		"password": "guest"
+
 	},
 	"Guest1": {
 		"role": "GUEST",

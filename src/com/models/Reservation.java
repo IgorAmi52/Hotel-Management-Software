@@ -1,5 +1,8 @@
 package com.models;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -33,10 +36,35 @@ public class Reservation {
 	public String getStatus() {
 		return status.getStatus();
 	}
+	public void cancelReservation() {
+		this.status = ReservationStatus.CANCELED;
+	}
 	public JsonObject getJson() {
 		Gson gson = new Gson();
         String jsonString = gson.toJson(Reservation.this);
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);	
 		return jsonObject;
 	}
+	 @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (o == null || getClass() != o.getClass()) return false;
+	        Reservation that = (Reservation) o;
+	        return Double.compare(that.price, price) == 0 &&
+	                Objects.equals(checkInDate, that.checkInDate) &&
+	                Objects.equals(checkOutDate, that.checkOutDate) &&
+	                Objects.equals(roomType, that.roomType) &&
+	                Objects.equals(room, that.room) &&
+	                Objects.equals(guest, that.guest) &&
+	                Arrays.equals(addServices, that.addServices) &&
+	                Objects.equals(comment, that.comment) &&
+	                status == that.status;
+	    }
+
+	    @Override
+	    public int hashCode() {
+	        int result = Objects.hash(checkInDate, checkOutDate, roomType, room, guest, price, comment, status);
+	        result = 31 * result + Arrays.hashCode(addServices);
+	        return result;
+	    }
 }

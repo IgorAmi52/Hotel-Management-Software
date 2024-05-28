@@ -1,5 +1,7 @@
 package com.models;
 
+import java.util.Objects;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.enums.Role;
@@ -36,6 +38,24 @@ abstract class Person {
 		// TODO Auto-generated method stub
 		return (name+" " + lastname);
 	}
+	  @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (o == null || getClass() != o.getClass()) return false;
+	        Person person = (Person) o;
+	        return Objects.equals(name, person.name) &&
+	                Objects.equals(lastname, person.lastname) &&
+	                Objects.equals(sex, person.sex) &&
+	                Objects.equals(dateOfBirth, person.dateOfBirth) &&
+	                Objects.equals(phoneNumber, person.phoneNumber) &&
+	                Objects.equals(address, person.address) &&
+	                Objects.equals(username, person.username) &&
+	                Objects.equals(password, person.password);
+	    }
 
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(name, lastname, sex, dateOfBirth, phoneNumber, address, username, password);
+	    }
 
 }

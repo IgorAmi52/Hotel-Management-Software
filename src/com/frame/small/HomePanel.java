@@ -29,8 +29,8 @@ public class HomePanel extends JPanel implements Panel {
 		User user = holder.getUser();
 		JLabel lblNewLabel = new JLabel("Welcome "+user.getFullName());
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(62, 59, 329, 50);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNewLabel.setBounds(62, 59, 580, 50);
 		add(lblNewLabel);
 		
 		JButton logoutButton = new JButton("Logout");

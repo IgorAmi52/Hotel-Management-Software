@@ -8,6 +8,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.frame.small.HomePanel;
+import com.frame.small.ManageReservationsPanel;
 import com.frame.small.RegisterGuestPanel;
 import com.service.ContainerService;
 
@@ -19,11 +20,12 @@ public class AgentMainPanel extends JTabbedPane {
 	public AgentMainPanel() {
 		Panel registerGuestPanel = new RegisterGuestPanel();
 		Panel homePanel = new HomePanel();
+		Panel manageReservations = new ManageReservationsPanel();
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
 		addTab("Home", (Component)homePanel);
 		addTab("Register Guest", (Component)registerGuestPanel);
-
+		addTab("Manage Reservations", (Component)manageReservations);
 		addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
