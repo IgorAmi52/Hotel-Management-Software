@@ -3,6 +3,8 @@ package com.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -36,5 +38,26 @@ public class DateLabelFormatter extends AbstractFormatter {
         // Check for overlap
         return !(end1.isBefore(start2) || start1.isAfter(end2));
     }
+    public static String getTodaysDateStr() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = today.format(formatter);
+        
+        return formattedDate;
+    }
+    public static boolean isFirstDateGreater(String date1, String date2) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        try {
+            LocalDate localDate1 = LocalDate.parse(date1, formatter);
+            LocalDate localDate2 = LocalDate.parse(date2, formatter);
+            
+            return localDate1.isAfter(localDate2);
+        } catch (DateTimeParseException e) {
+            System.err.println("Invalid date format: " + e.getMessage());
+            return false; // Consider returning false in case of invalid format
+        }
+    }
+
 
 }

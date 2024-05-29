@@ -32,7 +32,7 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 
 	private static final long serialVersionUID = 1L;
     private JTable table;
-	private Object[][] resData;
+	private String[][] resData;
     private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","User"};
 	private JLabel successLabel;
 	private JButton acceptButton;

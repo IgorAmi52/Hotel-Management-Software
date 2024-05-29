@@ -54,6 +54,12 @@ public class Reservation {
 	public String getRoomType() {
 		return this.roomType;
 	}
+	public Room getRoom() {
+		return this.room;
+	}
+	public Guest getGuest() {
+		return this.guest;
+	}
 	public String getCheckInDate() {
 		return this.checkInDate;
 	}

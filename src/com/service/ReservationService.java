@@ -4,6 +4,8 @@ import java.io.Console;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -119,6 +121,65 @@ public class ReservationService {
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();
+	}
+	public static String[][] getTodaysCheckInReservations() throws IOException{
+		
+		reader = new FileReader("data/reservations.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
+		reader.close();
+		
+		ArrayList<String[]> retArrList = new ArrayList<String[]>();
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+
+		for(int i = 0; i< confirmedArr.size();i++) {
+			Reservation currentReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
+			String checkInDate = currentReservation.getCheckInDate();
+			String checkOutDate = currentReservation.getCheckOutDate();
+			if(DateLabelFormatter.isFirstDateGreater(checkInDate, todaysDate)) {
+				rejectReservation(currentReservation);
+			}
+			else if(todaysDate.equals(checkInDate)) {
+				Room room = currentReservation.getRoom();
+				String user = currentReservation.getGuest().getUserName();
+				String[] temp = {room.getID(),room.getType(),user};
+				retArrList.add(temp);
+			}
+		}
+		String[][] ret = new String[retArrList.size()][];
+		
+		for(int i = 0; i < retArrList.size(); i++) {
+			ret[i] = retArrList.get(i);
+		}
+		return ret;
+	}
+	public static String[][] getTodaysCheckOutReservations() throws IOException{
+		
+		reader = new FileReader("data/reservations.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
+		reader.close();
+		
+		ArrayList<String[]> retArrList = new ArrayList<String[]>();
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+
+		for(int i = 0; i< confirmedArr.size();i++) {
+			Reservation currentReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
+			String checkOutDate = currentReservation.getCheckOutDate();
+
+			if(todaysDate.equals(checkOutDate)) {
+				Room room = currentReservation.getRoom();
+				String user = currentReservation.getGuest().getUserName();
+				String[] temp = {room.getID(),room.getType(),user};
+				retArrList.add(temp);
+			}
+		}
+		String[][] ret = new String[retArrList.size()][];
+		
+		for(int i = 0; i < retArrList.size(); i++) {
+			ret[i] = retArrList.get(i);
+		}
+		return ret;
 	}
 	public static void proccessReservation(Reservation reservation) throws IOException, NoRoomAvailableException{
 		reader = new FileReader("data/rooms.json");

@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Room;
+import com.models.enums.RoomStatus;
 
 public class RoomService {
 	
@@ -241,4 +242,43 @@ public class RoomService {
 		}
 		return ret;
  	}
+	public static void checkInRoom(Room room) throws IOException {
+		reader = new FileReader("data/rooms.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		room.changeStatus(RoomStatus.BUSY);
+		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+		writer = new FileWriter("data/rooms.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+	}
+	public static void checkOutRoom(Room room) throws IOException {
+		reader = new FileReader("data/rooms.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		room.changeStatus(RoomStatus.CLEANING);
+		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+		writer = new FileWriter("data/rooms.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+		
+		assignCleaner(room);
+	}
+	public static void cleanRoom(Room room) throws IOException {
+		reader = new FileReader("data/rooms.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		room.changeStatus(RoomStatus.AVAILABLE);
+		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+		writer = new FileWriter("data/rooms.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+
+	}
+	private static void assignCleaner(Room room) {
+		
+	}
 }
