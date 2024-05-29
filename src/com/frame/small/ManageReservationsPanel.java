@@ -136,6 +136,32 @@ public class ManageReservationsPanel extends JPanel implements Panel {
         });
         rejectButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		 try {
+             	    int selectedRow = table.getSelectedRow();
+             	    String roomType = (String) table.getValueAt(selectedRow, 0);
+             	    String checkInDate = (String) table.getValueAt(selectedRow, 1);
+             	    String checkOutDate = (String) table.getValueAt(selectedRow, 2);
+             	    String[] addServices;
+             	    if (((String) table.getValueAt(selectedRow, 3)).equals("")) {
+             	    	addServices = new String[0];
+             	    }
+             	    else {
+             	    	addServices = ((String) table.getValueAt(selectedRow, 3)).split(", ");
+             	    }
+             	    String username = (String) table.getValueAt(selectedRow, 6); 
+ 					Guest guest =UserService.getGuest(username);
+ 	        	    Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
+ 	        	    
+ 	        	    ReservationService.rejectReservation(reservation);
+ 	            	successLabel.setText("Reservation rejected!");
+ 	            	errorLabel.setText("");
+ 	    			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+ 	    			table.setModel(new DefaultTableModel(resData, columnNames));
+ 				}
+
+         	    catch (IOException ex) {
+ 					ex.printStackTrace();
+ 				}
         	}
         });
 	}

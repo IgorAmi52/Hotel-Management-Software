@@ -168,11 +168,37 @@ public class ReservationService {
 		}
 
 		List<String> idsList = new ArrayList<>(ids);
-		Room room = gson.fromJson(roomsObject.getAsJsonObject(reservation.getRoomType()).getAsJsonObject(idsList.get(0)), Room.class);
+		Room room = gson.fromJson(roomsObject.getAsJsonObject(reservation.getRoomType()).getAsJsonObject(idsList.get(0)), Room.class); //get free room
+		
 		reservation.setRoom(room);
+		reservation.setStatus(ReservationStatus.CONFIRMED);
+		
 		confirmedArr.add(reservation.getJson());
         jsonObject.add("Pending", pendingArr);
         jsonObject.add("Confirmed", confirmedArr);
+        writer = new FileWriter("data/reservations.json");
+        writer.write(gson.toJson(jsonObject));
+        writer.close();
+	}
+	
+	public static void rejectReservation(Reservation reservation) throws IOException {
+		reader = new FileReader("data/reservations.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonArray rejectedArr = jsonObject.getAsJsonArray("Rejected");
+		JsonArray pendingArr = jsonObject.getAsJsonArray("Pending");
+		reader.close();
+		
+		for(int i=0;i<pendingArr.size();i++) {
+			Reservation currentReservation = gson.fromJson(pendingArr.get(i), Reservation.class);
+			if(reservation.equals(currentReservation)) {
+				pendingArr.remove(i);
+				break;
+			}
+		}
+		reservation.setStatus(ReservationStatus.REJECTED);
+		rejectedArr.add(reservation.getJson());
+		jsonObject.add("Pending", pendingArr);
+		jsonObject.add("Rejected", rejectedArr);
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();

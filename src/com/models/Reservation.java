@@ -39,6 +39,9 @@ public class Reservation {
 	public String getStatus() {
 		return status.getStatus();
 	}
+	public void setStatus(ReservationStatus status) {
+		this.status = status;
+	}
 	public void cancelReservation() {
 		this.status = ReservationStatus.CANCELED;
 	}
