@@ -177,6 +177,7 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 			e.printStackTrace();
 		}
 		successLabel.setText("");		
+		errorLabel.setText("");
 	}
 
 }

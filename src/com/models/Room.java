@@ -32,6 +32,10 @@ public class Room {
 	public String getID() {
 		return String.valueOf(ID);
 	}
+	public RoomStatus getStatus() {
+		// TODO Auto-generated method stub
+		return this.status;
+	}
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,4 +50,5 @@ public class Room {
     public int hashCode() {
         return Objects.hash(type, status, ID);
     }
+
 }

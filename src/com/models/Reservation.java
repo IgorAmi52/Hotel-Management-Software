@@ -66,6 +66,9 @@ public class Reservation {
 	public String getCheckOutDate() {
 		return this.checkOutDate;
 	}
+	public String[] getAddServices() {
+		return this.addServices;
+	}
 	 @Override
 	    public boolean equals(Object o) {
 	        if (this == o) return true;

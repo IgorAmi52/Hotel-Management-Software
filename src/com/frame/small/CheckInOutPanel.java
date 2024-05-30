@@ -3,6 +3,12 @@ package com.frame.small;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -16,6 +22,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.frame.Panel;
+import com.models.Guest;
+import com.models.Reservation;
 import com.models.Room;
 import com.models.enums.ReservationStatus;
 import com.service.ContainerService;
@@ -25,6 +33,8 @@ import com.service.RoomService;
 
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
@@ -35,11 +45,16 @@ public class CheckInOutPanel extends JPanel implements Panel {
 	private JPanel contentPane;
 	private JTable checkOutTable;
 	private JTable CheckInTable;
+	private Reservation[] checkInReservations;
 	private String[][] checkInData;
+	private Reservation[] checkOutReservations;
 	private String[][] checkOutData;
     private String[] columnNames = {"Room ID","Room Type", "User"};
+    private String[] addServiceArr;
+	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
 	private JLabel successLabel;
 	private JLabel errorLabel;
+	private JScrollPane addScrollPane;
 
 /**
 	 * Create the frame.
@@ -97,6 +112,76 @@ public class CheckInOutPanel extends JPanel implements Panel {
         checkOutButton.setEnabled(false);
         checkOutButton.setBounds(509, 347, 117, 29);
         add(checkOutButton);
+        
+     
+        CheckInTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                    int selectedRow = CheckInTable.getSelectedRow();
+                    if (selectedRow != -1) { // If a row is selected
+                    	checkInButton.setEnabled(true);
+                    	
+                    	String[] allAddServiceArr = RoomService.getAddServicesArr();
+                    	String [] selectedAddServicesArr = checkInReservations[selectedRow].getAddServices();
+                        Set<String> set2 = new HashSet<>(Arrays.asList(selectedAddServicesArr));
+
+                        // Create a list to store the result
+                        List<String> result = new ArrayList<>();
+
+                        // Iterate through the first array
+                        for (String element : allAddServiceArr) {
+                            // Add element to result if it's not in set2
+                            if (!set2.contains(element)) {
+                                result.add(element);
+                            }
+                        }
+                       addServiceArr = result.toArray(new String[0]);
+                       
+                       while(!addCheckBoxes.isEmpty()) {
+                    	   addCheckBoxes.remove(0);
+                       }
+                       for (int i = 0; i < addServiceArr.length; i++) {
+                       	addCheckBoxes.add(new JCheckBox(addServiceArr[i]));
+                       }
+                       JPanel checkBoxPanel = new JPanel(new GridLayout(0,1));
+                       for(int i = 0; i < addCheckBoxes.size(); i++) {
+                       	checkBoxPanel.add(addCheckBoxes.get(i));
+                       }
+                 
+                       checkBoxPanel.setLocation(650, 182);
+                       addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                       addScrollPane.setSize(228, 80);
+                       addScrollPane.setLocation(240, 347);
+
+                       add(addScrollPane);
+                       
+                    }
+                    else {
+                    	remove(addScrollPane);
+                    	checkInButton.setEnabled(false);
+     
+                    }
+                }
+            }
+        });
+        checkInButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int selectedRow = CheckInTable.getSelectedRow();
+
+          	    Room room = checkInReservations[selectedRow].getRoom();
+          	    try {
+					RoomService.checkInRoom(room);
+					ReservationService.checkInReservation(checkInReservations[selectedRow]);
+					checkInReservations = ReservationService.getTodaysCheckInReservations();
+					checkInData = setReservationsData(checkInReservations);
+					CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
         checkOutTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -112,46 +197,16 @@ public class CheckInOutPanel extends JPanel implements Panel {
                 }
             }
         });
-        CheckInTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
-                    int selectedRow = CheckInTable.getSelectedRow();
-                    if (selectedRow != -1) { // If a row is selected
-                    	checkInButton.setEnabled(true);
-                    }
-                    else {
-                    	checkInButton.setEnabled(false);
-     
-                    }
-                }
-            }
-        });
-        checkInButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		int selectedRow = CheckInTable.getSelectedRow();
-          	    int roomID = Integer.parseInt((String)CheckInTable.getValueAt(selectedRow, 0));
-          	    String roomType = (String) CheckInTable.getValueAt(selectedRow, 1);
-          	    Room room = new Room(roomType, roomID);
-          	    try {
-					RoomService.checkInRoom(room);
-					checkInData = ReservationService.getTodaysCheckInReservations();
-					CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-        	}
-        });
+    
         checkOutButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
          		int selectedRow = checkOutTable.getSelectedRow();
-          	    int roomID = Integer.parseInt((String)checkOutTable.getValueAt(selectedRow, 0));
-          	    String roomType = (String) checkOutTable.getValueAt(selectedRow, 1);
-          	    Room room = new Room(roomType, roomID);
+          	    Room room = checkOutReservations[selectedRow].getRoom();
           	    try {
+          	    	ReservationService.archiveReservation(checkOutReservations[selectedRow]);
 					RoomService.checkOutRoom(room);
-					checkOutData = ReservationService.getTodaysCheckOutReservations();
+					checkOutReservations = ReservationService.getTodaysCheckOutReservations();
+					checkOutData = setReservationsData(checkOutReservations);
 					checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -161,23 +216,36 @@ public class CheckInOutPanel extends JPanel implements Panel {
         	
         });
 	}
-
-@Override
-public void reset() {
-	ContainerService.resetFields(this);
-	try {
-		checkInData = ReservationService.getTodaysCheckInReservations();
-		CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
-		checkOutData = ReservationService.getTodaysCheckOutReservations();
-		checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
-		successLabel.setText("");
-		errorLabel.setText("");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	private String[][] setReservationsData(Reservation[] reservations) {
+		String[][] ret = new String[reservations.length][];
+		for(int i = 0; i < reservations.length; i++) {
+			Room room = reservations[i].getRoom();
+			Guest guest = reservations[i].getGuest();
+			String[] row = {room.getID(),room.getType(),guest.getUserName()};
+			ret[i] = row;
+		}
+		return ret;
 	}
-	successLabel.setText("");		
-}
+	
+	@Override
+	public void reset() {
+		ContainerService.resetFields(this);
+		try {
+			checkInReservations = ReservationService.getTodaysCheckInReservations();
+			checkInData = setReservationsData(checkInReservations);
+			CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
+			
+			checkOutReservations= ReservationService.getTodaysCheckOutReservations();
+			checkOutData = setReservationsData(checkOutReservations);
+			checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
+			successLabel.setText("");
+			errorLabel.setText("");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		successLabel.setText("");		
+	}
 
 	
 }
