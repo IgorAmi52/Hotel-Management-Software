@@ -1,34 +1,30 @@
 package com.frame;
 
-
 import java.awt.Component;
 
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.frame.small.CheckInOutPanel;
+import com.frame.small.CleanerTasksPanel;
 import com.frame.small.HomePanel;
-import com.frame.small.ManageReservationsPanel;
-import com.frame.small.RegisterGuestPanel;
-import com.service.ContainerService;
 
-public class AgentMainPanel extends JTabbedPane {
+public class CleanerMainPanel extends JTabbedPane {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create the panel.
 	 */
-	public AgentMainPanel() {
-		Panel registerGuestPanel = new RegisterGuestPanel();
+	public CleanerMainPanel() {
+		
 		Panel homePanel = new HomePanel();
-		Panel manageReservations = new ManageReservationsPanel();
-		Panel checkInOut = new CheckInOutPanel();
-		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
+		Panel cleanerPanel = new CleanerTasksPanel();
 		
 		addTab("Home", (Component) homePanel);
-		addTab("Register Guest", (Component) registerGuestPanel);
-		addTab("Manage Reservations", (Component) manageReservations);
-		addTab("Todays check-in/out", (Component) checkInOut);
+		addTab("Tasks", (Component) cleanerPanel);
+		
 		addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

@@ -5,12 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.management.relation.RoleStatus;
 
 import com.exceptions.ElementAlreadyExistsException;
 import com.google.gson.Gson;
@@ -19,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Room;
 import com.models.Staff;
+import com.models.User;
 import com.models.enums.Role;
 import com.models.enums.RoomStatus;
 
@@ -352,6 +352,27 @@ public class RoomService {
 		writer = new FileWriter("data/cleaning.json");
 		writer.write(new Gson().toJson(jsonObject));
 		writer.close();
+	}
+	public static Room[] getCleanersRooms(User cleaner) throws IOException {
+		reader = new FileReader("data/cleaning.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
 		
+		List<Room> roomsArr = new ArrayList<Room>();
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		
+		if(!jsonObject.has(todaysDate)) {
+			return new Room[0];
+		}
+		if(!jsonObject.getAsJsonObject(todaysDate).has(cleaner.getUserName())) {
+			return new Room[0];
+		}
+		JsonArray roomsJsonArr = jsonObject.getAsJsonObject(todaysDate).getAsJsonArray(cleaner.getUserName());
+		
+		for (JsonElement roomJson:roomsJsonArr) {
+			Room room = gson.fromJson(roomJson, Room.class);
+			roomsArr.add(room);
+		}
+		return (Room[]) roomsArr.toArray();
 	}
 }

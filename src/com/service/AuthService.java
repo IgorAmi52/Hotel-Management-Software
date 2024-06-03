@@ -11,6 +11,7 @@ import com.exceptions.*;
 import com.frame.LoginPanel;
 import com.frame.AdminMainPanel;
 import com.frame.AgentMainPanel;
+import com.frame.CleanerMainPanel;
 import com.frame.GuestMainPanel;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -61,7 +62,7 @@ public class AuthService {
 			return new AgentMainPanel();
 		}
 		else if(user.getRole()==Role.CLEANER) {
-			return new AdminMainPanel();
+			return new CleanerMainPanel();
 		}
 		return new GuestMainPanel();
 	}
