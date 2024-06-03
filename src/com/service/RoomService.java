@@ -3,7 +3,14 @@ package com.service;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.management.relation.RoleStatus;
 
 import com.exceptions.ElementAlreadyExistsException;
 import com.google.gson.Gson;
@@ -11,6 +18,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Room;
+import com.models.Staff;
+import com.models.enums.Role;
 import com.models.enums.RoomStatus;
 
 public class RoomService {
@@ -278,7 +287,71 @@ public class RoomService {
 		writer.close();
 
 	}
-	private static void assignCleaner(Room room) {
+	private static void assignCleaner(Room room) throws IOException {
+		reader = new FileReader("data/users.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+
+		Map<String, Integer> cleaners = new HashMap<>();
+
+		for(String username: jsonObject.keySet()) {
+			String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
+			if(role.equals(Role.CLEANER.toString())) {
+				Staff cleaner = gson.fromJson(jsonObject.getAsJsonObject(username), Staff.class);
+				cleaners.put(cleaner.getUserName(), 0);
+			}
+		}
+		reader = new FileReader("data/cleaning.json");
+		jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+	
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		
+		if(!jsonObject.has(todaysDate)) { // no cleaning today
+			JsonObject cleaningObj = new JsonObject();
+			
+	        List<String> keys = new ArrayList<>(cleaners.keySet());
+	        Random random = new Random();
+	        int randomIndex = random.nextInt(keys.size());
+	        String randomCleaner = keys.get(randomIndex);
+	        
+			JsonArray rooms = new JsonArray();
+			
+			rooms.add(room.getJson());
+			cleaningObj.add(randomCleaner, rooms);
+			jsonObject.add(todaysDate, cleaningObj);
+		}
+		else { // todays object already exists
+			JsonObject todaysObj = jsonObject.getAsJsonObject(todaysDate);
+			
+			for (String username: todaysObj.keySet()) {
+				Integer roomNumber = todaysObj.getAsJsonArray(username).size();
+				cleaners.put(username, roomNumber);
+			}
+			//find the cleaner with the least work
+			String cleaner = "";
+			Integer work = Integer.MAX_VALUE;
+	        for (Map.Entry<String, Integer> entry : cleaners.entrySet()) {
+	        	if(entry.getValue()< work) {
+	        		work = entry.getValue();
+	        		cleaner = entry.getKey();
+	        	}
+	        }
+	        
+			JsonObject cleaningObj = new JsonObject();
+			JsonArray rooms = new JsonArray();
+			if(work!=0) {
+				rooms = todaysObj.getAsJsonArray(cleaner);
+			}
+			rooms.add(room.getJson());
+			cleaningObj.add(cleaner, rooms);
+			jsonObject.add(todaysDate, cleaningObj);
+    
+		}
+		writer = new FileWriter("data/cleaning.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
 		
 	}
 }
