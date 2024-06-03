@@ -2,7 +2,9 @@ package com.service;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.AbstractButton;
@@ -58,4 +60,15 @@ public class ContainerService {
            
           return datePicker;
     }
+	public static String[] getSelectedValues(ArrayList<JCheckBox> addList) {
+		  List<String> selectedValues = new ArrayList<>();
+		  for (JCheckBox checkBox : addList) {
+		    if (checkBox.isSelected()) {
+		      selectedValues.add(checkBox.getText());
+		    }
+		  }
+		  return selectedValues.toArray(new String[0]);
+		}
+
+	
 }

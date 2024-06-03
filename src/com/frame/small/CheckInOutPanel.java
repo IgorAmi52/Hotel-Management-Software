@@ -55,7 +55,7 @@ public class CheckInOutPanel extends JPanel implements Panel {
 	private JLabel successLabel;
 	private JLabel errorLabel;
 	private JScrollPane addScrollPane;
-
+	private JPanel checkBoxPanel;
 /**
 	 * Create the frame.
 	 */
@@ -113,7 +113,15 @@ public class CheckInOutPanel extends JPanel implements Panel {
         checkOutButton.setBounds(509, 347, 117, 29);
         add(checkOutButton);
         
-     
+        checkBoxPanel = new JPanel(new GridLayout(0,1));
+        checkBoxPanel.setLocation(200, 347);        
+
+        addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        addScrollPane.setSize(228, 80);
+        addScrollPane.setLocation(240, 347);
+
+        add(addScrollPane);
+
         CheckInTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -141,26 +149,23 @@ public class CheckInOutPanel extends JPanel implements Panel {
                        while(!addCheckBoxes.isEmpty()) {
                     	   addCheckBoxes.remove(0);
                        }
+                       
                        for (int i = 0; i < addServiceArr.length; i++) {
                        	addCheckBoxes.add(new JCheckBox(addServiceArr[i]));
                        }
-                       JPanel checkBoxPanel = new JPanel(new GridLayout(0,1));
                        for(int i = 0; i < addCheckBoxes.size(); i++) {
                        	checkBoxPanel.add(addCheckBoxes.get(i));
                        }
-                 
-                       checkBoxPanel.setLocation(650, 182);
+                       remove(addScrollPane);
                        addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                        addScrollPane.setSize(228, 80);
-                       addScrollPane.setLocation(240, 347);
+                       addScrollPane.setLocation(200, 347);
 
                        add(addScrollPane);
-                       
                     }
                     else {
-                    	remove(addScrollPane);
+ 
                     	checkInButton.setEnabled(false);
-     
                     }
                 }
             }
@@ -170,12 +175,24 @@ public class CheckInOutPanel extends JPanel implements Panel {
         		int selectedRow = CheckInTable.getSelectedRow();
 
           	    Room room = checkInReservations[selectedRow].getRoom();
+        		String[] addServiceArr = ContainerService.getSelectedValues(addCheckBoxes);
           	    try {
 					RoomService.checkInRoom(room);
-					ReservationService.checkInReservation(checkInReservations[selectedRow]);
+					ReservationService.checkInReservation(checkInReservations[selectedRow],addServiceArr);
 					checkInReservations = ReservationService.getTodaysCheckInReservations();
 					checkInData = setReservationsData(checkInReservations);
 					CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
+					checkOutReservations = ReservationService.getTodaysCheckOutReservations();
+					checkOutData = setReservationsData(checkOutReservations);
+					checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
+					successLabel.setText("User checked-in successfully!");
+					
+					checkBoxPanel.removeAll();
+                    addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    addScrollPane.setSize(228, 80);
+                    addScrollPane.setLocation(200, 347);
+
+                    add(addScrollPane);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -208,6 +225,7 @@ public class CheckInOutPanel extends JPanel implements Panel {
 					checkOutReservations = ReservationService.getTodaysCheckOutReservations();
 					checkOutData = setReservationsData(checkOutReservations);
 					checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
+					successLabel.setText("User checked-out successfully!");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -238,6 +256,9 @@ public class CheckInOutPanel extends JPanel implements Panel {
 			checkOutReservations= ReservationService.getTodaysCheckOutReservations();
 			checkOutData = setReservationsData(checkOutReservations);
 			checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
+			
+			checkBoxPanel.removeAll();
+			
 			successLabel.setText("");
 			errorLabel.setText("");
 		} catch (IOException e) {

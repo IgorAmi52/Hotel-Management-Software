@@ -139,7 +139,7 @@ public class ReservationService {
 			String checkInDate = currentReservation.getCheckInDate();
 			String checkOutDate = currentReservation.getCheckOutDate();
 			if(DateLabelFormatter.isFirstDateGreater(checkInDate, todaysDate)) {
-				rejectReservation(currentReservation);
+				rejectReservation(currentReservation,true);
 			}
 			else if(todaysDate.equals(checkInDate) && room.getStatus()==RoomStatus.AVAILABLE) {
 				retArrList.add(currentReservation);
@@ -165,8 +165,9 @@ public class ReservationService {
 		for(int i = 0; i< confirmedArr.size();i++) {
 			Reservation currentReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
 			String checkOutDate = currentReservation.getCheckOutDate();
+			Room room = currentReservation.getRoom();
 
-			if(todaysDate.equals(checkOutDate)) {
+			if(todaysDate.equals(checkOutDate) && room.getStatus()==RoomStatus.BUSY) {
 				retArrList.add(currentReservation);
 			}
 		}
@@ -238,29 +239,33 @@ public class ReservationService {
         writer.close();
 	}
 	
-	public static void rejectReservation(Reservation reservation) throws IOException {
+	public static void rejectReservation(Reservation reservation, Boolean isDated) throws IOException {
 		reader = new FileReader("data/reservations.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		JsonArray rejectedArr = jsonObject.getAsJsonArray("Rejected");
-		JsonArray pendingArr = jsonObject.getAsJsonArray("Pending");
+		String resStageStr = "Pending";
+		if(isDated) {
+			resStageStr = "Confirmed";
+		}
+		JsonArray loopArr = jsonObject.getAsJsonArray(resStageStr);
 		reader.close();
-		
-		for(int i=0;i<pendingArr.size();i++) {
-			Reservation currentReservation = gson.fromJson(pendingArr.get(i), Reservation.class);
+	
+		for(int i=0;i<loopArr.size();i++) {
+			Reservation currentReservation = gson.fromJson(loopArr.get(i), Reservation.class);
 			if(reservation.equals(currentReservation)) {
-				pendingArr.remove(i);
+				loopArr.remove(i);
 				break;
 			}
 		}
 		reservation.setStatus(ReservationStatus.REJECTED);
 		rejectedArr.add(reservation.getJson());
-		jsonObject.add("Pending", pendingArr);
+		jsonObject.add(resStageStr, loopArr);
 		jsonObject.add("Rejected", rejectedArr);
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();
 	}
-	public static void checkInReservation(Reservation reservation) throws IOException {
+	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException {
 		reader = new FileReader("data/reservations.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
@@ -268,10 +273,12 @@ public class ReservationService {
 		reader.close();
 		for(int i=0; i<confirmedArr.size();i++) {
 			Reservation currenctReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
+			Room room = currenctReservation.getRoom();
+			room.changeStatus(RoomStatus.BUSY);
 			if(reservation.equals(currenctReservation)) {
 				confirmedArr.remove(i);
-				Room room = currenctReservation.getRoom();
-				room.changeStatus(RoomStatus.BUSY);
+				currenctReservation.addAddServices(addServices);
+				// add pricing
 				confirmedArr.add(currenctReservation.getJson());
 				break;
 			}

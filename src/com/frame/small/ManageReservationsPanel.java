@@ -152,7 +152,7 @@ public class ManageReservationsPanel extends JPanel implements Panel {
  					Guest guest =UserService.getGuest(username);
  	        	    Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
  	        	    
- 	        	    ReservationService.rejectReservation(reservation);
+ 	        	    ReservationService.rejectReservation(reservation,false);
  	            	successLabel.setText("Reservation rejected!");
  	            	errorLabel.setText("");
  	    			resData = ReservationService.getReservations(Holder.getInstance().getUser());

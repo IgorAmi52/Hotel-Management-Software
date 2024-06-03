@@ -69,6 +69,17 @@ public class Reservation {
 	public String[] getAddServices() {
 		return this.addServices;
 	}
+	public void addAddServices(String[] addServices) {
+		String[] arr = new String[this.addServices.length+addServices.length];
+        int index = 0;
+        for (String element : this.addServices) {
+            arr[index++] = element;
+        }
+        for (String element : addServices) {
+            arr[index++] = element;
+        }
+        this.addServices = arr;
+	}
 	 @Override
 	    public boolean equals(Object o) {
 	        if (this == o) return true;

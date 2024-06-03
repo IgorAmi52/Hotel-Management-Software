@@ -185,7 +185,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		String checkOutDate = checkoutDatePicker.getJFormattedTextField().getText();
         		String roomType =roomTypeBox.getSelectedItem().toString();
 
-        		String[] addServiceArr = getSelectedValues(addCheckBoxes);
+        		String[] addServiceArr = ContainerService.getSelectedValues(addCheckBoxes);
         		Guest guest = (Guest) Holder.getInstance().getUser();
     
         		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
@@ -205,17 +205,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
         });
 
 	}
-	public String[] getSelectedValues(ArrayList<JCheckBox> addList) {
-		  List<String> selectedValues = new ArrayList<>();
-		  for (JCheckBox checkBox : addList) {
-		    if (checkBox.isSelected()) {
-		      selectedValues.add(checkBox.getText());
-		    }
-		  }
-		  return selectedValues.toArray(new String[0]);
-		}
 
-	
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
