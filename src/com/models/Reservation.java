@@ -30,9 +30,10 @@ public class Reservation {
 		this.addServices = addServices;
 		this.guest = guest;	
 	}
-	public void addPricing(double price) {
-		this.price+=price;
+	public void setPricing(double price) {
+		this.price=price;
 	}
+
 	public void setRoom(Room room) {
 		this.room = room;
 	}

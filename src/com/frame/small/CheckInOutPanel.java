@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.exceptions.NoPricingException;
 import com.frame.Panel;
 import com.models.Guest;
 import com.models.Reservation;
@@ -118,10 +119,9 @@ public class CheckInOutPanel extends JPanel implements Panel {
 
         addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         addScrollPane.setSize(228, 80);
-        addScrollPane.setLocation(240, 347);
-
+        addScrollPane.setLocation(200, 347);
         add(addScrollPane);
-
+        
         CheckInTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -153,18 +153,13 @@ public class CheckInOutPanel extends JPanel implements Panel {
                        for (int i = 0; i < addServiceArr.length; i++) {
                        	addCheckBoxes.add(new JCheckBox(addServiceArr[i]));
                        }
+                       checkBoxPanel.removeAll();
                        for(int i = 0; i < addCheckBoxes.size(); i++) {
                        	checkBoxPanel.add(addCheckBoxes.get(i));
                        }
-                       remove(addScrollPane);
-                       addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                       addScrollPane.setSize(228, 80);
-                       addScrollPane.setLocation(200, 347);
-
-                       add(addScrollPane);
+                       addScrollPane.setViewportView(checkBoxPanel);
                     }
                     else {
- 
                     	checkInButton.setEnabled(false);
                     }
                 }
@@ -177,23 +172,30 @@ public class CheckInOutPanel extends JPanel implements Panel {
           	    Room room = checkInReservations[selectedRow].getRoom();
         		String[] addServiceArr = ContainerService.getSelectedValues(addCheckBoxes);
           	    try {
+		
 					RoomService.checkInRoom(room);
 					ReservationService.checkInReservation(checkInReservations[selectedRow],addServiceArr);
+					
+					String price = Double.toString(checkInReservations[selectedRow].getPrice());
 					checkInReservations = ReservationService.getTodaysCheckInReservations();
 					checkInData = setReservationsData(checkInReservations);
 					CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));
+					
 					checkOutReservations = ReservationService.getTodaysCheckOutReservations();
 					checkOutData = setReservationsData(checkOutReservations);
 					checkOutTable.setModel(new DefaultTableModel(checkOutData, columnNames));
-					successLabel.setText("User checked-in successfully!");
+					
+ 					successLabel.setText("User checked-in successfully! Total price " + price + ".");
+					errorLabel.setText("");
 					
 					checkBoxPanel.removeAll();
-                    addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    addScrollPane.setSize(228, 80);
-                    addScrollPane.setLocation(200, 347);
-
-                    add(addScrollPane);
-				} catch (IOException e1) {
+                    addScrollPane.setViewportView(checkBoxPanel);
+                    
+				}catch (NoPricingException e1) {
+					successLabel.setText("");
+					errorLabel.setText(e1.getMessage());
+				} 
+          	    catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -249,6 +251,9 @@ public class CheckInOutPanel extends JPanel implements Panel {
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
+            checkBoxPanel.removeAll();
+            addScrollPane.setViewportView(checkBoxPanel);
+            
 			checkInReservations = ReservationService.getTodaysCheckInReservations();
 			checkInData = setReservationsData(checkInReservations);
 			CheckInTable.setModel(new DefaultTableModel(checkInData, columnNames));

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.exceptions.NoPricingException;
 import com.exceptions.NoRoomAvailableException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -237,7 +238,7 @@ public class ReservationService {
         writer.write(gson.toJson(jsonObject));
         writer.close();
 	}
-	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException {
+	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException, NoPricingException {
 		reader = new FileReader("data/reservations.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
@@ -249,9 +250,10 @@ public class ReservationService {
 			room.changeStatus(RoomStatus.BUSY);
 			if(reservation.equals(currenctReservation)) {
 				confirmedArr.remove(i);
-				currenctReservation.addAddServices(addServices);
+				reservation.addAddServices(addServices);
+				reservation.setPricing(PricingService.calculatePricing(reservation));
 				// add pricing
-				confirmedArr.add(currenctReservation.getJson());
+				confirmedArr.add(reservation.getJson());
 				break;
 			}
 		}

@@ -160,11 +160,11 @@ public class PricingService {
 		
 		for(String service:services) {
 			if(!jsonObject.has(service)) {
-				throw new NoPricingException("No pricing set for " + service + "service!");
+				throw new NoPricingException("No pricing set for " + service + " service!");
 			}
 			JsonArray pricesJsonArr = jsonObject.getAsJsonArray(service);
 			
-			Set<String> datesSet = DateLabelFormatter.getDateRange(checkInDate, checkOutDate);
+			Set<String> datesSet = DateLabelFormatter.getDateRange(checkInDate, DateLabelFormatter.previousDate(checkOutDate));
 			
 			for(JsonElement priceJson: pricesJsonArr) {
 				if(datesSet.isEmpty()) {

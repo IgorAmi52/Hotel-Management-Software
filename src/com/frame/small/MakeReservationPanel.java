@@ -201,8 +201,8 @@ public class MakeReservationPanel extends JPanel implements Panel {
            	
         		try {
             		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
-            		System.out.println(PricingService.calculatePricing(reservation));
-            		reservation.addPricing(PricingService.calculatePricing(reservation));
+ 
+            		reservation.setPricing(PricingService.calculatePricing(reservation));
             		
         			ReservationService.requestReservation(reservation);
         			ContainerService.resetFields(MakeReservationPanel.this);
