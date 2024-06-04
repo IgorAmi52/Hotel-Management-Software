@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 public class ManageStaffPanel extends JPanel implements Panel {
 
 	private final String[] columnNames = { "Username","Name", "Lastname","Role", "Sex", "Date of Birth", "Phone Number", "Address", };
-	private String[][] staffArr;
+	private String[][] staffArr = {{"temp"}};
 	private JTable table;
 	private JScrollPane scrollPane;
 	
@@ -31,13 +31,6 @@ public class ManageStaffPanel extends JPanel implements Panel {
 		setLayout(null);
 		setSize(ContainerService.panelWidth, ContainerService.panelHeight);
 		
-		try {
-			staffArr = UserService.getStaff();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
-
         table = new JTable(staffArr, columnNames);
         table.setOpaque(true);
 

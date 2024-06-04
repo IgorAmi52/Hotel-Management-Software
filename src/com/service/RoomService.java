@@ -275,17 +275,43 @@ public class RoomService {
 		
 		assignCleaner(room);
 	}
-	public static void cleanRoom(Room room) throws IOException {
+	public static void cleanRoom(Room room, User cleaner) throws IOException {
 		reader = new FileReader("data/rooms.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 		
 		room.changeStatus(RoomStatus.AVAILABLE);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
+		
 		writer = new FileWriter("data/rooms.json");
 		writer.write(new Gson().toJson(jsonObject));
 		writer.close();
-
+		
+		reader = new FileReader("data/cleaning.json");
+		jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		
+		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
+		JsonArray cleanerArr = todaysJson.getAsJsonArray(cleaner.getUserName());
+		
+		for(int i = 0; i < cleanerArr.size();i++) {
+			Room currentRoom = gson.fromJson(cleanerArr.get(i), Room.class);
+			if(currentRoom.getID().equals(room.getID())) {
+				cleanerArr.remove(i);
+				currentRoom.changeStatus(RoomStatus.AVAILABLE);
+				cleanerArr.add(currentRoom.getJson());
+				break;
+			}
+		}
+		todaysJson.add(cleaner.getUserName(), cleanerArr);
+		jsonObject.add(todaysDate, todaysJson);
+		
+		writer = new FileWriter("data/cleaning.json");
+		writer.write(new Gson().toJson(jsonObject));
+		writer.close();
+		
 	}
 	private static void assignCleaner(Room room) throws IOException {
 		reader = new FileReader("data/users.json");
@@ -358,7 +384,6 @@ public class RoomService {
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 		
-		List<Room> roomsArr = new ArrayList<Room>();
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		
 		if(!jsonObject.has(todaysDate)) {
@@ -369,10 +394,19 @@ public class RoomService {
 		}
 		JsonArray roomsJsonArr = jsonObject.getAsJsonObject(todaysDate).getAsJsonArray(cleaner.getUserName());
 		
+		List<Room> roomArrList = new ArrayList<Room>();
+
 		for (JsonElement roomJson:roomsJsonArr) {
 			Room room = gson.fromJson(roomJson, Room.class);
-			roomsArr.add(room);
+			if(room.getStatus()==RoomStatus.CLEANING) {
+				roomArrList.add(room);
+			}
 		}
-		return (Room[]) roomsArr.toArray();
+		Room [] ret = new Room[roomArrList.size()];
+		int i = 0;
+		for (Room room:roomArrList) {
+			ret[i++] = room;
+		}
+		return ret;
 	}
 }

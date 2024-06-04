@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.Pricing;
+import com.models.Reservation;
 
 public class PricingService {
 	
@@ -133,5 +134,8 @@ public class PricingService {
 		writer.close();
 		
 	}
+//	public static float calculatePricing(Reservation reservation) {
+//		
+//	}
 
 }
