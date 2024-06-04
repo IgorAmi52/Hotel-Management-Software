@@ -1,12 +1,15 @@
 package com.models;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.enums.ReservationStatus;
+import com.service.PricingService;
 
 public class Reservation {
 	
@@ -16,7 +19,7 @@ public class Reservation {
 	private  Room room;
 	private  Guest guest;
 	private String[] addServices;
-	private double price;
+	private double price = 0.0;
 	private String comment = "";
 	private ReservationStatus status = ReservationStatus.PENDING;
 	
@@ -25,13 +28,10 @@ public class Reservation {
 		this.checkOutDate = checkOutDate;
 		this.roomType = roomType;
 		this.addServices = addServices;
-		this.guest = guest;
-		this.price = calculatePrice();
+		this.guest = guest;	
 	}
-
-	private double calculatePrice() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void addPricing(double price) {
+		this.price+=price;
 	}
 	public void setRoom(Room room) {
 		this.room = room;
@@ -44,6 +44,13 @@ public class Reservation {
 	}
 	public void cancelReservation() {
 		this.status = ReservationStatus.CANCELED;
+	}
+	public String getComment() {
+		return this.comment;
+	}
+	public Double getPrice() {
+		// TODO Auto-generated method stub
+		return this.price;
 	}
 	public JsonObject getJson() {
 		Gson gson = new Gson();
@@ -102,4 +109,5 @@ public class Reservation {
 	        result = 31 * result + Arrays.hashCode(addServices);
 	        return result;
 	    }
+
 }

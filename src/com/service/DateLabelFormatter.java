@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
@@ -58,6 +60,22 @@ public class DateLabelFormatter extends AbstractFormatter {
             return false; // Consider returning false in case of invalid format
         }
     }
+    public static Set<String> getDateRange(String startDate, String endDate) {
+        // Parse the start and end dates
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
 
+        // Initialize a set to store the dates
+        Set<String> dateSet = new HashSet<>();
+
+        // Iterate through the date range and add each date to the set
+        LocalDate currentDate = start;
+        while (!currentDate.isAfter(end)) {
+            dateSet.add(currentDate.toString());
+            currentDate = currentDate.plusDays(1);
+        }
+
+        return dateSet;
+    }
 
 }

@@ -1,1 +1,50 @@
-{"Two bedded":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"Two bedded","price":200.0}],"One bedded":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"One bedded","price":100.0}],"Breakfast":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"Breakfast","price":24.0}],"Lunch":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"Lunch","price":25.0}],"Spa":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"Spa","price":30.0}],"Dinner":[{"fromDate":"2024-06-03","toDate":"2024-06-28","type":"Dinner","price":25.0}]}
+{
+	"Two bedded": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "Two bedded",
+			"price": 200.0
+		}
+	],
+	"One bedded": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "One bedded",
+			"price": 100.0
+		}
+	],
+	"Breakfast": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "Breakfast",
+			"price": 24.0
+		}
+	],
+	"Lunch": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "Lunch",
+			"price": 25.0
+		}
+	],
+	"Spa": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "Spa",
+			"price": 30.0
+		}
+	],
+	"Dinner": [
+		{
+			"fromDate": "2024-06-03",
+			"toDate": "2024-06-28",
+			"type": "Dinner",
+			"price": 25.0
+		}
+	]
+}

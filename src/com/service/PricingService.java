@@ -5,9 +5,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Pricing;
 import com.models.Reservation;
@@ -134,8 +139,53 @@ public class PricingService {
 		writer.close();
 		
 	}
-//	public static float calculatePricing(Reservation reservation) {
-//		
-//	}
+	public static Double calculatePricing(Reservation reservation) throws IOException, NoPricingException {
+		
+		Double ret = 0.0;
+		String roomType = reservation.getRoomType();
+		String checkInDate = reservation.getCheckInDate();
+		String checkOutDate = reservation.getCheckOutDate();
+		String[] addServices = reservation.getAddServices();
+		String[] services = new String[addServices.length+1];
+		
+		int i = 0;
+		services[i] = roomType;
+		for(String service:addServices) {
+			services[++i] = service;
+		}
+		
+		reader = new FileReader("data/pricing.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		for(String service:services) {
+			if(!jsonObject.has(service)) {
+				throw new NoPricingException("No pricing set for " + service + "service!");
+			}
+			JsonArray pricesJsonArr = jsonObject.getAsJsonArray(service);
+			
+			Set<String> datesSet = DateLabelFormatter.getDateRange(checkInDate, checkOutDate);
+			
+			for(JsonElement priceJson: pricesJsonArr) {
+				if(datesSet.isEmpty()) {
+					break;
+				}
+				Pricing pricing = gson.fromJson(priceJson, Pricing.class);
+				Set<String> pricingSet = DateLabelFormatter.getDateRange(pricing.getFromDate(), pricing.getToDate());
+				int totalDays = datesSet.size();
+				datesSet.removeAll(pricingSet);
+				int difference  = totalDays - datesSet.size();
+				
+				Double dailyPrice = pricing.getPrice();
+				
+				ret+= dailyPrice*difference;
+			}
+			if(!datesSet.isEmpty()) {
+				throw new NoPricingException("Missing pricing for "+ service);
+			}
+		}
+
+		return ret;
+	}
 
 }

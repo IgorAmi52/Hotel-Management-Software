@@ -29,6 +29,15 @@ public class Pricing {
 	public String getType() {
 		return type;
 	}
+	public String getFromDate() {
+		return this.fromDate;
+	}
+	public String getToDate() {
+		return this.toDate;
+	}
+	public Double getPrice() {
+		return this.price;
+	}
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

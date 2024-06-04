@@ -33,6 +33,7 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 	private static final long serialVersionUID = 1L;
     private JTable table;
 	private String[][] resData;
+	private Reservation[] reservations;
     private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","User"};
 	private JLabel successLabel;
 	private JButton acceptButton;
@@ -101,27 +102,17 @@ public class ManageReservationsPanel extends JPanel implements Panel {
         });
         acceptButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-
+        		
+           	    int selectedRow = table.getSelectedRow();
+        	    Reservation reservation = reservations[selectedRow];
         	    try {
-            	    int selectedRow = table.getSelectedRow();
-            	    String roomType = (String) table.getValueAt(selectedRow, 0);
-            	    String checkInDate = (String) table.getValueAt(selectedRow, 1);
-            	    String checkOutDate = (String) table.getValueAt(selectedRow, 2);
-            	    String[] addServices;
-            	    if (((String) table.getValueAt(selectedRow, 3)).equals("")) {
-            	    	addServices = new String[0];
-            	    }
-            	    else {
-            	    	addServices = ((String) table.getValueAt(selectedRow, 3)).split(", ");
-            	    }
-            	    String username = (String) table.getValueAt(selectedRow, 6); 
-					Guest guest =UserService.getGuest(username);
-	        	    Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
-	        	    
+     
 	        	    ReservationService.proccessReservation(reservation);
 	            	successLabel.setText("Reservation confirmed successfully!");
 	            	errorLabel.setText("");
-	    			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+	            
+	    			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+	    			resData = setData(reservations);
 	    			table.setModel(new DefaultTableModel(resData, columnNames));
 				}
         	    catch (NoRoomAvailableException ex) {
@@ -136,26 +127,15 @@ public class ManageReservationsPanel extends JPanel implements Panel {
         });
         rejectButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        	    int selectedRow = table.getSelectedRow();
+        	    Reservation reservation = reservations[selectedRow];
         		 try {
-             	    int selectedRow = table.getSelectedRow();
-             	    String roomType = (String) table.getValueAt(selectedRow, 0);
-             	    String checkInDate = (String) table.getValueAt(selectedRow, 1);
-             	    String checkOutDate = (String) table.getValueAt(selectedRow, 2);
-             	    String[] addServices;
-             	    if (((String) table.getValueAt(selectedRow, 3)).equals("")) {
-             	    	addServices = new String[0];
-             	    }
-             	    else {
-             	    	addServices = ((String) table.getValueAt(selectedRow, 3)).split(", ");
-             	    }
-             	    String username = (String) table.getValueAt(selectedRow, 6); 
- 					Guest guest =UserService.getGuest(username);
- 	        	    Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
- 	        	    
+            	
  	        	    ReservationService.rejectReservation(reservation,false);
  	            	successLabel.setText("Reservation rejected!");
  	            	errorLabel.setText("");
- 	    			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+	    			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+	    			resData = setData(reservations);
  	    			table.setModel(new DefaultTableModel(resData, columnNames));
  				}
 
@@ -165,12 +145,29 @@ public class ManageReservationsPanel extends JPanel implements Panel {
         	}
         });
 	}
-
+	private String[][] setData(Reservation[] reservations) {
+		String[][] ret = new String[reservations.length][];
+		int i = 0;
+		for(Reservation reservation:reservations) {
+			String roomType = reservation.getRoomType();
+			String checkInDate = reservation.getCheckInDate();
+			String checkOutDate = reservation.getCheckOutDate();
+			String additionals = String.join(", ", reservation.getAddServices());
+			String status = reservation.getStatus();
+			String price = Double.toString(reservation.getPrice());
+			String user = reservation.getGuest().getUserName();
+			
+			String[] row = {roomType,checkInDate,checkOutDate,additionals,status,price,user};
+			ret[i++] = row;
+		}
+		return ret;
+	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+			resData = setData(reservations);
 			table.setModel(new DefaultTableModel(resData, columnNames));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

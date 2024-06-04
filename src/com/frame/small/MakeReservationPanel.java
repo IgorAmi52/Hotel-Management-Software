@@ -9,6 +9,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 
 import org.jdatepicker.impl.JDatePickerImpl;
+
+import com.exceptions.NoPricingException;
 import com.frame.Panel;
 import com.models.Guest;
 import com.models.Reservation;
@@ -49,7 +51,9 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	private String[] roomTypes = {"temp"};
 	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
 	private JLabel successLabel;
-	private Object[][] resData;
+	private JLabel errorLabel;
+	private String[][] resData;
+	private Reservation[] reservations;
     private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","Comment"};
     private JTable table;
     private String[] addServiceArr;
@@ -141,6 +145,13 @@ public class MakeReservationPanel extends JPanel implements Panel {
         cancelReservationButton.setBounds(668, 335, 210, 29);
         add(cancelReservationButton);
         
+        errorLabel = new JLabel("");
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setForeground(new Color(255, 28, 14));
+        errorLabel.setFont(new Font("KufiStandardGK", Font.PLAIN, 17));
+        errorLabel.setBounds(268, 21, 476, 25);
+        add(errorLabel);
+        
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -160,20 +171,20 @@ public class MakeReservationPanel extends JPanel implements Panel {
         });
         cancelReservationButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        	    int selectedRow = table.getSelectedRow();
-        	    String roomType = (String) table.getValueAt(selectedRow, 0);
-        	    String checkInDate = (String) table.getValueAt(selectedRow, 1);
-        	    String checkOutDate = (String) table.getValueAt(selectedRow, 2);
-        	    String[] addServices = ((String) table.getValueAt(selectedRow, 3)).split(", ");
-        	    Guest guest =(Guest) Holder.getInstance().getUser();
-        	    Reservation cancelReservation = new Reservation(checkInDate, checkOutDate, roomType, addServices, guest);
-        	    
+        	    int selectedRow = table.getSelectedRow();        	    
         	    try {
+        	    	
+            	    Reservation cancelReservation = reservations[selectedRow];
 					ReservationService.cancelReservation(cancelReservation);
-					successLabel.setText("Reservation cancelled successfully!");
-					resData = ReservationService.getReservations(Holder.getInstance().getUser());
+					
+				
+        			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+        			resData = setData(reservations);
+        			
 					table.setModel(new DefaultTableModel(resData, columnNames));
-				} catch (IOException e1) {
+					successLabel.setText("Reservation cancelled successfully!");
+				}
+        	    catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -187,25 +198,52 @@ public class MakeReservationPanel extends JPanel implements Panel {
 
         		String[] addServiceArr = ContainerService.getSelectedValues(addCheckBoxes);
         		Guest guest = (Guest) Holder.getInstance().getUser();
-    
-        		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
-        	
+           	
         		try {
+            		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
+            		System.out.println(PricingService.calculatePricing(reservation));
+            		reservation.addPricing(PricingService.calculatePricing(reservation));
+            		
         			ReservationService.requestReservation(reservation);
         			ContainerService.resetFields(MakeReservationPanel.this);
-        			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+        			
+        			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+        			resData = setData(reservations);
         			table.setModel(new DefaultTableModel(resData, columnNames));
+        			
         			successLabel.setText("");
         			successLabel.setText("Reservation was successfully submited!");
-				} catch (Exception e2) {
-					e2.printStackTrace();
-					// add error message;
+        			errorLabel.setText("");
+        			
+				}	catch (NoPricingException e1) {
+					successLabel.setText("");
+					errorLabel.setText(e1.getMessage());
+				}
+        	    catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
         	}
         });
 
 	}
-
+	private String[][] setData(Reservation[] reservations) {
+		String[][] ret = new String[reservations.length][];
+		int i = 0;
+		for(Reservation reservation:reservations) {
+			String roomType = reservation.getRoomType();
+			String checkInDate = reservation.getCheckInDate();
+			String checkOutDate = reservation.getCheckOutDate();
+			String additionals = String.join(", ", reservation.getAddServices());
+			String status = reservation.getStatus();
+			String price = Double.toString(reservation.getPrice());
+			String comment = reservation.getComment();
+			
+			String[] row = {roomType,checkInDate,checkOutDate,additionals,status,price,comment};
+			ret[i++] = row;
+		}
+		return ret;
+	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
@@ -215,7 +253,8 @@ public class MakeReservationPanel extends JPanel implements Panel {
 			for (String type: roomTypes) {
 				roomTypeBox.addItem(type);
 			}
-			resData = ReservationService.getReservations(Holder.getInstance().getUser());
+			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
+			resData = setData(reservations);
 			addServiceArr = RoomService.getAddServicesArr();
 			table.setModel(new DefaultTableModel(resData, columnNames));
 		} catch (IOException e) {
@@ -223,5 +262,8 @@ public class MakeReservationPanel extends JPanel implements Panel {
 			e.printStackTrace();
 		}
 		successLabel.setText("");
+		errorLabel.setText("");
 	}
+
+
 }

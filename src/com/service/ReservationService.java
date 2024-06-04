@@ -44,58 +44,30 @@ public class ReservationService {
 		writer.close();
 		
 	}
-	public static String[][] getReservations(User user) throws IOException{
+	public static Reservation[] getReservations(User user) throws IOException{
 		
 		reader = new FileReader("data/reservations.json");
 	
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject();
 		reader.close();
-		
-		int count = 0;
+
 		Role role = user.getRole();
-		for(String status: jsonObject.keySet()) {
-			for(JsonElement res: jsonObject.getAsJsonArray(status)) {
-				if(role == Role.GUEST) {
-					JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
-					String resUsername = resGuest.get("username").getAsString();
-					if(resUsername.equals(user.getUserName())) { // if reservation from our guest
-						count++;
-					}
-				}
-				else {
-					count++;
-				}
-			}
-		}
-		if(count==0) {
-			return new String[0][7];
-		}
-		String[][] ret = new String[count][];
-		int i = 0;
+		List<Reservation> resArrayList = new ArrayList<Reservation>();
+		
 		for(String status: jsonObject.keySet()) {
 			for(JsonElement res: jsonObject.getAsJsonArray(status)) {				
 				JsonObject resGuest = ((JsonObject)res).get("guest").getAsJsonObject();
 				String resUsername = resGuest.get("username").getAsString();
 				if(resUsername.equals(user.getUserName()) || role != Role.GUEST) { 
-					
-					JsonObject resObj = (JsonObject)res;
-					
-					String roomType = resObj.get("roomType").getAsString();
-					String checkInDate = resObj.get("checkInDate").getAsString();
-				    String checkOutDate = resObj.get("checkOutDate").getAsString();
-			        String comment = resObj.get("comment").getAsString();
-			        if (role!=Role.GUEST) {
-			        	comment = resUsername;
-			        }
-			        String price = resObj.get("price").getAsString();
-			        String addServices = String.join(", ", gson.fromJson(resObj.get("addServices"), String[].class));
-			        
-			        
-			        String[] resArr = {roomType,checkInDate,checkOutDate,addServices,status,price,comment};
-			        ret[i] = resArr;
-			        i++;
+			        Reservation currentReservation  = gson.fromJson(res, Reservation.class);
+			        resArrayList.add(currentReservation);   		      			        
 				}
 			}
+		}
+		Reservation[] ret = new Reservation[resArrayList.size()];
+		int i = 0;
+		for(Reservation reservation: resArrayList) {
+			ret[i++] = reservation;
 		}
 		return ret;
 	}
