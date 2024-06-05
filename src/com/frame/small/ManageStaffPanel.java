@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 public class ManageStaffPanel extends JPanel implements Panel {
 
 	private final String[] columnNames = { "Username","Name", "Lastname","Role", "Sex", "Date of Birth", "Phone Number", "Address", };
+	private Staff[] staffs;
 	private String[][] staffArr = {{"temp"}};
 	private JTable table;
 	private JScrollPane scrollPane;
@@ -64,9 +65,12 @@ public class ManageStaffPanel extends JPanel implements Panel {
         });
         deleteStaffButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		String username = (String)table.getValueAt(table.getSelectedRow(), 0);
+        		int selectedRow = table.getSelectedRow();
         		try {
-					UserService.deleteUser(username);
+					UserService.deleteUser(staffs[selectedRow]);
+					staffs = UserService.getStaff();
+					staffArr = seStaffData(staffs);
+					table.setModel(new DefaultTableModel(staffArr, columnNames));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -80,7 +84,8 @@ public class ManageStaffPanel extends JPanel implements Panel {
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			staffArr = UserService.getStaff();
+			staffs = UserService.getStaff();
+			staffArr = seStaffData(staffs);
 			table.setModel(new DefaultTableModel(staffArr, columnNames));
 		} catch (IOException e) {
 			/// print the error on screen
@@ -88,5 +93,23 @@ public class ManageStaffPanel extends JPanel implements Panel {
 		}
 		
 	}
-
+	private String[][] seStaffData(Staff[] staffs) {
+		String[][] ret = new String[staffs.length][];
+		int i = 0;
+		
+		for(Staff staff:staffs) {
+			String username = staff.getUserName();
+			String name = staff.getFirstName();
+			String lastname =staff.getLastName();
+			String role = staff.getRole().getRole();
+			String sex =staff.getSex();
+			String dateOfBirth = staff.getDateOfBirth();
+			String phone =staff.getPhone();
+			String address = staff.getAddress();
+			String[] temp = {username,name,lastname,role,sex,dateOfBirth,phone,address};
+			
+			ret[i++] = temp;
+		}
+		return ret;
+	}
 }

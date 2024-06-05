@@ -38,6 +38,24 @@ abstract class Person {
 		// TODO Auto-generated method stub
 		return (name+" " + lastname);
 	}
+	public String getFirstName() {
+		return name;
+	}
+	public String getLastName() {
+		return lastname;
+	}
+	public String getSex() {
+		return sex;
+	}
+	public String getDateOfBirth() {
+		return dateOfBirth;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public String getPhone() {
+		return phoneNumber;
+	}
 	  @Override
 	    public boolean equals(Object o) {
 	        if (this == o) return true;

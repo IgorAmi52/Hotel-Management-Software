@@ -10,6 +10,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.Guest;
+import com.models.Staff;
 import com.models.User;
 import com.models.enums.Role;
 
@@ -19,53 +20,38 @@ public class UserService {
 	private static FileReader reader;
 	private static FileWriter writer;
 	
-	public static String[][] getStaff() throws IOException {
+	public static Staff[] getStaff() throws IOException {
 
 		reader = new FileReader("data/users.json");
-	
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-	
 		reader.close();
 
-	    //get arr count
-	    int arrLength = 0;
-	    for(String username: jsonObject.keySet()) {
-	     	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
-	      	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
-	      		arrLength++;
-	      	}
-	    }
-	    String[][] staffArr = new String[arrLength][];
-	    int i = 0;
+	    List<Staff> staffArrList = new ArrayList<Staff>();
+
 	    for(String username: jsonObject.keySet()) {
 	       	String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
 	    	if(!role.equals(Role.GUEST.toString()) && !role.equals(Role.ADMIN.toString())) {
-	 
 	    		JsonObject staffObject = jsonObject.getAsJsonObject(username);
-	    		
-	            String[] staff = {
-	            		staffObject.get("username").getAsString(),
-	            		staffObject.get("name").getAsString(),
-	            		staffObject.get("lastname").getAsString(),
-	            		Role.valueOf(role).getRole(),
-	            		staffObject.get("sex").getAsString(),
-	            		staffObject.get("dateOfBirth").getAsString(),
-	            		staffObject.get("phoneNumber").getAsString(),
-	            		staffObject.get("address").getAsString()
-	            };
-	            staffArr[i]= staff;
-	            i++;
+	    		Staff currentStaff = gson.fromJson(staffObject, Staff.class);
+	    		staffArrList.add(currentStaff);
 	    	}
 	    }
-	    return staffArr;
+	    Staff[] ret = new Staff[staffArrList.size()];
+	    int i = 0;
+	    
+	    for(Staff staff: staffArrList) {
+	    	ret[i++] = staff;
+	    }
+	    return ret;
 	}
 
-	public static void deleteUser(String username) throws IOException {
+	public static void deleteUser(User user) throws IOException {
 	
 		reader = new FileReader("data/users.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
-	
+		
+		String username = user.getUserName();
 	    jsonObject.remove(username);
 	    
 	    writer = new FileWriter("data/users.json");
