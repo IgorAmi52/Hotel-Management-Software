@@ -135,7 +135,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         errorLabel.setForeground(new Color(255, 6, 22));
         errorLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-        errorLabel.setBounds(0, 12, 988, 16);
+        errorLabel.setBounds(0, 6, 988, 22);
         add(errorLabel);
         
         addAddPriceButton.addActionListener(new ActionListener() {
@@ -281,7 +281,8 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					price = Double.parseDouble(roomPriceLabel.getText());
 				} catch (NumberFormatException e1) {
 					successLabel.setText("");
-					errorLabel.setText("Dates are required fields!");
+					errorLabel.setText("Price must be a number!");
+
 					return;
 				}
 				String serviceType = (roomTypeBox.getSelectedItem().toString());
@@ -290,7 +291,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 				
 				if(fromDate.isEmpty() || toDate.isEmpty()) {
 					successLabel.setText("");
-					errorLabel.setText("Price must be a number!");
+					errorLabel.setText("Dates are required fields!");
 					return;
 				}
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
