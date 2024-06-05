@@ -89,23 +89,7 @@ public class RoomService {
 		writer.close();
 		
 	}
-	public static String[][] getRoomTypes() throws IOException {
-		reader = new FileReader("data/rooms.json");
-		
 
-		JsonArray jsonArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("roomTypes");
-		reader.close();
-		
-        String[][] roomTypes = new String[jsonArray.size()][];
-
-        // Iterate through the JsonArray and populate the String array
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JsonElement element = jsonArray.get(i);
-            String [] roomType = {element.getAsString()};
-            roomTypes[i] = roomType;
-        }
-        return roomTypes;
-	}
 	public static void deleteRoomType(String name) throws IOException {
 		
 		reader = new FileReader("data/rooms.json");
@@ -128,7 +112,7 @@ public class RoomService {
 		writer.close();
 	}
 	
-	public static String[] getRoomTypesArr() throws IOException {
+	public static String[] getRoomTypes() throws IOException {
 		reader = new FileReader("data/rooms.json");
 		
 
@@ -145,34 +129,27 @@ public class RoomService {
         return roomTypes;
 	}
 
-	public static String[][] getRooms() throws IOException{
-		reader = new FileReader("data/rooms.json");
+	public static Room[] getRooms() throws IOException{
 		
-
+		reader = new FileReader("data/rooms.json");
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject("rooms");
 		reader.close();
 		
-		int arrLength = 0;
-		for(String type: jsonObject.keySet()) {
-			for(String ID: jsonObject.getAsJsonObject(type).keySet()) {
-				arrLength++;
-			}
-		}
-		if(arrLength==0) {
-			return new String[0][4];
-		}
-		String[][] ret = new String[arrLength][];
-		
-		int i = 0;
+		List<Room> roomArrList = new ArrayList<Room>();
+
 		for(String type: jsonObject.keySet()) {
 			JsonObject typeObject = jsonObject.getAsJsonObject(type);
 			for(String ID: typeObject.keySet()) {
-				String status = typeObject.getAsJsonObject(ID).get("status").getAsString();
-				String [] roomArr = {type,ID,status};
-				ret[i]= roomArr;
-				i++;
+				Room currentRoom = gson.fromJson(typeObject.get(ID), Room.class);
+				roomArrList.add(currentRoom);
 			}
 		}
+		Room[]ret = new Room[roomArrList.size()];
+		int i = 0;
+		for(Room room:roomArrList) {
+			ret[i++]=room;
+		}
+		
 		return ret;
 	}
 	public static void addAddService(String name) throws IOException, ElementAlreadyExistsException {
@@ -398,7 +375,7 @@ public class RoomService {
 
 		for (JsonElement roomJson:roomsJsonArr) {
 			Room room = gson.fromJson(roomJson, Room.class);
-			if(room.getStatus()==RoomStatus.CLEANING) {
+			if(room.getStatus().equals(RoomStatus.CLEANING.getStatus())) {
 				roomArrList.add(room);
 			}
 		}

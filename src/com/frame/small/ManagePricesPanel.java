@@ -369,7 +369,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(RoomService.getAddServicesArr());
 			addTypeBox.setModel(model);
 	    	roomTypeBox.removeAllItems();
-			for(String type: RoomService.getRoomTypesArr()) {
+			for(String type: RoomService.getRoomTypes()) {
 				roomTypeBox.addItem(type);
 			}
 			successLabel.setText("");

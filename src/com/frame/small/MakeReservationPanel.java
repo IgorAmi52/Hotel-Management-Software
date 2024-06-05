@@ -248,7 +248,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			roomTypes = RoomService.getRoomTypesArr();
+			roomTypes = RoomService.getRoomTypes();
 			roomTypeBox.removeAllItems();
 			for (String type: roomTypes) {
 				roomTypeBox.addItem(type);

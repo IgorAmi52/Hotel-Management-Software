@@ -42,8 +42,9 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	private JScrollPane addServiceScrollPane;
 	private JLabel successLabel;
 	private final String[] roomColumnNames = {"Type","Number","Status"};
-	
+	private JComboBox<String> roomTypeBox;
 	private final String[] columnNames = {"Name"};
+	private Room[] rooms;
 	private String[][] roomArr = {};
 	private String[][] roomTypeArr = {};
 	private String[][] addServiceArr = {};
@@ -64,19 +65,8 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	    add(lblNewLabel_1);
 	    
 	    
-		JComboBox<String> roomTypeBox = new JComboBox<String>(new String[] {"No rooms"});
-		try {
-			roomTypeBox.removeAllItems();
-			roomTypeArr = RoomService.getRoomTypes();
-			for(String type: RoomService.getRoomTypesArr()) {
-				roomTypeBox.addItem(type);
-			}
-			roomArr = RoomService.getRooms();
-	    	addServiceArr = RoomService.getAddServices();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		roomTypeBox = new JComboBox<String>(new String[] {"No rooms"});
+	
 		roomTypeBox.setBounds(138, 201, 192, 27);
 	    add(roomTypeBox);
 	    
@@ -104,11 +94,11 @@ public class ManageServicesPanel extends JPanel implements Panel {
         
         deleteRoomButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		String type = (String)roomTable.getValueAt(roomTable.getSelectedRow(), 0);
-        		int ID =Integer.parseInt((String)roomTable.getValueAt(roomTable.getSelectedRow(), 1));
+        		int selectedRow =roomTable.getSelectedRow();
         		try {
-					RoomService.deleteRoom(new Room(type, ID));
-					roomArr = RoomService.getRooms();
+					RoomService.deleteRoom(rooms[selectedRow]);
+					rooms = RoomService.getRooms();
+					roomArr = setRoomData(rooms);
 					roomTable.setModel(new DefaultTableModel(roomArr,roomColumnNames));
 					successLabel.setText("Room deleted!");
 				} catch (IOException e1) {
@@ -271,9 +261,12 @@ public class ManageServicesPanel extends JPanel implements Panel {
         		String name = (String)roomTypeTable.getValueAt(roomTypeTable.getSelectedRow(), 0);
         		try {
 					RoomService.deleteRoomType(name);
-					roomTypeArr = RoomService.getRoomTypes();
 					roomTypeBox.removeAllItems();
-					for(String type: RoomService.getRoomTypesArr()) {
+					roomTypeArr = new String[RoomService.getRoomTypes().length][];
+					int i = 0;
+					for(String type: RoomService.getRoomTypes()) {
+						String[] temp = {type};
+						roomTypeArr[i++]=temp;
 						roomTypeBox.addItem(type);
 					}
 					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
@@ -306,7 +299,8 @@ public class ManageServicesPanel extends JPanel implements Panel {
 					Room room = new Room(roomType, roomID);
 					RoomService.addRoom(room);
 					ContainerService.resetFields(ManageServicesPanel.this);
-					roomArr = RoomService.getRooms();
+					rooms = RoomService.getRooms();
+					roomArr = setRoomData(rooms);
 					roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));
 					successLabel.setText("New Room was successfully added!");
 					//success label
@@ -322,9 +316,12 @@ public class ManageServicesPanel extends JPanel implements Panel {
         		String newType = roomTypeField.getText();
         		try {
 					RoomService.addRoomType(newType);
-					roomTypeArr = RoomService.getRoomTypes();
 					roomTypeBox.removeAllItems();
-					for(String type: RoomService.getRoomTypesArr()) {
+					roomTypeArr = new String[RoomService.getRoomTypes().length][];
+					int i = 0;
+					for(String type: RoomService.getRoomTypes()) {
+						String[] temp = {type};
+						roomTypeArr[i++]=temp;
 						roomTypeBox.addItem(type);
 					}
 					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
@@ -356,14 +353,38 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			roomArr = RoomService.getRooms();
+			roomTypeBox.removeAllItems();
+			roomTypeArr = new String[RoomService.getRoomTypes().length][];
+			int i = 0;
+			for(String type: RoomService.getRoomTypes()) {
+				String[] temp = {type};
+				roomTypeArr[i++]=temp;
+				roomTypeBox.addItem(type);
+			}
+			rooms = RoomService.getRooms();
+			roomArr = setRoomData(rooms);
 			addServiceArr = RoomService.getAddServices();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));
+		roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
 		addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
 		successLabel.setText("");
+	}
+
+	private String[][] setRoomData(Room[] rooms) {
+		String[][] ret = new String[rooms.length][];
+		int i = 0;
+		
+		for(Room room:rooms) {
+			String type =room.getType();
+			String ID = room.getID();
+			String status = room.getStatus();
+			String[] temp = {type,ID,status};
+			ret[i++] = temp;
+		}
+		return ret;
 	}
 }

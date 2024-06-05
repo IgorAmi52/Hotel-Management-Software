@@ -35,14 +35,14 @@ public class PricingService {
 		List<Pricing> pricingArrList = new ArrayList<Pricing>();
 		
 		for(String type: jsonObject.keySet()) {
-			if(isRoom && Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
+			if(isRoom && Arrays.asList(RoomService.getRoomTypes()).contains(type)) {
 				JsonArray roomsArr = jsonObject.getAsJsonArray(type); 
 				for(int i = 0; i < roomsArr.size(); i++) {		
 					Pricing currentPricing = gson.fromJson(roomsArr.get(i), Pricing.class);
 					pricingArrList.add(currentPricing);
 				}
 			}
-			else if(!isRoom && !Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
+			else if(!isRoom && !Arrays.asList(RoomService.getRoomTypes()).contains(type)) {
 				JsonArray addArr = jsonObject.getAsJsonArray(type); 
 				for(int i = 0; i < addArr.size(); i++) {
 					Pricing currentPricing = gson.fromJson(addArr.get(i), Pricing.class);
@@ -157,7 +157,6 @@ public class PricingService {
 				throw new NoPricingException("Missing pricing for "+ service);
 			}
 		}
-
 		return ret;
 	}
 

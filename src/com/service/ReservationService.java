@@ -114,7 +114,7 @@ public class ReservationService {
 			if(DateLabelFormatter.isFirstDateGreater(checkInDate, todaysDate)) {
 				rejectReservation(currentReservation,true);
 			}
-			else if(todaysDate.equals(checkInDate) && room.getStatus()==RoomStatus.AVAILABLE) {
+			else if(todaysDate.equals(checkInDate) && room.getStatus().equals(RoomStatus.AVAILABLE.getStatus())) {
 				retArrList.add(currentReservation);
 			}
 		}
@@ -140,7 +140,7 @@ public class ReservationService {
 			String checkOutDate = currentReservation.getCheckOutDate();
 			Room room = currentReservation.getRoom();
 
-			if(todaysDate.equals(checkOutDate) && room.getStatus()==RoomStatus.BUSY) {
+			if(todaysDate.equals(checkOutDate) && room.getStatus().equals(RoomStatus.BUSY.getStatus())) {
 				retArrList.add(currentReservation);
 			}
 		}

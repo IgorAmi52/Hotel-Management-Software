@@ -32,9 +32,9 @@ public class Room {
 	public String getID() {
 		return String.valueOf(ID);
 	}
-	public RoomStatus getStatus() {
+	public String getStatus() {
 		// TODO Auto-generated method stub
-		return this.status;
+		return this.status.getStatus();
 	}
     @Override
     public boolean equals(Object o) {

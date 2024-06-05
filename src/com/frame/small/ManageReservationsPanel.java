@@ -130,7 +130,6 @@ public class ManageReservationsPanel extends JPanel implements Panel {
         	    int selectedRow = table.getSelectedRow();
         	    Reservation reservation = reservations[selectedRow];
         		 try {
-            	
  	        	    ReservationService.rejectReservation(reservation,false);
  	            	successLabel.setText("Reservation rejected!");
  	            	errorLabel.setText("");
