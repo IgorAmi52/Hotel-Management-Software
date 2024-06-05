@@ -18,6 +18,7 @@ import com.models.User;
 import com.models.enums.ReservationStatus;
 import com.models.enums.RoomStatus;
 import com.service.ContainerService;
+import com.service.DateLabelFormatter;
 import com.service.Holder;
 import com.service.PricingService;
 import com.service.ReservationService;
@@ -41,6 +42,8 @@ import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -195,10 +198,23 @@ public class MakeReservationPanel extends JPanel implements Panel {
         		String checkInDate = checkinDatePicker.getJFormattedTextField().getText();
         		String checkOutDate = checkoutDatePicker.getJFormattedTextField().getText();
         		String roomType =roomTypeBox.getSelectedItem().toString();
-
         		String[] addServiceArr = ContainerService.getSelectedValues(addCheckBoxes);
         		Guest guest = (Guest) Holder.getInstance().getUser();
-           	
+        		
+        		if(checkInDate.isEmpty() || checkOutDate.isEmpty()) {
+        			successLabel.setText("");
+        			errorLabel.setText("Dates are required fields!");
+        			return;
+        		}
+                LocalDate today = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String formattedDate = today.format(formatter);
+                
+        		if(DateLabelFormatter.isFirstDateGreater(formattedDate, checkInDate)) {
+        			successLabel.setText("");
+        			errorLabel.setText("You can't reserve in the past!");
+        			return;
+        		}
         		try {
             		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
  

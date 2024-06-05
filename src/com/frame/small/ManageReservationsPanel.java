@@ -91,6 +91,10 @@ public class ManageReservationsPanel extends JPanel implements Panel {
                     		acceptButton.setEnabled(true);
                     		rejectButton.setEnabled(true);
                       	}
+                      	else {
+                        	acceptButton.setEnabled(false);
+                        	rejectButton.setEnabled(false);
+                      	}
 
                     }
                     else {

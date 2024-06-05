@@ -41,6 +41,7 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	private JScrollPane roomTypeScrollPane;
 	private JScrollPane addServiceScrollPane;
 	private JLabel successLabel;
+	private JLabel errorLabel;
 	private final String[] roomColumnNames = {"Type","Number","Status"};
 	private JComboBox<String> roomTypeBox;
 	private final String[] columnNames = {"Name"};
@@ -130,7 +131,7 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	    successLabel.setForeground(new Color(3, 198, 6));
 	    successLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-	    successLabel.setBounds(6, 26, 988, 16);
+	    successLabel.setBounds(6, 26, 988, 26);
 	    add(successLabel);
 	    
 	    JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
@@ -226,10 +227,17 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	    roomTypeScrollPane.setBounds(436, 391, 267, 177);
         add(roomTypeScrollPane);
         
+        errorLabel = new JLabel("");
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setForeground(new Color(255, 34, 41));
+        errorLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+        errorLabel.setBounds(6, 26, 988, 26);
+        add(errorLabel);
+        
         roomTypeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) { // To prevent multiple events when selection is still being adjusted
+                if (!e.getValueIsAdjusting()) { 
                     int selectedRow = roomTypeTable.getSelectedRow();
                     if (selectedRow != -1) { // If a row is selected
                     	deleteRoomTypeButton.setEnabled(true);
@@ -313,38 +321,50 @@ public class ManageServicesPanel extends JPanel implements Panel {
 	    });
        addRoomTypeButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		String newType = roomTypeField.getText();
-        		try {
-					RoomService.addRoomType(newType);
-					roomTypeBox.removeAllItems();
-					roomTypeArr = new String[RoomService.getRoomTypes().length][];
-					int i = 0;
-					for(String type: RoomService.getRoomTypes()) {
-						String[] temp = {type};
-						roomTypeArr[i++]=temp;
-						roomTypeBox.addItem(type);
-					}
-					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
-	        		successLabel.setText("New Room Type was successfully added!");
-	        		roomTypeField.setText("");
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
+        		String newType = roomTypeField.getText(); // if this empty then and if addService empty error
+        		if(newType.isEmpty()) {
+        			successLabel.setText("");
+        			errorLabel.setText("Room type field can't be empty!");
+        		}
+        		else {
+            		try {
+    					RoomService.addRoomType(newType);
+    					roomTypeBox.removeAllItems();
+    					roomTypeArr = new String[RoomService.getRoomTypes().length][];
+    					int i = 0;
+    					for(String type: RoomService.getRoomTypes()) {
+    						String[] temp = {type};
+    						roomTypeArr[i++]=temp;
+    						roomTypeBox.addItem(type);
+    					}
+    					roomTypeTable.setModel(new DefaultTableModel(roomTypeArr,columnNames));
+    	        		successLabel.setText("New Room Type was successfully added!");
+    	        		roomTypeField.setText("");
+    				} catch (Exception e2) {
+    					e2.printStackTrace();
+    				}
+        		}
         	}
         });
         addAddService.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		String name = serviceNameField.getText();
-	    		try {
-					RoomService.addAddService(name);
-					addServiceArr = RoomService.getAddServices();
-					addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
-					successLabel.setText("New Service was successfully added!");
-					serviceNameField.setText("");
+	    		if(name.isEmpty()) {
+        			successLabel.setText("");
+        			errorLabel.setText("Service name field can't be empty!");
+	    		}
+	    		else {
+	        		try {
+						RoomService.addAddService(name);
+						addServiceArr = RoomService.getAddServices();
+						addServiceTable.setModel(new DefaultTableModel(addServiceArr,columnNames));
+						successLabel.setText("New Service was successfully added!");
+						serviceNameField.setText("");
 
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+	    		}
 	    	}
 	    });
 	}
@@ -365,7 +385,6 @@ public class ManageServicesPanel extends JPanel implements Panel {
 			roomArr = setRoomData(rooms);
 			addServiceArr = RoomService.getAddServices();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));

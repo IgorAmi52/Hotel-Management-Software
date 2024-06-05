@@ -177,21 +177,36 @@ public class RegisterStaffPanel extends JPanel implements Panel {
 					errorLabel.setText("Years Of Experience and level of Education fields must be numbers!");
 					return;
 				}
-
-        		Staff user = new Staff(nameField.getText(), lastnameField.getText(), sexBox.getSelectedItem().toString(), datePicker.getJFormattedTextField().getText(), phoneField.getText(), addressField.getText(), usernameField.getText(), passwordField.getText(), lvlOfEdct, yearsOfXp, Role.getByAssociatedValue(roleBox.getSelectedItem().toString()));
-        		try {
-					AuthService.registerUser(user);
-					ContainerService.resetFields(RegisterStaffPanel.this);
-					errorLabel.setText("");
-					successLabel.setText("New staff member was successfully registered!");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					errorLabel.setText(e1.getMessage());
-				} catch (ElementAlreadyExistsException e1) {
-					// TODO Auto-generated catch block
-					errorLabel.setText(e1.getMessage());
+        		String name = nameField.getText();
+        		String lastName = lastnameField.getText();
+        		String sex = sexBox.getSelectedItem().toString();
+        		String dateOfBirth = datePicker.getJFormattedTextField().getText();
+        		String phone = phoneField.getText();
+        		String address = addressField.getText();
+        		String username = usernameField.getText();
+        		String password = passwordField.getText();
+        		Role role = Role.getByAssociatedValue(roleBox.getSelectedItem().toString());
+         		// Check if any of the fields are empty
+        		if (name.isEmpty() || lastName.isEmpty() || sex.isEmpty() || dateOfBirth.isEmpty() ||
+        		    phone.isEmpty() || address.isEmpty() || username.isEmpty() || password.isEmpty()) {
+					errorLabel.setText("All fields are required!");
 					successLabel.setText("");
-				}
+        		} else {
+        			Staff user = new Staff(name, lastName, sex, dateOfBirth, phone, address, username, password, lvlOfEdct, yearsOfXp, role);
+            		try {
+    					AuthService.registerUser(user);
+    					ContainerService.resetFields(RegisterStaffPanel.this);
+    					errorLabel.setText("");
+    					successLabel.setText("New staff member was successfully registered!");
+    				} catch (IOException e1) {
+    					// TODO Auto-generated catch block
+    					errorLabel.setText(e1.getMessage());
+    				} catch (ElementAlreadyExistsException e1) {
+    					// TODO Auto-generated catch block
+    					errorLabel.setText(e1.getMessage());
+    					successLabel.setText("");
+    				}
+        		}
         	}
         });
 	}

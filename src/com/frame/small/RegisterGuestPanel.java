@@ -133,20 +133,36 @@ public class RegisterGuestPanel extends JPanel implements Panel {
         
         registerButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        
-        		Guest user = new Guest(nameField.getText(), lastnameField.getText(), sexBox.getSelectedItem().toString(), datePicker.getJFormattedTextField().getText(), phoneField.getText(), addressField.getText(), usernameField.getText(), passwordField.getText());
-        		try {
-					AuthService.registerUser(user);
-					ContainerService.resetFields(RegisterGuestPanel.this);
-					errorLabel.setText("");
-					successLabel.setText("New guest was successfully registered!");
-				} catch (IOException e1) {
-					errorLabel.setText(e1.getMessage());
-				} catch (ElementAlreadyExistsException e1) {
-					// TODO Auto-generated catch block
-					errorLabel.setText(e1.getMessage());
+        		String name = nameField.getText();
+        		String lastName = lastnameField.getText();
+        		String sex = sexBox.getSelectedItem().toString();
+        		String dateOfBirth = datePicker.getJFormattedTextField().getText();
+        		String phone = phoneField.getText();
+        		String address = addressField.getText();
+        		String username = usernameField.getText();
+        		String password = passwordField.getText();
+        		
+        		if (name.isEmpty() || lastName.isEmpty() || sex.isEmpty() || dateOfBirth.isEmpty() ||
+        			    phone.isEmpty() || address.isEmpty() || username.isEmpty() || password.isEmpty()) {
+					errorLabel.setText("All fields are required!");
 					successLabel.setText("");
-				}
+					
+        			} else {
+        	      		Guest user = new Guest(name, lastName, sex, dateOfBirth, phone, address, username, password);
+                		try {
+        					AuthService.registerUser(user);
+        					ContainerService.resetFields(RegisterGuestPanel.this);
+        					errorLabel.setText("");
+        					successLabel.setText("New guest was successfully registered!");
+        				} catch (IOException e1) {
+        					errorLabel.setText(e1.getMessage());
+        				} catch (ElementAlreadyExistsException e1) {
+        					// TODO Auto-generated catch block
+        					errorLabel.setText(e1.getMessage());
+        					successLabel.setText("");
+        				}
+        			}
+  
         	}
         });
 	}

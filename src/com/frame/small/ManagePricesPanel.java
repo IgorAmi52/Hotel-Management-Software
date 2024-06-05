@@ -39,7 +39,7 @@ import java.awt.event.ActionEvent;
 public class ManagePricesPanel extends JPanel implements Panel {
 	
 	private JLabel successLabel;
-	private JLabel erroLabel;
+	private JLabel errorLabel;
 	private JTextField roomPriceLabel;
 	private JTextField addPriceLabel;
 	private final String[] bedColumnNames = { "Room Type","Price","From","To" };
@@ -131,12 +131,12 @@ public class ManagePricesPanel extends JPanel implements Panel {
         deleteAddPricingButton.setBounds(877, 295, 117, 29);
         add(deleteAddPricingButton);
         
-        erroLabel = new JLabel("");
-        erroLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        erroLabel.setForeground(new Color(255, 6, 22));
-        erroLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-        erroLabel.setBounds(0, 12, 988, 16);
-        add(erroLabel);
+        errorLabel = new JLabel("");
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setForeground(new Color(255, 6, 22));
+        errorLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        errorLabel.setBounds(0, 12, 988, 16);
+        add(errorLabel);
         
         addAddPriceButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -145,14 +145,19 @@ public class ManagePricesPanel extends JPanel implements Panel {
 				try {
 					price = Double.parseDouble(addPriceLabel.getText());
 				} catch (NumberFormatException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					successLabel.setText("");
+					errorLabel.setText("Price must be a number!");
 					return;
 				}
 				String serviceType = (addTypeBox.getSelectedItem().toString());
 				String fromDate = fromAddDatePicker.getJFormattedTextField().getText();
 				String toDate = toAddDatePicker.getJFormattedTextField().getText();
 				
+				if(fromDate.isEmpty() || toDate.isEmpty()) {
+					successLabel.setText("");
+					errorLabel.setText("Dates are required fields!");
+					return;
+				}
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		try {
         			ContainerService.resetFields(ManagePricesPanel.this);
@@ -161,12 +166,12 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					addArr = setData(addPricings);
         			extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
         			successLabel.setText("Service price successfully added!");
-        			erroLabel.setText("");
+        			errorLabel.setText("");
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				} catch (ElementAlreadyExistsException e1) {
 					successLabel.setText("");
-					erroLabel.setText(e1.getMessage());	
+					errorLabel.setText(e1.getMessage());	
 				}
         	}
         });
@@ -197,7 +202,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					addArr = setData(addPricings);
 					extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
 					successLabel.setText("Extras Pricing succesfully deleted!");
-					erroLabel.setText("");
+					errorLabel.setText("");
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -275,13 +280,19 @@ public class ManagePricesPanel extends JPanel implements Panel {
 				try {
 					price = Double.parseDouble(roomPriceLabel.getText());
 				} catch (NumberFormatException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					successLabel.setText("");
+					errorLabel.setText("Dates are required fields!");
 					return;
 				}
 				String serviceType = (roomTypeBox.getSelectedItem().toString());
 				String fromDate = fromRoomDatePicker.getJFormattedTextField().getText();
 				String toDate = toRoomDatePicker.getJFormattedTextField().getText();
+				
+				if(fromDate.isEmpty() || toDate.isEmpty()) {
+					successLabel.setText("");
+					errorLabel.setText("Price must be a number!");
+					return;
+				}
         		Pricing pricing = new Pricing(serviceType,price,fromDate,toDate);
         		
         		try {
@@ -291,12 +302,12 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					bedArr = setData(bedPricings);
         			bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
         			successLabel.setText("Bed price successfully added!");
-        			erroLabel.setText("");
+        			errorLabel.setText("");
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				} catch (ElementAlreadyExistsException e1) {
 					successLabel.setText("");
-					erroLabel.setText(e1.getMessage());	
+					errorLabel.setText(e1.getMessage());	
 				}
 
         	}
@@ -328,7 +339,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 					bedArr = setData(bedPricings);
 					bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
 					successLabel.setText("Bed Pricing succesfully deleted!");
-					erroLabel.setText("");
+					errorLabel.setText("");
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
