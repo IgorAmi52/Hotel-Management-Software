@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,19 +13,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
+
+import com.exceptions.ElementAlreadyExistsException;
 
 import com.frame.Panel;
 import com.models.Guest;
-import com.models.Staff;
-import com.models.enums.Role;
+
 import com.service.AuthService;
 import com.service.ContainerService;
-import com.service.DateLabelFormatter;
+
 
 public class RegisterGuestPanel extends JPanel implements Panel {
+
+	private static final long serialVersionUID = 1L;
 
 	private JTextField nameField;
 	private JTextField lastnameField;
@@ -142,6 +142,10 @@ public class RegisterGuestPanel extends JPanel implements Panel {
 					successLabel.setText("New guest was successfully registered!");
 				} catch (IOException e1) {
 					errorLabel.setText(e1.getMessage());
+				} catch (ElementAlreadyExistsException e1) {
+					// TODO Auto-generated catch block
+					errorLabel.setText(e1.getMessage());
+					successLabel.setText("");
 				}
         	}
         });

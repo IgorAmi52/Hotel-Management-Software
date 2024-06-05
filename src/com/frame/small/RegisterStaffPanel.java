@@ -1,32 +1,21 @@
 package com.frame.small;
 
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
-import java.text.DateFormatSymbols;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.stream.IntStream;
-
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-
-import org.jdatepicker.DateModel;
-import org.jdatepicker.JDatePicker;
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
+
+import com.exceptions.ElementAlreadyExistsException;
 import com.frame.Panel;
 import com.models.Staff;
 import com.models.enums.Role;
 import com.service.AuthService;
 import com.service.ContainerService;
-import com.service.DateLabelFormatter;
+
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.Color;
@@ -198,6 +187,10 @@ public class RegisterStaffPanel extends JPanel implements Panel {
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					errorLabel.setText(e1.getMessage());
+				} catch (ElementAlreadyExistsException e1) {
+					// TODO Auto-generated catch block
+					errorLabel.setText(e1.getMessage());
+					successLabel.setText("");
 				}
         	}
         });

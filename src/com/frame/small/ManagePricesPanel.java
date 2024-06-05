@@ -5,6 +5,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 
+import com.exceptions.ElementAlreadyExistsException;
 import com.frame.Panel;
 import com.models.Pricing;
 
@@ -38,18 +39,21 @@ import java.awt.event.ActionEvent;
 public class ManagePricesPanel extends JPanel implements Panel {
 	
 	private JLabel successLabel;
+	private JLabel erroLabel;
 	private JTextField roomPriceLabel;
 	private JTextField addPriceLabel;
 	private final String[] bedColumnNames = { "Room Type","Price","From","To" };
 	private final String[] addColumnNames = {"Service Type","Price","From","To"};
 	private String[][] bedArr= {};
+	private Pricing[] bedPricings;
 	private String[][] addArr = {};
+	private Pricing[] addPricings;
 	private JTable bedTable;
 	private JTable extrasTable;
 	private JScrollPane bedScrollPane;
 	private JScrollPane extrasScrollPane;
-	private JComboBox addTypeBox;
-	private JComboBox roomTypeBox;
+	private JComboBox<String> addTypeBox;
+	private JComboBox<String> roomTypeBox;
 	public ManagePricesPanel() {
 		
 		super();
@@ -60,7 +64,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	    successLabel.setForeground(new Color(3, 198, 6));
 	    successLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    successLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-	    successLabel.setBounds(6, 26, 988, 16);
+	    successLabel.setBounds(0, 6, 988, 16);
 	    add(successLabel);
 	    
 		roomPricingDiv();
@@ -69,14 +73,14 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	private void addPricingDiv() {
 		JLabel lblNewLabel = new JLabel("Add Additional Service Pricing:");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		lblNewLabel.setBounds(30, 279, 266, 26);
+		lblNewLabel.setBounds(17, 292, 266, 26);
 		add(lblNewLabel);
 		
 	    JLabel lblNewLabel_1 = new JLabel("Service type:");
 	    lblNewLabel_1.setBounds(70, 330, 97, 16);
 	    add(lblNewLabel_1);
 
-		addTypeBox = new JComboBox(RoomService.getAddServicesArr());
+		addTypeBox = new JComboBox<String>(RoomService.getAddServicesArr());
 		addTypeBox.setBounds(202, 330, 161, 27);
 	    add(addTypeBox);
 	    
@@ -127,6 +131,13 @@ public class ManagePricesPanel extends JPanel implements Panel {
         deleteAddPricingButton.setBounds(877, 295, 117, 29);
         add(deleteAddPricingButton);
         
+        erroLabel = new JLabel("");
+        erroLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        erroLabel.setForeground(new Color(255, 6, 22));
+        erroLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        erroLabel.setBounds(0, 12, 988, 16);
+        add(erroLabel);
+        
         addAddPriceButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//validation 
@@ -146,13 +157,17 @@ public class ManagePricesPanel extends JPanel implements Panel {
         		try {
         			ContainerService.resetFields(ManagePricesPanel.this);
         			PricingService.addPricing(pricing);
-        			addArr = PricingService.getPricing(false);
+					addPricings = PricingService.getPricing(false);  
+					addArr = setData(addPricings);
         			extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
         			successLabel.setText("Service price successfully added!");
-				} catch (Exception e2) {
+        			erroLabel.setText("");
+				} catch (IOException e2) {
 					e2.printStackTrace();
+				} catch (ElementAlreadyExistsException e1) {
+					successLabel.setText("");
+					erroLabel.setText(e1.getMessage());	
 				}
-       
         	}
         });
         extrasTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -178,9 +193,11 @@ public class ManagePricesPanel extends JPanel implements Panel {
         		Pricing pricing = new Pricing(type, price, from, to);
         		try {
 					PricingService.deletePricing(pricing);
-					addArr = PricingService.getPricing(false);  
+					addPricings = PricingService.getPricing(false);  
+					addArr = setData(addPricings);
 					extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
 					successLabel.setText("Extras Pricing succesfully deleted!");
+					erroLabel.setText("");
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -190,7 +207,7 @@ public class ManagePricesPanel extends JPanel implements Panel {
 	private void roomPricingDiv() {
 		JLabel lblNewLabel = new JLabel("Add Room Pricing:");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		lblNewLabel.setBounds(30, 19, 199, 26);
+		lblNewLabel.setBounds(20, 32, 199, 26);
 		add(lblNewLabel);
 		
 	
@@ -270,11 +287,16 @@ public class ManagePricesPanel extends JPanel implements Panel {
         		try {
         			PricingService.addPricing(pricing);
         			ContainerService.resetFields(ManagePricesPanel.this);
-        			bedArr = PricingService.getPricing(true);
+					bedPricings = PricingService.getPricing(true);  
+					bedArr = setData(bedPricings);
         			bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
         			successLabel.setText("Bed price successfully added!");
-				} catch (Exception e2) {
+        			erroLabel.setText("");
+				} catch (IOException e2) {
 					e2.printStackTrace();
+				} catch (ElementAlreadyExistsException e1) {
+					successLabel.setText("");
+					erroLabel.setText(e1.getMessage());	
 				}
 
         	}
@@ -302,24 +324,47 @@ public class ManagePricesPanel extends JPanel implements Panel {
         		Pricing pricing = new Pricing(type, price, from, to);
         		try {
 					PricingService.deletePricing(pricing);
-					bedArr = PricingService.getPricing(true);  
+					bedPricings = PricingService.getPricing(true);  
+					bedArr = setData(bedPricings);
 					bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
 					successLabel.setText("Bed Pricing succesfully deleted!");
+					erroLabel.setText("");
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
         	}
         });
 	}
-	
+	private String[][] setData(Pricing[] pricings) {
+		// TODO Auto-generated method stub
+		String[][] ret = new String[pricings.length][];
+		
+		int i = 0;
+		
+		for(Pricing pricing:pricings) {
+			String type = pricing.getType();
+			String price = Double.toString(pricing.getPrice());
+			String fromDate = pricing.getFromDate();
+			String toDate = pricing.getToDate();
+			
+			String[] temp = {type,price,fromDate,toDate};
+			ret[i++] = temp;
+		}
+		
+		return ret;
+	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
 		try {
-			bedArr = PricingService.getPricing(true);
+			bedPricings = PricingService.getPricing(true);
+			bedArr = setData(bedPricings);
 			bedTable.setModel(new DefaultTableModel(bedArr, bedColumnNames));
-			addArr = PricingService.getPricing(false);
+			
+			addPricings = PricingService.getPricing(false);
+			addArr = setData(addPricings);
 			extrasTable.setModel(new DefaultTableModel(addArr, addColumnNames));
+			
 			addTypeBox.removeAllItems();
 			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(RoomService.getAddServicesArr());
 			addTypeBox.setModel(model);

@@ -66,12 +66,16 @@ public class AuthService {
 		}
 		return new GuestMainPanel();
 	}
-	public static void registerUser(User user) throws IOException {
+	public static void registerUser(User user) throws IOException, ElementAlreadyExistsException {
 		FileReader reader = new FileReader("data/users.json");
 		
 		Gson gson = new Gson();
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 	    reader.close();
+	    
+	    if(jsonObject.has(user.getUserName())) {
+	    	throw new ElementAlreadyExistsException("User with this username already exists!");
+	    }
 	    
 	    jsonObject.add(user.getUserName(), user.getJson());
 	    FileWriter writer = new FileWriter("data/users.json");

@@ -4,11 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.exceptions.ElementAlreadyExistsException;
 import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -23,76 +26,35 @@ public class PricingService {
 	private static FileReader reader;
 	private static FileWriter writer;
 
-	public static String[][] getPricing(Boolean isRoom) throws IOException {
+	public static Pricing[] getPricing(Boolean isRoom) throws IOException {
 		
 		reader = new FileReader("data/pricing.json");
-	
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 		
-		int arrLength = 0;
+		List<Pricing> pricingArrList = new ArrayList<Pricing>();
 		
 		for(String type: jsonObject.keySet()) {
-			if(isRoom) {
-				if(Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
-					arrLength+= jsonObject.getAsJsonArray(type).size();
+			if(isRoom && Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
+				JsonArray roomsArr = jsonObject.getAsJsonArray(type); 
+				for(int i = 0; i < roomsArr.size(); i++) {		
+					Pricing currentPricing = gson.fromJson(roomsArr.get(i), Pricing.class);
+					pricingArrList.add(currentPricing);
 				}
 			}
-			else {
-				if(!Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
-					arrLength+= jsonObject.getAsJsonArray(type).size();}				
-				}		
+			else if(!isRoom && !Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
+				JsonArray addArr = jsonObject.getAsJsonArray(type); 
+				for(int i = 0; i < addArr.size(); i++) {
+					Pricing currentPricing = gson.fromJson(addArr.get(i), Pricing.class);
+					pricingArrList.add(currentPricing);
+				}
+			}
 		}
+		Pricing[] ret = new Pricing[pricingArrList.size()];
 		
-		if(arrLength==0) { //if no items still
-			return new String[0][4];
-		}
-		String[][] ret = new String[arrLength][];
-		int itt = 0;
-		for(String type: jsonObject.keySet()) {
-			if(isRoom) {
-				if(Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
-					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
-					for(int i = 0; i < roomsArr.size(); i++) {
-						
-						String [] priceArr = new String[4];
-						JsonObject priceObject = roomsArr.get(i).getAsJsonObject();
-			
-						String price = priceObject.get("price").getAsString();
-						String fromDate = priceObject.get("fromDate").getAsString();
-						String toDate = priceObject.get("toDate").getAsString();
-						priceArr[0] = type;
-						priceArr[1] = price;
-						priceArr[2] = fromDate;
-						priceArr[3] = toDate;
-						
-						ret[itt] = priceArr;
-						itt++;
-					}
-				}
-
-			}
-			else {
-				if(!Arrays.asList(RoomService.getRoomTypesArr()).contains(type)) {
-					JsonArray roomsArr = jsonObject.getAsJsonArray(type); //Collecting Rooms and object is of type room, or collecting addServices and object not of type room
-					for(int i = 0; i < roomsArr.size(); i++) {
-						
-						String [] priceArr = new String[4];
-						JsonObject priceObject = roomsArr.get(i).getAsJsonObject();
-			
-						String price = priceObject.get("price").getAsString();
-						String fromDate = priceObject.get("fromDate").getAsString();
-						String toDate = priceObject.get("toDate").getAsString();
-						priceArr[0] = type;
-						priceArr[1] = price;
-						priceArr[2] = fromDate;
-						priceArr[3] = toDate;
-						
-						ret[itt] = priceArr;
-						itt++;
-					}
-				}
-			}		
+		int i = 0;
+		for(Pricing pricing: pricingArrList) {
+			ret[i++] = pricing;
 		}
 		return ret;
 	}
@@ -116,7 +78,7 @@ public class PricingService {
         writer.write(gson.toJson(jsonObject));
         writer.close();
 	}
-	public static void addPricing(Pricing pricing) throws IOException {
+	public static void addPricing(Pricing pricing) throws IOException, ElementAlreadyExistsException {
 
 		reader = new FileReader("data/pricing.json");
 
@@ -127,11 +89,22 @@ public class PricingService {
 		
 		if(arr==null) {
 			arr = new JsonArray();
-			jsonObject.add(pricing.getType(), arr);
 		}
-		
+		else {
+			String fromDate = pricing.getFromDate();
+			String toDate = pricing.getToDate();
+			for(int i = 0; i < arr.size(); i++) {
+	            JsonObject current = arr.get(i).getAsJsonObject();
+	            String currentFromDate = current.get("fromDate").getAsString();
+	            String currentToDate = current.get("toDate").getAsString();
+	            
+	            if(DateLabelFormatter.checkIntervalOverlap(fromDate, toDate, currentFromDate, currentToDate)) {
+	            	throw new ElementAlreadyExistsException("Pricing for this service already exists for this time interval!");
+	            }
+			}
+		}
+
 		arr.add(pricing.getJson());
-		
 		jsonObject.add(pricing.getType(), arr);
 
 		FileWriter writer = new FileWriter("data/pricing.json");

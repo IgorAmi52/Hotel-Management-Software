@@ -1,6 +1,5 @@
 package com.service;
 
-import javax.swing.JPanel;
 import com.frame.Frame;
 import com.models.User;
 
@@ -10,7 +9,7 @@ public class Holder {
 	
 	private User user;
 	public Frame frame;
-	private JPanel[] panels; //to be impleemented for hashing
+
 	
 	private Holder(Frame frame) {
 		this.frame = frame;
