@@ -206,11 +206,8 @@ public class MakeReservationPanel extends JPanel implements Panel {
         			errorLabel.setText("Dates are required fields!");
         			return;
         		}
-                LocalDate today = LocalDate.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formattedDate = today.format(formatter);
-                
-        		if(DateLabelFormatter.isFirstDateGreater(formattedDate, checkInDate)) {
+                String todayDate = DateLabelFormatter.getTodaysDateStr();
+        		if(DateLabelFormatter.isFirstDateGreater(todayDate, checkInDate)) {
         			successLabel.setText("");
         			errorLabel.setText("You can't reserve in the past!");
         			return;

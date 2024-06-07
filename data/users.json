@@ -1,1 +1,66 @@
-{"Admin":{"name":"Alice","lastname":"Smith","sex":"Female","dateOfBirth":"1990-05-20","phoneNumber":"+1987654321","address":"456 Elm St, Town, Country","username":"alicesmith","password":"admin","lvlOfEdct":4,"yearsOfXp":8,"salary":75000.50,"role":"ADMIN"},"Guest":{"role":"GUEST","name":"Marko","lastname":"Sladojevic","sex":"Male","dateOfBirth":"2020-05-27","phoneNumber":"+3812312","address":"Novi Sad","username":"Guest","password":"guest"},"Guest1":{"role":"GUEST","name":"Igor","lastname":"Amidzic","sex":"Male","dateOfBirth":"2024-05-09","phoneNumber":"+3911","address":"Novi SAd","username":"Guest1","password":"guest"},"Agent":{"lvlOfEdct":3,"yearsOfXp":4,"salary":0.0,"role":"AGENT","name":"Sofija","lastname":"Amidzic","sex":"Female","dateOfBirth":"2024-05-08","phoneNumber":"+391421","address":"Novi Sad","username":"Agent","password":"agent"},"Cleaner":{"lvlOfEdct":1,"yearsOfXp":4,"salary":0.0,"role":"CLEANER","name":"Sara","lastname":"Radosevic","sex":"Female","dateOfBirth":"2024-06-10","phoneNumber":"aaa","address":"aaa","username":"Cleaner","password":"cleaner"}}
+{
+	"Admin": {
+		"name": "Pera",
+		"lastname": "Peric",
+		"sex": "Male",
+		"dateOfBirth": "1990-05-20",
+		"phoneNumber": "+1987654321",
+		"address": "456 Elm St, Town, Country",
+		"username": "alicesmith",
+		"password": "admin",
+		"lvlOfEdct": 4,
+		"yearsOfXp": 8,
+		"salary": 75000.50,
+		"role": "ADMIN"
+	},
+	"Agent": {
+		"lvlOfEdct": 3,
+		"yearsOfXp": 3,
+		"salary": 0.0,
+		"role": "AGENT",
+		"name": "Mika",
+		"lastname": "Mikic",
+		"sex": "Male",
+		"dateOfBirth": "2016-06-07",
+		"phoneNumber": "+3814123123",
+		"address": "Novi Sad",
+		"username": "Agent",
+		"password": "agent"
+	},
+	"Cleaner": {
+		"lvlOfEdct": 3,
+		"yearsOfXp": 3,
+		"salary": 0.0,
+		"role": "CLEANER",
+		"name": "Jana",
+		"lastname": "Janic",
+		"sex": "Female",
+		"dateOfBirth": "2016-06-05",
+		"phoneNumber": "+383123412",
+		"address": "Novi Sad",
+		"username": "Cleaner",
+		"password": "cleaner"
+	},
+	"Guest1": {
+		"role": "GUEST",
+		"name": "MIlica",
+		"lastname": "Milic",
+		"sex": "Female",
+		"dateOfBirth": "2024-06-04",
+		"phoneNumber": "+38123412",
+		"address": "Novi Sad",
+		"username": "Guest1",
+		"password": "guest"
+	},
+	"Guest2": {
+		"role": "GUEST",
+		"name": "Ana",
+		"lastname": "Anic",
+		"sex": "Female",
+		"dateOfBirth": "2024-06-03",
+		"phoneNumber": "+3812431",
+		"address": "Vrbas",
+		"username": "Guest2",
+		"password": "guest"
+	}
+}

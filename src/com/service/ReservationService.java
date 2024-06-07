@@ -33,9 +33,8 @@ public class ReservationService {
 
 	
 	public static void requestReservation(Reservation reservation) throws IOException {
-		// a lot of checking and validation
+
 		reader = new FileReader("data/reservations.json");
-		
 		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 		reader.close();
 

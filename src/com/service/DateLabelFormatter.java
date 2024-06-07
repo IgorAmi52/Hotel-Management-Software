@@ -35,6 +35,12 @@ public class DateLabelFormatter extends AbstractFormatter {
     	
     	return date.minusDays(1).toString();
     }
+    public static String nextDate(String dateStr) {
+    	LocalDate date = LocalDate.parse(dateStr);
+    	
+    	return date.plusDays(1).toString();
+    }
+  
     public static boolean checkIntervalOverlap(String startDate1, String endDate1, String startDate2, String endDate2) {
         // Parse dates
         LocalDate start1 = LocalDate.parse(startDate1);
