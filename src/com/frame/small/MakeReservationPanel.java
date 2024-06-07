@@ -212,6 +212,11 @@ public class MakeReservationPanel extends JPanel implements Panel {
         			errorLabel.setText("You can't reserve in the past!");
         			return;
         		}
+        		if(checkInDate.equals(checkOutDate)) {
+        			successLabel.setText("");
+        			errorLabel.setText("Check-in and check-out must be different!");
+        			return;
+        		}
         		try {
             		Reservation reservation = new Reservation(checkInDate, checkOutDate, roomType, addServiceArr, guest);
  

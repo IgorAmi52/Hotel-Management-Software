@@ -256,6 +256,7 @@ public class ReservationService {
 			if(reservation.equals(currenctReservation)) {
 				confirmedArr.remove(i);
 				reservation.addAddServices(addServices);
+
 				reservation.setPricing(PricingService.calculatePricing(reservation));
 				// add pricing
 				confirmedArr.add(reservation.getJson());
