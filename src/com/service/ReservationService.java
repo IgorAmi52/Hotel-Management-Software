@@ -94,6 +94,8 @@ public class ReservationService {
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();
+        
+        ReportsService.reservationCancelled();
 	}
 	public static Reservation[] getTodaysCheckInReservations() throws IOException{
 		
@@ -209,6 +211,8 @@ public class ReservationService {
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();
+        
+        ReportsService.reservationConfirmed(reservation);
 	}
 	
 	public static void rejectReservation(Reservation reservation, Boolean isDated) throws IOException {
@@ -236,6 +240,8 @@ public class ReservationService {
         writer = new FileWriter("data/reservations.json");
         writer.write(gson.toJson(jsonObject));
         writer.close();
+        
+        ReportsService.reservationRejected();
 	}
 	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException, NoPricingException {
 		reader = new FileReader("data/reservations.json");

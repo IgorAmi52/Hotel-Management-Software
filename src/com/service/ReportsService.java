@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.util.Set;
 
+import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.Reservation;
@@ -18,7 +19,7 @@ public class ReportsService {
 	private static FileReader reader;
 	private static FileWriter writer;
 
-	public static void reservationConfirmed(Reservation reservation, double roomPrice) throws IOException {
+	public static void reservationConfirmed(Reservation reservation) throws IOException {
 
 		createMissingReports(reservation.getCheckOutDate());
 
@@ -30,7 +31,6 @@ public class ReportsService {
 		
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		todaysJson.addProperty("Confirmed", todaysJson.get("Confirmed").getAsInt()+1);
-		
 		jsonObject.add(todaysDate, todaysJson);
 		
 		Room room = reservation.getRoom();
@@ -45,6 +45,7 @@ public class ReportsService {
 		for(String currentDate: missingDatesSet) {
 			JsonObject currentJson = jsonObject.getAsJsonObject(currentDate);
 			
+			double roomPrice = PricingService.getRoomPricingForDate(room, currentDate);
 			currentJson.getAsJsonObject("rooms").addProperty(roomID, roomPrice);
 			
 			if(currentJson.getAsJsonObject("roomTypes").has(roomType)) {

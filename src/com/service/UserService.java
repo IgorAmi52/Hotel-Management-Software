@@ -68,5 +68,13 @@ public class UserService {
 		
 		return guest;
 	}
-
+	public static Staff getStaff(String username) throws IOException{
+		reader = new FileReader("data/users.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		Staff staff = gson.fromJson(jsonObject.getAsJsonObject(username), Staff.class);
+		
+		return staff;
+	}
 }

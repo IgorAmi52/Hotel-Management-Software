@@ -297,7 +297,7 @@ public class RoomService {
 		
 
 		Map<String, Integer> cleaners = new HashMap<>();
-
+	
 		for(String username: jsonObject.keySet()) {
 			String role = jsonObject.getAsJsonObject(username).get("role").getAsString();
 			if(role.equals(Role.CLEANER.toString())) {
@@ -310,6 +310,7 @@ public class RoomService {
 		reader.close();
 	
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		Staff selectedCleaner;
 		
 		if(!jsonObject.has(todaysDate)) { // no cleaning today
 			JsonObject cleaningObj = new JsonObject();
@@ -318,7 +319,7 @@ public class RoomService {
 	        Random random = new Random();
 	        int randomIndex = random.nextInt(keys.size());
 	        String randomCleaner = keys.get(randomIndex);
-	        
+	        selectedCleaner = UserService.getStaff(randomCleaner);
 			JsonArray rooms = new JsonArray();
 			
 			rooms.add(room.getJson());
@@ -350,11 +351,15 @@ public class RoomService {
 			rooms.add(room.getJson());
 			cleaningObj.add(cleaner, rooms);
 			jsonObject.add(todaysDate, cleaningObj);
+			
+			selectedCleaner = UserService.getStaff(cleaner);
     
 		}
 		writer = new FileWriter("data/cleaning.json");
 		writer.write(new Gson().toJson(jsonObject));
 		writer.close();
+		
+		ReportsService.cleaningAssigned(selectedCleaner);
 	}
 	public static Room[] getCleanersRooms(User cleaner) throws IOException {
 		reader = new FileReader("data/cleaning.json");

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.service.DateLabelFormatter;
 
 public class Pricing {
 	
@@ -37,6 +38,12 @@ public class Pricing {
 	}
 	public Double getPrice() {
 		return this.price;
+	}
+	public boolean inInterval(String date) {
+		if(DateLabelFormatter.isFirstDateGreater(fromDate, date) || DateLabelFormatter.isFirstDateGreater(date, toDate)) {
+			return false;
+		}
+		return true;
 	}
     @Override
     public boolean equals(Object o) {

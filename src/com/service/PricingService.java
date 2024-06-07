@@ -19,6 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Pricing;
 import com.models.Reservation;
+import com.models.Room;
 
 public class PricingService {
 	
@@ -158,6 +159,23 @@ public class PricingService {
 			}
 		}
 		return ret;
+	}
+	public static double getRoomPricingForDate(Room room, String date) throws IOException {
+		reader = new FileReader("data/pricing.json");
+		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		reader.close();
+		
+		String roomType = room.getType();
+		
+		JsonArray roomJsonArr = jsonObject.getAsJsonArray(roomType);
+		
+		for(JsonElement pricing: roomJsonArr) {
+			Pricing currentPricing = gson.fromJson(pricing, Pricing.class);
+			if(currentPricing.inInterval(date)) {
+				return currentPricing.getPrice();
+			}
+		}
+		return 0; //not reachable
 	}
 
 }
