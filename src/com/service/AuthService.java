@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.models.Guest;
 import com.models.User;
 import com.models.Staff;
+import com.models.enums.DataTypes;
 import com.models.enums.Role;
 
 public class AuthService {
@@ -25,12 +26,9 @@ public class AuthService {
 	private static Gson gson = new Gson();
 	
 	public static User login(String username, String password) throws IOException, BadLoginException { 
-	
-		FileReader reader = new FileReader("data/users.json"); 
 		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-	    reader.close();
-	    
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+	   
 	    if(jsonObject.has(username)) {	
 	    	JsonObject userObject = jsonObject.get(username).getAsJsonObject();
 	    	String pass = userObject.get("password").getAsString();
@@ -67,20 +65,15 @@ public class AuthService {
 		return new GuestMainPanel();
 	}
 	public static void registerUser(User user) throws IOException, ElementAlreadyExistsException {
-		FileReader reader = new FileReader("data/users.json");
 		
-		Gson gson = new Gson();
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-	    reader.close();
-	    
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		
 	    if(jsonObject.has(user.getUserName())) {
 	    	throw new ElementAlreadyExistsException("User with this username already exists!");
 	    }
 	    
 	    jsonObject.add(user.getUserName(), user.getJson());
-	    FileWriter writer = new FileWriter("data/users.json");
-	    writer.write(new Gson().toJson(jsonObject));
-	    writer.close();
+	    DataAccessService.setData(DataTypes.USERS, jsonObject);
 	}
 	
 }

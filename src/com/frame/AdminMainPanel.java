@@ -14,6 +14,7 @@ import com.frame.small.ManageServicesPanel;
 import com.frame.small.ManageStaffPanel;
 import com.frame.small.RegisterGuestPanel;
 import com.frame.small.RegisterStaffPanel;
+import com.frame.small.ReportsPanel;
 import com.service.ContainerService;
 
 import javax.swing.JSplitPane;
@@ -29,13 +30,15 @@ public class AdminMainPanel extends JTabbedPane {
 		Panel manageStaffPanel = new ManageStaffPanel();
 		Panel managePricesPanel = new ManagePricesPanel();
 		Panel manageServicePanel =  new ManageServicesPanel();
-		
+		Panel reportsPanel = new ReportsPanel();
 		addTab("Home", (Component) homePanel);
 		addTab("Register Staff",(Component)  registerStaffPanel);
 		addTab("Register Guest",(Component) registerGuestPanel);
 		addTab("Manage Staff",(Component)  manageStaffPanel);
-		addTab("Manage Pricing",(Component)  managePricesPanel);
 		addTab("Manage Service/Rooms",(Component)  manageServicePanel);
+		addTab("Manage Pricing",(Component)  managePricesPanel);
+		addTab("Reports",(Component)  reportsPanel);
+		
 		addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

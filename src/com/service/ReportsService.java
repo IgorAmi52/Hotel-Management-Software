@@ -12,21 +12,17 @@ import com.google.gson.JsonObject;
 import com.models.Reservation;
 import com.models.Room;
 import com.models.Staff;
+import com.models.enums.DataTypes;
 
 public class ReportsService {
 	
 	private static Gson gson = new Gson();
-	private static FileReader reader;
-	private static FileWriter writer;
-
+	
 	public static void reservationConfirmed(Reservation reservation) throws IOException {
 
 		createMissingReports(reservation.getCheckOutDate());
 
-		reader = new FileReader("data/reports.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
@@ -56,57 +52,44 @@ public class ReportsService {
 				currentJson.getAsJsonObject("roomTypes").addProperty(roomType,roomPrice);
 			}
 			jsonObject.add(currentDate, currentJson);
-		}
-		
-        writer = new FileWriter("data/reports.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
+		}	
+		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
+	
 	public static void reservationCancelled() throws IOException {
 		
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		reader = new FileReader("data/reports.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
-		todaysJson.addProperty("Cancelled", todaysJson.get("Cancelled").getAsInt()+1);
 		
+		todaysJson.addProperty("Cancelled", todaysJson.get("Cancelled").getAsInt()+1);		
 		jsonObject.add(todaysDate, todaysJson);
 		 
-		writer = new FileWriter("data/reports.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
+		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
+	
 	public static void reservationRejected() throws IOException {
 		
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		reader = new FileReader("data/reports.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		todaysJson.addProperty("Rejected", todaysJson.get("Rejected").getAsInt()+1);
 		
 		jsonObject.add(todaysDate, todaysJson);
 		 
-		writer = new FileWriter("data/reports.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
+		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
+	
 	public static void cleaningAssigned(Staff cleaner) throws IOException {
 		
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		reader = new FileReader("data/reports.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		JsonObject cleanersJson = todaysJson.getAsJsonObject("cleaners");
 		
@@ -122,20 +105,14 @@ public class ReportsService {
 		todaysJson.add("cleaners", cleanersJson);
 		jsonObject.add(todaysDate, todaysJson);
 		
-        writer = new FileWriter("data/reports.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
-        
+		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
+	
 	public static void createMissingReports(String lastDate) throws IOException {
 		
-		reader = new FileReader("data/reports.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
 		String lastDateCreated = jsonObject.get("lastDate").getAsString();
 
-		
 		if(!DateLabelFormatter.isFirstDateGreater(lastDate, lastDateCreated)) {
 			return;
 		}
@@ -154,9 +131,6 @@ public class ReportsService {
         }
         jsonObject.addProperty("lastDate", lastDate);
         
-        writer = new FileWriter("data/reports.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
- 
+       DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 }

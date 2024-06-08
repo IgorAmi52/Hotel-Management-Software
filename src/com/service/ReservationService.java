@@ -18,6 +18,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.User;
+import com.models.enums.DataTypes;
 import com.models.enums.ReservationStatus;
 import com.models.enums.Role;
 import com.models.enums.RoomStatus;
@@ -28,29 +29,16 @@ import com.models.Room;
 public class ReservationService {
 	
 	private static Gson gson = new Gson();
-	private static FileReader reader;
-	private static FileWriter writer;
-
 	
 	public static void requestReservation(Reservation reservation) throws IOException {
-
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
  		jsonObject.get(reservation.getStatus()).getAsJsonArray().add(reservation.getJson());
-		writer = new FileWriter("data/reservations.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
-		
+		DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	}
+	
 	public static Reservation[] getReservations(User user) throws IOException{
 		
-		reader = new FileReader("data/reservations.json");
-	
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject();
-		reader.close();
-
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		Role role = user.getRole();
 		List<Reservation> resArrayList = new ArrayList<Reservation>();
 		
@@ -72,10 +60,8 @@ public class ReservationService {
 		return ret;
 	}
 	public static void cancelReservation(Reservation reservation) throws IOException {
-		reader = new FileReader("data/reservations.json");
-
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray arrPending = jsonObject.getAsJsonArray("Pending");
 		JsonArray arrCancelled = jsonObject.getAsJsonArray("Cancelled");
         for (int i = 0; i < arrPending.size(); i++) {
@@ -91,18 +77,15 @@ public class ReservationService {
         }
         jsonObject.add("Pending", arrPending);
         jsonObject.add("Cancelled", arrCancelled);
-        writer = new FileWriter("data/reservations.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
         
+        DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationCancelled();
 	}
+	
 	public static Reservation[] getTodaysCheckInReservations() throws IOException{
 		
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
-		reader.close();
 		
 		ArrayList<Reservation> retArrList = new ArrayList<Reservation>();
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
@@ -128,10 +111,8 @@ public class ReservationService {
 	}
 	public static Reservation[] getTodaysCheckOutReservations() throws IOException{
 		
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
-		reader.close();
 		
 		ArrayList<Reservation> retArrList = new ArrayList<Reservation>();
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
@@ -153,10 +134,8 @@ public class ReservationService {
 		return ret;
 	}
 	public static void proccessReservation(Reservation reservation) throws IOException, NoRoomAvailableException{
-		reader = new FileReader("data/rooms.json");
-
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
 		JsonObject roomsObject = jsonObject.getAsJsonObject("rooms");
 		
 		if (!roomsObject.has(reservation.getRoomType())){
@@ -165,14 +144,10 @@ public class ReservationService {
 		JsonObject typeObject = roomsObject.getAsJsonObject(reservation.getRoomType());
 		Set<String> ids = typeObject.keySet();
 		
-		
-		reader = new FileReader("data/reservations.json");
-		jsonObject = gson.fromJson(reader, JsonObject.class);
+		jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		JsonArray pendingArr = jsonObject.getAsJsonArray("Pending");
-		reader.close();
-		
-		
+
 		for(int i = 0; i < confirmedArr.size();i++) {
 			JsonObject currentReservation = confirmedArr.get(i).getAsJsonObject();
 			Room currentRoom = gson.fromJson(currentReservation.getAsJsonObject("room"), Room.class);
@@ -208,23 +183,20 @@ public class ReservationService {
 		confirmedArr.add(reservation.getJson());
         jsonObject.add("Pending", pendingArr);
         jsonObject.add("Confirmed", confirmedArr);
-        writer = new FileWriter("data/reservations.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
         
+        DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationConfirmed(reservation);
 	}
 	
 	public static void rejectReservation(Reservation reservation, Boolean isDated) throws IOException {
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray rejectedArr = jsonObject.getAsJsonArray("Rejected");
 		String resStageStr = "Pending";
 		if(isDated) {
 			resStageStr = "Confirmed";
 		}
 		JsonArray loopArr = jsonObject.getAsJsonArray(resStageStr);
-		reader.close();
 	
 		for(int i=0;i<loopArr.size();i++) {
 			Reservation currentReservation = gson.fromJson(loopArr.get(i), Reservation.class);
@@ -237,18 +209,15 @@ public class ReservationService {
 		rejectedArr.add(reservation.getJson());
 		jsonObject.add(resStageStr, loopArr);
 		jsonObject.add("Rejected", rejectedArr);
-        writer = new FileWriter("data/reservations.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
-        
+		
+	    DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationRejected();
 	}
 	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException, NoPricingException {
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 
-		reader.close();
 		for(int i=0; i<confirmedArr.size();i++) {
 			Reservation currenctReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
 			Room room = currenctReservation.getRoom();
@@ -264,17 +233,14 @@ public class ReservationService {
 			}
 		}
 		jsonObject.add("Confirmed", confirmedArr);
-        writer = new FileWriter("data/reservations.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
-	
+	    DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	}
 	public static void archiveReservation(Reservation reservation) throws IOException {
-		reader = new FileReader("data/reservations.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		JsonArray archiveArr = jsonObject.getAsJsonArray("Archive");
-		reader.close();
+
 		for(int i=0; i<confirmedArr.size();i++) {
 			Reservation currenctReservation = gson.fromJson(confirmedArr.get(i), Reservation.class);
 			if(reservation.equals(currenctReservation)) {
@@ -285,9 +251,7 @@ public class ReservationService {
 		archiveArr.add(reservation.getJson());
 		jsonObject.add("Confirmed", confirmedArr);
 		jsonObject.add("Archive", archiveArr);
-        writer = new FileWriter("data/reservations.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
+		DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	
 	}
 }

@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.models.Room;
 import com.models.Staff;
 import com.models.User;
+import com.models.enums.DataTypes;
 import com.models.enums.Role;
 import com.models.enums.RoomStatus;
 
@@ -30,22 +31,16 @@ public class RoomService {
 
 	
 	public static int getNextRoomID() throws IOException {
-		
-		reader = new FileReader("data/rooms.json");
-		
-		int nextID = gson.fromJson(reader, JsonObject.class).getAsJsonPrimitive("next ID").getAsInt();
-		reader.close();
-		
+
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		int nextID = jsonObject.getAsJsonPrimitive("next ID").getAsInt();
 		return nextID;
 	}
 
 
 	public static void addRoom(Room room) throws IOException {
 		
-		reader = new FileReader("data/rooms.json");
-		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
         if (jsonObject.getAsJsonObject("rooms").has(room.getType())) {
             // Room type exists, add the new room to the existing type
         	jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
@@ -58,66 +53,41 @@ public class RoomService {
 		int nextID = getNextRoomID()+1;
 		jsonObject.addProperty("next ID", nextID);
 		
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
 	}
 	public static void deleteRoom(Room room) throws IOException {
-	reader = new FileReader("data/rooms.json");
-		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
-		JsonObject roomObj = room.getJson();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).remove(room.getID());
-		
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
-		
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
+	
 	public static void addRoomType(String type)throws IOException{
-		reader = new FileReader("data/rooms.json");
-		
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
 		jsonObject.get("roomTypes").getAsJsonArray().add(type);
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
-		
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 
 	public static void deleteRoomType(String name) throws IOException {
 		
-		reader = new FileReader("data/rooms.json");
-		JsonObject jsonObj = gson.fromJson(reader, JsonObject.class);
-		JsonArray jsonArr = jsonObj.getAsJsonArray("roomTypes");
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonArray jsonArr = jsonObject.getAsJsonArray("roomTypes");
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
 			JsonElement element = jsonArr.get(i);
 	        String elementString = element.getAsString();
 	        
 	        if (elementString.equals(name)) {
-	        	jsonObj.getAsJsonArray("roomTypes").remove(element);
+	        	jsonObject.getAsJsonArray("roomTypes").remove(element);
 	          break;
 	        }
 		}
-		
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObj));
-		writer.close();
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static String[] getRoomTypes() throws IOException {
-		reader = new FileReader("data/rooms.json");
 		
-
-		JsonArray jsonArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("roomTypes");
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonArray jsonArray = jsonObject.getAsJsonArray("roomTypes");
 		
         String[]roomTypes = new String[jsonArray.size()];
 
@@ -131,10 +101,7 @@ public class RoomService {
 
 	public static Room[] getRooms() throws IOException{
 		
-		reader = new FileReader("data/rooms.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class).getAsJsonObject("rooms");
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
 		List<Room> roomArrList = new ArrayList<Room>();
 
 		for(String type: jsonObject.keySet()) {
@@ -153,12 +120,10 @@ public class RoomService {
 		return ret;
 	}
 	public static void addAddService(String name) throws IOException, ElementAlreadyExistsException {
-		reader = new FileReader("data/addServices.json");
 		
-		JsonObject jsonObj = gson.fromJson(reader, JsonObject.class);
-		JsonArray jsonArr = jsonObj.getAsJsonArray("services");
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
+
 		//check if already exists
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
@@ -167,42 +132,32 @@ public class RoomService {
 		          throw new ElementAlreadyExistsException("This service already exists in the database!");
 			}
 		}
-		jsonObj.getAsJsonArray("services").add(name);
-		
-		
-		writer = new FileWriter("data/addServices.json");
-		writer.write(new Gson().toJson(jsonObj));
-		writer.close();
+		jsonObject.getAsJsonArray("services").add(name);
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
+	
 	public static void deleteAddService(String name) throws IOException {
 		
-		reader = new FileReader("data/addServices.json");
-		JsonObject jsonObj = gson.fromJson(reader, JsonObject.class);
-		JsonArray jsonArr = jsonObj.getAsJsonArray("services");
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ADD_SERVICES);
+		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
 			JsonElement element = jsonArr.get(i);
 	        String elementString = element.getAsString();
 	        
 	        if (elementString.equals(name)) {
-	        	jsonObj.getAsJsonArray("services").remove(element);
+	        	jsonObject.getAsJsonArray("services").remove(element);
 	          break;
 	        }
 		}
-		
-		writer = new FileWriter("data/addServices.json");
-		writer.write(new Gson().toJson(jsonObj));
-		writer.close();
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static String[][] getAddServices() throws IOException{
-	reader = new FileReader("data/addServices.json");
 		
-		JsonArray jsonArr = gson.fromJson(reader, JsonObject.class).getAsJsonArray("services");
-		
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ADD_SERVICES);
+		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
+
 		String[][] ret = new String [jsonArr.size()][];
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
@@ -229,45 +184,32 @@ public class RoomService {
 		return ret;
  	}
 	public static void checkInRoom(Room room) throws IOException {
-		reader = new FileReader("data/rooms.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
 		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
 		room.changeStatus(RoomStatus.BUSY);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
 	}
 	public static void checkOutRoom(Room room) throws IOException {
-		reader = new FileReader("data/rooms.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
 		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+
 		room.changeStatus(RoomStatus.CLEANING);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
 		
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
 		assignCleaner(room);
 	}
+	
 	public static void cleanRoom(Room room, User cleaner) throws IOException {
-		reader = new FileReader("data/rooms.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+
 		room.changeStatus(RoomStatus.AVAILABLE);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
 		
-		writer = new FileWriter("data/rooms.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
+		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
 		
-		reader = new FileReader("data/cleaning.json");
-		jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-
+		jsonObject = DataAccessService.getData(DataTypes.CLEANING);
 		JsonArray cleanerArr = jsonObject.getAsJsonArray(cleaner.getUserName());
 		
 		for(int i = 0; i < cleanerArr.size();i++) {
@@ -279,16 +221,12 @@ public class RoomService {
 		}
 		jsonObject.add(cleaner.getUserName(), cleanerArr);
 		
-		writer = new FileWriter("data/cleaning.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
+		DataAccessService.setData(DataTypes.CLEANING, jsonObject);
 		
 	}
 	private static void assignCleaner(Room room) throws IOException {
-		reader = new FileReader("data/users.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
 		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
 
 		Map<String, Integer> cleaners = new HashMap<>();
 	
@@ -299,9 +237,7 @@ public class RoomService {
 				cleaners.put(cleaner.getUserName(), 0);
 			}
 		}
-		reader = new FileReader("data/cleaning.json");
-		jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		jsonObject = DataAccessService.getData(DataTypes.CLEANING);
 
 		Staff selectedCleaner;
 		
@@ -326,22 +262,17 @@ public class RoomService {
         }
         selectedCleaner = UserService.getStaff(cleaner);
 
-		writer = new FileWriter("data/cleaning.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
-		
+		DataAccessService.setData(DataTypes.CLEANING, jsonObject);
 		ReportsService.cleaningAssigned(selectedCleaner);
 	}
 	
 	public static Room[] getCleanersRooms(User cleaner) throws IOException {
-		reader = new FileReader("data/cleaning.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-				
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.CLEANING);
+
 		if(!jsonObject.has(cleaner.getUserName())) {
 			return new Room[0];
 		}
-
 		JsonArray roomsJsonArr = jsonObject.getAsJsonArray(cleaner.getUserName());
 		
 		List<Room> roomArrList = new ArrayList<Room>();

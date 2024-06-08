@@ -1,14 +1,9 @@
 package com.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.exceptions.ElementAlreadyExistsException;
@@ -20,18 +15,15 @@ import com.google.gson.JsonObject;
 import com.models.Pricing;
 import com.models.Reservation;
 import com.models.Room;
+import com.models.enums.DataTypes;
 
 public class PricingService {
 	
 	private static Gson gson = new Gson();
-	private static FileReader reader;
-	private static FileWriter writer;
 
 	public static Pricing[] getPricing(Boolean isRoom) throws IOException {
 		
-		reader = new FileReader("data/pricing.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
 		
 		List<Pricing> pricingArrList = new ArrayList<Pricing>();
 		
@@ -60,11 +52,10 @@ public class PricingService {
 		return ret;
 	}
 	public static void deletePricing(Pricing pricing) throws IOException{
-		reader = new FileReader("data/pricing.json");
-
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
 		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
+		
         for (int i = 0; i < arr.size(); i++) {
             JsonObject current = arr.get(i).getAsJsonObject();
             Pricing currentPricing = gson.fromJson(current, Pricing.class);
@@ -75,17 +66,11 @@ public class PricingService {
             }
         }
         jsonObject.add(pricing.getType(), arr);
-        writer = new FileWriter("data/pricing.json");
-        writer.write(gson.toJson(jsonObject));
-        writer.close();
+        DataAccessService.setData(DataTypes.PRICING, jsonObject);
 	}
 	public static void addPricing(Pricing pricing) throws IOException, ElementAlreadyExistsException {
 
-		reader = new FileReader("data/pricing.json");
-
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
 		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
 		
 		if(arr==null) {
@@ -108,9 +93,7 @@ public class PricingService {
 		arr.add(pricing.getJson());
 		jsonObject.add(pricing.getType(), arr);
 
-		FileWriter writer = new FileWriter("data/pricing.json");
-		writer.write(new Gson().toJson(jsonObject));
-		writer.close();
+        DataAccessService.setData(DataTypes.PRICING, jsonObject);
 		
 	}
 	public static Double calculatePricing(Reservation reservation) throws IOException, NoPricingException {
@@ -128,9 +111,7 @@ public class PricingService {
 			services[++i] = service;
 		}
 		
-		reader = new FileReader("data/pricing.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
 		
 		for(String service:services) {
 			if(!jsonObject.has(service)) {
@@ -161,10 +142,8 @@ public class PricingService {
 		return ret;
 	}
 	public static double getRoomPricingForDate(Room room, String date) throws IOException {
-		reader = new FileReader("data/pricing.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
 		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
 		String roomType = room.getType();
 		
 		JsonArray roomJsonArr = jsonObject.getAsJsonArray(roomType);
@@ -177,5 +156,4 @@ public class PricingService {
 		}
 		return 0; //not reachable
 	}
-
 }

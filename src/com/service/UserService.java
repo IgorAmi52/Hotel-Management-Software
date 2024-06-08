@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.models.Guest;
 import com.models.Staff;
 import com.models.User;
+import com.models.enums.DataTypes;
 import com.models.enums.Role;
 
 public class UserService {
@@ -22,10 +23,7 @@ public class UserService {
 	
 	public static Staff[] getStaff() throws IOException {
 
-		reader = new FileReader("data/users.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
 	    List<Staff> staffArrList = new ArrayList<Staff>();
 
 	    for(String username: jsonObject.keySet()) {
@@ -47,32 +45,21 @@ public class UserService {
 
 	public static void deleteUser(User user) throws IOException {
 	
-		reader = new FileReader("data/users.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
 		String username = user.getUserName();
 	    jsonObject.remove(username);
 	    
-	    writer = new FileWriter("data/users.json");
-	    writer.write(new Gson().toJson(jsonObject));
-	    writer.close();
+	    DataAccessService.setData(DataTypes.USERS, jsonObject);
 	}
 	
 	public static Guest getGuest(String username) throws IOException{
-		reader = new FileReader("data/users.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
 		Guest guest = gson.fromJson(jsonObject.getAsJsonObject(username), Guest.class);
 		
 		return guest;
 	}
 	public static Staff getStaff(String username) throws IOException{
-		reader = new FileReader("data/users.json");
-		JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-		reader.close();
-		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
 		Staff staff = gson.fromJson(jsonObject.getAsJsonObject(username), Staff.class);
 		
 		return staff;
