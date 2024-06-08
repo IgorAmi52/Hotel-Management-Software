@@ -101,7 +101,7 @@ public class RoomService {
 
 	public static Room[] getRooms() throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
 		List<Room> roomArrList = new ArrayList<Room>();
 
 		for(String type: jsonObject.keySet()) {
