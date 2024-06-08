@@ -3,7 +3,8 @@ package com.service;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import com.exceptions.NoPricingException;
@@ -16,8 +17,106 @@ import com.models.enums.DataTypes;
 
 public class ReportsService {
 	
-	private static Gson gson = new Gson();
+	private String fromDate;
+	private String toDate;
+	private int confirmedNumber = 0;
+	private int cancelledNumber = 0;
+	private int rejectedNumber = 0;
+	private HashMap<String, Integer> cleaners = new HashMap<String, Integer>();
+	private HashMap<String, double[]> rooms = new HashMap<String, double[]>();
 	
+	private void setData() throws IOException {
+		
+		this.confirmedNumber = 0;
+		this.cancelledNumber = 0;
+		this.rejectedNumber = 0;
+		this.cleaners.clear();
+		this.rooms.clear();
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		Set<String> dateRange = DateLabelFormatter.getDateRange(this.fromDate, this.toDate);
+		
+		for(String date: jsonObject.keySet()) {
+			if(dateRange.isEmpty()) {
+				break;
+			}
+			if(dateRange.contains(date)) {
+				dateRange.remove(date);
+				JsonObject dateObject = jsonObject.getAsJsonObject(date);
+				this.confirmedNumber += dateObject.get("Confirmed").getAsInt();
+				this.cancelledNumber += dateObject.get("Cancelled").getAsInt();
+				this.rejectedNumber += dateObject.get("Rejected").getAsInt();
+				
+				JsonObject roomsObject = dateObject.getAsJsonObject("rooms");
+				
+				for(String room: roomsObject.keySet()) {
+					double price = roomsObject.get(room).getAsDouble();
+					if(rooms.containsKey(room)) {
+						double[] values = rooms.get(room);
+						values[0]++;
+						values[1]+= price;
+						rooms.put(room, values);
+					}
+					else {
+						double[] values = {1,price};
+						rooms.put(room, values);
+					}
+				}
+				JsonObject cleanersObject = dateObject.getAsJsonObject("cleaners");
+				
+				for(String cleaner: cleanersObject.keySet()) {
+					if(cleaners.containsKey(cleaner)) {
+						Integer value = cleaners.get(cleaner) + cleanersObject.get(cleaner).getAsInt();
+						cleaners.put(cleaner, value);
+					}
+					else {
+						cleaners.put(cleaner, cleanersObject.get(cleaner).getAsInt());
+					}
+				}
+			}
+		}
+	}
+	
+	public int getConfirmedNumber(String fromDate, String toDate) throws IOException {
+		if(!this.fromDate.equals(toDate) || !this.toDate.equals(toDate)){
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			setData();
+		}
+		return confirmedNumber;
+	}
+	public int getCancelledNumber(String fromDate, String toDate) throws IOException {
+		if(!this.fromDate.equals(toDate) || !this.toDate.equals(toDate)){
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			setData();
+		}
+		return cancelledNumber;
+	}
+	public int getRejectedNumber(String fromDate, String toDate) throws IOException {
+		if(!this.fromDate.equals(toDate) || !this.toDate.equals(toDate)){
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			setData();
+		}
+		return rejectedNumber;
+	}
+	public HashMap<String, Integer> getCleanersActity(String fromDate, String toDate) throws IOException {
+		if(!this.fromDate.equals(toDate) || !this.toDate.equals(toDate)){
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			setData();
+		}
+		return cleaners;
+	}
+	public HashMap<String, double[]> getRoomsActivity(String fromDate, String toDate) throws IOException {
+		if(!this.fromDate.equals(toDate) || !this.toDate.equals(toDate)){
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			setData();
+		}
+		return rooms;
+	}
 	public static void reservationConfirmed(Reservation reservation) throws IOException {
 
 		createMissingReports(reservation.getCheckOutDate());
@@ -133,4 +232,5 @@ public class ReportsService {
         
        DataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
+	
 }

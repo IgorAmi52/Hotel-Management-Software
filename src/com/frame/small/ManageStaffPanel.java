@@ -38,7 +38,7 @@ public class ManageStaffPanel extends JPanel implements Panel {
         table.setSize(500, 50);
         table.setLocation(50, 100);
         table.setForeground(new Color(0, 0, 0));
-         scrollPane = new JScrollPane(table);
+        scrollPane = new JScrollPane(table);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(6, 56, 977, 200);
         add(scrollPane);
