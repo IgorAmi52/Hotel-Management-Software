@@ -1,1 +1,54 @@
-{"next ID":8,"rooms":{"one bed":{"1":{"type":"one bed","status":"AVAILABLE","ID":1},"5":{"type":"one bed","status":"AVAILABLE","ID":5},"6":{"type":"one bed","status":"AVAILABLE","ID":6}},"two beds":{"2":{"type":"two beds","status":"AVAILABLE","ID":2}},"two-bedded":{},"two-bedded+one bed":{"4":{"type":"two-bedded+one bed","status":"BUSY","ID":4},"7":{"type":"two-bedded+one bed","status":"BUSY","ID":7}}},"roomTypes":["one bed","two beds","two-bedded","two-bedded+one bed"]}
+{
+	"next ID": 8,
+	"rooms": {
+		"one bed": {
+			"1": {
+				"type": "one bed",
+				"status": "CLEANING",
+				"ID": 1
+			},
+			"5": {
+				"type": "one bed",
+				"status": "AVAILABLE",
+				"ID": 5
+			},
+			"6": {
+				"type": "one bed",
+				"status": "AVAILABLE",
+				"ID": 6
+			}
+		},
+		"two beds": {
+			"2": {
+				"type": "two beds",
+				"status": "AVAILABLE",
+				"ID": 2
+			}
+		},
+		"two-bedded": {
+			"3": {
+				"type": "two-bedded",
+				"status": "BUSY",
+				"ID": 3
+			}
+		},
+		"two-bedded+one bed": {
+			"4": {
+				"type": "two-bedded+one bed",
+				"status": "BUSY",
+				"ID": 4
+			},
+			"7": {
+				"type": "two-bedded+one bed",
+				"status": "AVAILABLE",
+				"ID": 7
+			}
+		}
+	},
+	"roomTypes": [
+		"one bed",
+		"two beds",
+		"two-bedded",
+		"two-bedded+one bed"
+	]
+}
