@@ -117,6 +117,8 @@ public class ReportsService {
 		}
 		return rooms;
 	}
+	
+	
 	public static void reservationConfirmed(Reservation reservation) throws IOException {
 
 		createMissingReports(reservation.getCheckOutDate());
