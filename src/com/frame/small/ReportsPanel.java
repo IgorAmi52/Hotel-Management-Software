@@ -12,6 +12,7 @@ import com.service.ReportsService;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import org.jdatepicker.impl.JDatePickerImpl;
 
@@ -20,6 +21,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashMap;
 import java.awt.event.ActionEvent;
 
 public class ReportsPanel extends JPanel implements Panel {
@@ -159,12 +161,42 @@ public class ReportsPanel extends JPanel implements Panel {
 					int cancelledNumber = reportsService.getCancelledNumber(fromDate, toDate);
 					int rejectedNumber = reportsService.getRejectedNumber(fromDate, toDate);
 					int confirmedNumber = reportsService.getConfirmedNumber(fromDate, toDate);
+					cancelledNumberLabel.setText(Integer.toString(cancelledNumber));
+					rejectedNumberLabel.setText(Integer.toString(rejectedNumber));
+					confirmedNumberLabel.setText(Integer.toString(confirmedNumber));
+					roomArr = setRoomData(reportsService.getRoomsActivity(fromDate, toDate));
+					cleanerArr = setCleanerData(reportsService.getCleanersActity(fromDate, toDate));
 					
+					roomTable.setModel(new DefaultTableModel(roomArr,roomColumnNames));
+					cleanerTable.setModel(new DefaultTableModel(cleanerArr,cleanerColumnNames));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
         	}
+
+			private String[][] setCleanerData(HashMap<String, Integer> cleanersMap) {
+				String[][] ret = new String[cleanersMap.size()][];
+				int i = 0;
+				for(String cleaner: cleanersMap.keySet()) {
+					String activity = Integer.toString(cleanersMap.get(cleaner));
+					String[] temp = {cleaner,activity};
+					ret[i++] = temp;
+				}
+				return ret;
+			}
+
+			private String[][] setRoomData(HashMap<String, double[]> roomsMap) {
+				String[][] ret = new String[roomsMap.size()][];
+				int i = 0;
+				for(String roomID: roomsMap.keySet()) {
+					String activity = Double.toString(roomsMap.get(roomID)[0]);
+					String profit = Double.toString(roomsMap.get(roomID)[1]);
+					String[] temp = {roomID,activity,profit};
+					ret[i++] = temp;
+				}
+				return ret;
+			}
         });
 	}
 

@@ -35,7 +35,7 @@
 		"two-bedded+one bed": {
 			"4": {
 				"type": "two-bedded+one bed",
-				"status": "BUSY",
+				"status": "AVAILABLE",
 				"ID": 4
 			},
 			"7": {

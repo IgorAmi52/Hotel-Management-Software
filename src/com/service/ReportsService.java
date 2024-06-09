@@ -17,8 +17,8 @@ import com.models.enums.DataTypes;
 
 public class ReportsService {
 	
-	private String fromDate;
-	private String toDate;
+	private String fromDate="";
+	private String toDate="";
 	private int confirmedNumber = 0;
 	private int cancelledNumber = 0;
 	private int rejectedNumber = 0;
