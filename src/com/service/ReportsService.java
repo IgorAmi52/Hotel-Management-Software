@@ -5,10 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.models.Reservation;
 import com.models.Room;
@@ -75,6 +78,119 @@ public class ReportsService {
 				}
 			}
 		}
+	}
+	
+	public static Map<String, double[]> getYearlyRoomTypeStatistics(int year) throws IOException{
+		
+		Map<String, double[]> ret = new HashMap<String, double[]>();
+		String[] roomTypes =  RoomService.getRoomTypes();
+		for(String type: roomTypes) {
+			double[] temp = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+			ret.put(type, temp);
+		}
+		double[] temp = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+		ret.put("total", temp);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		
+		for(String date: jsonObject.keySet()) {
+			if(date.equals("lastDate")) {
+				continue;
+			}
+			if(DateLabelFormatter.isDateInYear(year, date)) { //in this year
+				
+				JsonObject roomTypesObject = jsonObject.getAsJsonObject(date).getAsJsonObject("roomTypes");
+				int month = DateLabelFormatter.getMonthAsInt(date);
+				
+				for(String type: roomTypesObject.keySet()) {
+					double profit = roomTypesObject.get(type).getAsDouble();
+					double[] typeMonths = ret.get(type);
+					typeMonths[month-1]+=profit;
+					ret.put(type, typeMonths); //maybe not needed
+					
+					double[] totalMonths = ret.get("total");
+					totalMonths[month-1]+=profit;
+				}
+			}
+		}
+		return ret;
+	}
+	public static Map<String, Integer> getCleanersActivityInLastThirtyDays() throws IOException{
+		Map<String, Integer> ret = new HashMap<String, Integer>();
+		
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		String startDate = todaysDate;
+		
+		for(int i = 0; i < 30; i++) {
+			startDate = DateLabelFormatter.previousDate(startDate);
+		}
+		
+		Set<String> intervalSet = DateLabelFormatter.getDateRange(startDate, todaysDate);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		
+		for(String date: jsonObject.keySet()) {
+			if(!intervalSet.contains(date)) {
+				continue;
+			}
+			if(intervalSet.isEmpty()) {
+				break;
+			}
+			intervalSet.remove(date);
+			JsonObject cleanersObject = jsonObject.getAsJsonObject(date).getAsJsonObject("cleaners");
+			
+			for(String cleaner:cleanersObject.keySet()) {
+				if(ret.containsKey(cleaner)) {
+					Integer temp = ret.get(cleaner) + cleanersObject.get(cleaner).getAsInt();
+					ret.put(cleaner, temp);
+					continue;
+				}
+				Integer temp = cleanersObject.get(cleaner).getAsInt();
+				ret.put(cleaner, temp);
+			}
+		}
+		return ret;
+	}
+	public static Map<String, Integer> getReservationStatusesCreatedInLastThirtyDays() throws IOException{
+		Map<String, Integer> ret = new HashMap<String, Integer>();
+		
+		ret.put("Pending", 0);
+		ret.put("Confirmed", 0);
+		ret.put("Rejected", 0);
+		ret.put("Cancelled", 0);
+	
+		String todaysDate = DateLabelFormatter.getTodaysDateStr();
+		String startDate = todaysDate;
+		
+		for(int i = 0; i < 30; i++) {
+			startDate = DateLabelFormatter.previousDate(startDate);
+		}
+		
+		Set<String> intervalSet = DateLabelFormatter.getDateRange(startDate, todaysDate);
+		
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		
+		for(String status: jsonObject.keySet()) {
+			JsonArray statusArray = jsonObject.getAsJsonArray(status);
+			
+			for(int i = 0; i < statusArray.size(); i++) {
+				
+				JsonObject reservationObject = statusArray.get(i).getAsJsonObject();
+				String creationDate = reservationObject.get("creationDate").getAsString();
+				
+				if(intervalSet.contains(creationDate)) {
+					int temp;
+					String currentStatus = status;
+					if(status.equals("Archive")) {
+						currentStatus = "Confirmed";
+					}
+					temp = ret.get(currentStatus) + 1;
+
+					ret.put(currentStatus,temp);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	public int getConfirmedNumber(String fromDate, String toDate) throws IOException {

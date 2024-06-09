@@ -1,10 +1,10 @@
 {
-	"Pending": [
-	],
+	"Pending": [],
 	"Confirmed": [
 		{
 			"checkInDate": "2024-06-06",
 			"checkOutDate": "2024-06-13",
+			"creationDate": "2024-05-27",
 			"roomType": "two-bedded+one bed",
 			"room": {
 				"type": "two-bedded+one bed",
@@ -22,11 +22,7 @@
 				"username": "Guest1",
 				"password": "guest"
 			},
-			"addServices": [
-				"breakfast",
-				"dinner",
-				"pool"
-			],
+			"addServices": ["breakfast", "dinner", "pool"],
 			"price": 2520.0,
 			"comment": "",
 			"status": "CONFIRMED"
@@ -34,6 +30,7 @@
 		{
 			"checkInDate": "2024-06-07",
 			"checkOutDate": "2024-06-26",
+			"creationDate": "2024-05-28",
 			"roomType": "two-bedded+one bed",
 			"room": {
 				"type": "two-bedded+one bed",
@@ -51,10 +48,7 @@
 				"username": "Guest1",
 				"password": "guest"
 			},
-			"addServices": [
-				"dinner",
-				"breakfast"
-			],
+			"addServices": ["dinner", "breakfast"],
 			"price": 6270.0,
 			"comment": "",
 			"status": "CONFIRMED"
@@ -64,6 +58,7 @@
 		{
 			"checkInDate": "2024-06-06",
 			"checkOutDate": "2024-06-14",
+			"creationDate": "2024-05-27",
 			"roomType": "two-bedded+one bed",
 			"guest": {
 				"role": "GUEST",
@@ -76,8 +71,7 @@
 				"username": "Guest2",
 				"password": "guest"
 			},
-			"addServices": [
-			],
+			"addServices": [],
 			"price": 2400.0,
 			"comment": "",
 			"status": "REJECTED"
@@ -85,6 +79,7 @@
 		{
 			"checkInDate": "2024-06-09",
 			"checkOutDate": "2024-06-27",
+			"creationDate": "2024-05-30",
 			"roomType": "two-bedded+one bed",
 			"guest": {
 				"role": "GUEST",
@@ -97,11 +92,112 @@
 				"username": "Guest1",
 				"password": "guest"
 			},
-			"addServices": [
-				"lunch",
-				"dinner"
-			],
+			"addServices": ["lunch", "dinner"],
 			"price": 6030.0,
+			"comment": "",
+			"status": "REJECTED"
+		},
+		{
+			"checkInDate": "2024-09-07",
+			"checkOutDate": "2024-08-19",
+			"creationDate": "2024-08-28",
+			"roomType": "two-bedded",
+			"room": {
+				"type": "two-bedded",
+				"status": "BUSY",
+				"ID": 3
+			},
+			"guest": {
+				"role": "GUEST",
+				"name": "MIlica",
+				"lastname": "Milic",
+				"sex": "Female",
+				"dateOfBirth": "2024-06-04",
+				"phoneNumber": "+38123412",
+				"address": "Novi Sad",
+				"username": "Guest1",
+				"password": "guest"
+			},
+			"addServices": [],
+			"price": 0.0,
+			"comment": "",
+			"status": "REJECTED"
+		},
+		{
+			"checkInDate": "2024-08-11",
+			"checkOutDate": "2024-08-17",
+			"creationDate": "2024-08-01",
+			"roomType": "one bed",
+			"room": {
+				"type": "one bed",
+				"status": "CLEANING",
+				"ID": 1
+			},
+			"guest": {
+				"role": "GUEST",
+				"name": "MIlica",
+				"lastname": "Milic",
+				"sex": "Female",
+				"dateOfBirth": "2024-06-04",
+				"phoneNumber": "+38123412",
+				"address": "Novi Sad",
+				"username": "Guest1",
+				"password": "guest"
+			},
+			"addServices": [],
+			"price": 900.0,
+			"comment": "",
+			"status": "REJECTED"
+		},
+		{
+			"checkInDate": "2024-08-12",
+			"checkOutDate": "2024-08-28",
+			"creationDate": "2024-08-02",
+			"roomType": "two beds",
+			"room": {
+				"type": "two beds",
+				"status": "AVAILABLE",
+				"ID": 2
+			},
+			"guest": {
+				"role": "GUEST",
+				"name": "MIlica",
+				"lastname": "Milic",
+				"sex": "Female",
+				"dateOfBirth": "2024-06-04",
+				"phoneNumber": "+38123412",
+				"address": "Novi Sad",
+				"username": "Guest1",
+				"password": "guest"
+			},
+			"addServices": ["dinner"],
+			"price": 4240.0,
+			"comment": "",
+			"status": "REJECTED"
+		},
+		{
+			"checkInDate": "2024-07-12",
+			"checkOutDate": "2024-07-31",
+			"creationDate": "2024-07-02",
+			"roomType": "one bed",
+			"room": {
+				"type": "one bed",
+				"status": "CLEANING",
+				"ID": 1
+			},
+			"guest": {
+				"role": "GUEST",
+				"name": "MIlica",
+				"lastname": "Milic",
+				"sex": "Female",
+				"dateOfBirth": "2024-06-04",
+				"phoneNumber": "+38123412",
+				"address": "Novi Sad",
+				"username": "Guest1",
+				"password": "guest"
+			},
+			"addServices": ["lunch", "dinner"],
+			"price": 3515.0,
 			"comment": "",
 			"status": "REJECTED"
 		}
@@ -110,6 +206,7 @@
 		{
 			"checkInDate": "2024-06-15",
 			"checkOutDate": "2024-06-22",
+			"creationDate": "2024-06-05",
 			"roomType": "one bed",
 			"guest": {
 				"role": "GUEST",
@@ -122,8 +219,7 @@
 				"username": "Guest2",
 				"password": "guest"
 			},
-			"addServices": [
-			],
+			"addServices": [],
 			"price": 1050.0,
 			"comment": "",
 			"status": "CANCELED"
@@ -131,6 +227,7 @@
 		{
 			"checkInDate": "2024-06-14",
 			"checkOutDate": "2024-06-20",
+			"creationDate": "2024-06-04",
 			"roomType": "one bed",
 			"guest": {
 				"role": "GUEST",
@@ -143,8 +240,7 @@
 				"username": "Guest2",
 				"password": "guest"
 			},
-			"addServices": [
-			],
+			"addServices": [],
 			"price": 900.0,
 			"comment": "",
 			"status": "CANCELED"
@@ -152,6 +248,7 @@
 		{
 			"checkInDate": "2024-06-07",
 			"checkOutDate": "2024-06-07",
+			"creationDate": "2024-05-28",
 			"roomType": "one bed",
 			"guest": {
 				"role": "GUEST",
@@ -164,8 +261,7 @@
 				"username": "Guest1",
 				"password": "guest"
 			},
-			"addServices": [
-			],
+			"addServices": [],
 			"price": 0.0,
 			"comment": "",
 			"status": "CANCELED"
@@ -173,6 +269,7 @@
 		{
 			"checkInDate": "2024-06-07",
 			"checkOutDate": "2024-06-14",
+			"creationDate": "2024-05-28",
 			"roomType": "one bed",
 			"guest": {
 				"role": "GUEST",
@@ -185,9 +282,7 @@
 				"username": "Guest1",
 				"password": "guest"
 			},
-			"addServices": [
-				"lunch"
-			],
+			"addServices": ["lunch"],
 			"price": 1190.0,
 			"comment": "",
 			"status": "CANCELED"
@@ -197,6 +292,7 @@
 		{
 			"checkInDate": "2024-06-07",
 			"checkOutDate": "2024-06-07",
+			"creationDate": "2024-05-28",
 			"roomType": "one bed",
 			"room": {
 				"type": "one bed",
@@ -214,15 +310,11 @@
 				"username": "Guest2",
 				"password": "guest"
 			},
-			"addServices": [
-				"breakfast",
-				"lunch",
-				"dinner",
-				"pool"
-			],
+			"addServices": ["breakfast", "lunch", "dinner", "pool"],
 			"price": 0.0,
 			"comment": "",
 			"status": "CONFIRMED"
 		}
 	]
 }
+

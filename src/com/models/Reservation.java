@@ -1,15 +1,13 @@
 package com.models;
 
-import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.Objects;
-
-import com.exceptions.NoPricingException;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.models.enums.ReservationStatus;
-import com.service.PricingService;
+import com.service.DateLabelFormatter;
+
 
 public class Reservation {
 	
@@ -20,10 +18,12 @@ public class Reservation {
 	private  Guest guest;
 	private String[] addServices;
 	private double price = 0.0;
+	private String creationDate;
 	private String comment = "";
 	private ReservationStatus status = ReservationStatus.PENDING;
 	
 	public Reservation(String checkInDate, String checkOutDate, String roomType, String[] addServices, Guest guest) {
+		this.creationDate = DateLabelFormatter.getTodaysDateStr();
 		this.checkInDate = checkInDate;
 		this.checkOutDate = checkOutDate;
 		this.roomType = roomType;
@@ -45,6 +45,9 @@ public class Reservation {
 	}
 	public void cancelReservation() {
 		this.status = ReservationStatus.CANCELED;
+	}
+	public String getCreationDate() {
+		return this.creationDate;
 	}
 	public String getComment() {
 		return this.comment;

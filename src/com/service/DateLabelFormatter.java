@@ -40,7 +40,20 @@ public class DateLabelFormatter extends AbstractFormatter {
     	
     	return date.plusDays(1).toString();
     }
-  
+    public static boolean isDateInYear(int year, String dateString) {
+    	
+        LocalDate date = LocalDate.parse(dateString);
+        return date.getYear() == year;
+    }
+    public static int getMonthAsInt(String dateString) {
+
+        LocalDate date = LocalDate.parse(dateString);
+
+        int monthValue = date.getMonthValue();
+   
+        return monthValue;
+    }
+
     public static boolean checkIntervalOverlap(String startDate1, String endDate1, String startDate2, String endDate2) {
         // Parse dates
         LocalDate start1 = LocalDate.parse(startDate1);

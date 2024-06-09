@@ -1,8 +1,5 @@
 package com.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +15,7 @@ import com.models.enums.Role;
 public class UserService {
 	
 	private static Gson gson = new Gson();
-	private static FileReader reader;
-	private static FileWriter writer;
-	
+
 	public static Staff[] getStaff() throws IOException {
 
 		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
