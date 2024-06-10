@@ -3,10 +3,7 @@ package com.frame.small;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
 
-import java.awt.Component;
-import java.awt.FlowLayout;
 
 import org.jdatepicker.impl.JDatePickerImpl;
 
@@ -14,9 +11,7 @@ import com.exceptions.NoPricingException;
 import com.frame.Panel;
 import com.models.Guest;
 import com.models.Reservation;
-import com.models.User;
 import com.models.enums.ReservationStatus;
-import com.models.enums.RoomStatus;
 import com.service.ContainerService;
 import com.service.DateLabelFormatter;
 import com.service.Holder;
@@ -25,9 +20,7 @@ import com.service.ReservationService;
 import com.service.RoomService;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -36,20 +29,17 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Color;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class MakeReservationPanel extends JPanel implements Panel {
 	
+	private static final long serialVersionUID = 1L;
 	private JComboBox<String> roomTypeBox;
 	private String[] roomTypes = {"temp"};
 	private ArrayList<JCheckBox> addCheckBoxes = new ArrayList<JCheckBox>();
@@ -60,6 +50,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
     private String[] columnNames = {"Room Type","Check-in", "Check-out", "Additionals","Status","Price","Comment"};
     private JTable table;
     private String[] addServiceArr;
+    private JLabel totalSpentLabel;
 	public MakeReservationPanel() {
 		super();
 		setLayout(null);
@@ -69,7 +60,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		lblNewLabel.setBounds(484, 122, 92, 16);
 		add(lblNewLabel); 
 
-		roomTypeBox = new JComboBox(roomTypes);
+		roomTypeBox = new JComboBox<String>(roomTypes);
 		roomTypeBox.setBounds(650, 118, 228, 27);
 		add(roomTypeBox);
 		
@@ -86,7 +77,6 @@ public class MakeReservationPanel extends JPanel implements Panel {
         for(int i = 0; i < addCheckBoxes.size(); i++) {
         	checkBoxPanel.add(addCheckBoxes.get(i));
         }
-  
         checkBoxPanel.setLocation(650, 182);
         JScrollPane addScrollPane = new JScrollPane(checkBoxPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         addScrollPane.setSize(228, 80);
@@ -137,15 +127,15 @@ public class MakeReservationPanel extends JPanel implements Panel {
         scrollPane.setBounds(73, 373, 807, 200);
         add(scrollPane);
         
-        JLabel lblNewLabel_4 = new JLabel("Your Reservations:");
+        JLabel lblNewLabel_4 = new JLabel("Total money spent:");
         lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-        lblNewLabel_4.setBounds(73, 331, 221, 30);
+        lblNewLabel_4.setBounds(73, 331, 162, 30);
         add(lblNewLabel_4);
         
         JButton cancelReservationButton = new JButton("Cancel Reservation");
 
         cancelReservationButton.setEnabled(false);
-        cancelReservationButton.setBounds(668, 335, 210, 29);
+        cancelReservationButton.setBounds(668, 332, 210, 29);
         add(cancelReservationButton);
         
         errorLabel = new JLabel("");
@@ -154,6 +144,11 @@ public class MakeReservationPanel extends JPanel implements Panel {
         errorLabel.setFont(new Font("KufiStandardGK", Font.PLAIN, 17));
         errorLabel.setBounds(268, 21, 476, 25);
         add(errorLabel);
+        
+        totalSpentLabel = new JLabel("0 RSD");
+        totalSpentLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+        totalSpentLabel.setBounds(247, 331, 172, 30);
+        add(totalSpentLabel);
         
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -262,6 +257,15 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		}
 		return ret;
 	}
+	private String getTotalSpentString(Reservation[] reservations) {
+		double total = 0;
+		for(Reservation reservation: reservations) {
+			if(reservation.getStatus()!=ReservationStatus.REJECTED.getStatus() && reservation.getStatus()!=ReservationStatus.PENDING.getStatus()) {
+				total+= reservation.getPrice();
+			}
+		}
+		return Double.toString(total);
+	}
 	@Override
 	public void reset() {
 		ContainerService.resetFields(this);
@@ -273,6 +277,7 @@ public class MakeReservationPanel extends JPanel implements Panel {
 			}
 			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
 			resData = setData(reservations);
+			totalSpentLabel.setText(getTotalSpentString(reservations)+" RSD");
 			addServiceArr = RoomService.getAddServicesArr();
 			table.setModel(new DefaultTableModel(resData, columnNames));
 		} catch (IOException e) {
@@ -282,6 +287,4 @@ public class MakeReservationPanel extends JPanel implements Panel {
 		successLabel.setText("");
 		errorLabel.setText("");
 	}
-
-
 }

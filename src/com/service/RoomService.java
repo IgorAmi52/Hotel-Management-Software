@@ -153,6 +153,24 @@ public class RoomService {
 		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
+	public static String[] getRoomIDs() throws IOException{
+		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
+		List<String> idsArrayList = new ArrayList<String>();
+		for(String type: jsonObject.keySet()) {
+			JsonObject typeObject = jsonObject.getAsJsonObject(type);
+			for(String ID: typeObject.keySet()) {
+				idsArrayList.add(ID);
+			}
+		}
+		String[] ret = new String[idsArrayList.size()];
+		int i = 0;
+		
+		for(String ID: idsArrayList) {
+			ret[i++] = ID;
+		}
+		return ret;
+	}
+	
 	public static String[][] getAddServices() throws IOException{
 		
 		JsonObject jsonObject = DataAccessService.getData(DataTypes.ADD_SERVICES);

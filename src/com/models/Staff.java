@@ -23,7 +23,7 @@ import com.models.enums.Role;
 		
 	}
 	private void calculateSalary() { //to be implemented
-		this.salary = 0;
+		this.salary = lvlOfEdct*300+yearsOfXp*100;
 		
 	}
 	@Override
