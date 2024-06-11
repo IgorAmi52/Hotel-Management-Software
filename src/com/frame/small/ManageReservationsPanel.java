@@ -368,7 +368,10 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 		try {
 			reservations = ReservationService.getReservations(Holder.getInstance().getUser());
 	        filteredResData = setData(reservations);
-
+	        filteredReservations = new Reservation[reservations.length];
+	        for(int i = 0; i < reservations.length; i++) {
+	        	filteredReservations[i] = reservations[i];
+	        }
 			table.setModel(new DefaultTableModel(filteredResData, columnNames));
 			
 			addServiceArr = RoomService.getAddServicesArr();
