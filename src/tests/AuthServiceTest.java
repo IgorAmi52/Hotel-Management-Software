@@ -27,13 +27,13 @@ import com.models.User;
 import com.models.enums.DataTypes;
 import com.models.enums.Role;
 import com.service.AuthService;
-import com.service.DataAccess;
+import com.service.DataAccessInterface;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthServiceTest {
 
 	@Mock
-	private DataAccess dataAccessService;
+	private DataAccessInterface dataAccessService;
 
 	@InjectMocks
 	private AuthService authService;

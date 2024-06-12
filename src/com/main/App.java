@@ -1,30 +1,28 @@
 package com.main;
 
-
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.frame.Frame;
 import com.frame.LoginPanel;
-import com.models.enums.Role;
 import com.service.Holder;
 
 public class App {
-	public static void main(String[]args) {
-		
+	public static void main(String[] args) {
+
 		try {
-		    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
-		
+
 		Holder holder = Holder.getInstance();
-		
+
 		JPanel loginPanel = new LoginPanel();
-		Frame mainFrame = holder.frame;
-		
+		Frame mainFrame = holder.getFrame();
+
 		mainFrame.setPanel(loginPanel);
 		mainFrame.setVisible(true);
-		
+
 	}
 }

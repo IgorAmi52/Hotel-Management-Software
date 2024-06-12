@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.models.enums.DataTypes;
 
-public class DataAccessImpl implements DataAccess {
+public class DataAccessImpl implements DataAccessInterface {
 	private Gson gson = new Gson();
 
 	public JsonObject getData(DataTypes dataType) throws IOException {

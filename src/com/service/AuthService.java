@@ -23,9 +23,9 @@ import com.models.enums.Role;
 public class AuthService {
 
 	private Gson gson = new Gson();
-	private DataAccess dataAccessService;
+	private DataAccessInterface dataAccessService;
 
-	public AuthService(DataAccess dataAccessService) {
+	public AuthService(DataAccessInterface dataAccessService) {
 		this.dataAccessService = dataAccessService;
 	}
 
