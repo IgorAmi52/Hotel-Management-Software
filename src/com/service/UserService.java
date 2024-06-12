@@ -14,11 +14,12 @@ import com.models.enums.Role;
 
 public class UserService {
 	
+	private static DataAccessImpl dataAccessService = new DataAccessImpl();
 	private static Gson gson = new Gson();
 
 	public static Staff[] getStaff() throws IOException {
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.USERS);
 	    List<Staff> staffArrList = new ArrayList<Staff>();
 
 	    for(String username: jsonObject.keySet()) {
@@ -40,21 +41,21 @@ public class UserService {
 
 	public static void deleteUser(User user) throws IOException {
 	
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.USERS);
 		String username = user.getUserName();
 	    jsonObject.remove(username);
 	    
-	    DataAccessService.setData(DataTypes.USERS, jsonObject);
+	    dataAccessService.setData(DataTypes.USERS, jsonObject);
 	}
 	
 	public static Guest getGuest(String username) throws IOException{
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.USERS);
 		Guest guest = gson.fromJson(jsonObject.getAsJsonObject(username), Guest.class);
 		
 		return guest;
 	}
 	public static Staff getStaff(String username) throws IOException{
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.USERS);
 		Staff staff = gson.fromJson(jsonObject.getAsJsonObject(username), Staff.class);
 		
 		return staff;

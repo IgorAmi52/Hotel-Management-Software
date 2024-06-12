@@ -20,10 +20,11 @@ import com.models.enums.DataTypes;
 public class PricingService {
 	
 	private static Gson gson = new Gson();
-
+	private static DataAccessImpl dataAccessService = new DataAccessImpl();
+	
 	public static Pricing[] getPricing(Boolean isRoom) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.PRICING);
 		
 		List<Pricing> pricingArrList = new ArrayList<Pricing>();
 		
@@ -53,7 +54,7 @@ public class PricingService {
 	}
 	public static void deletePricing(Pricing pricing) throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.PRICING);
 		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
 		
         for (int i = 0; i < arr.size(); i++) {
@@ -66,11 +67,11 @@ public class PricingService {
             }
         }
         jsonObject.add(pricing.getType(), arr);
-        DataAccessService.setData(DataTypes.PRICING, jsonObject);
+        dataAccessService.setData(DataTypes.PRICING, jsonObject);
 	}
 	public static void addPricing(Pricing pricing) throws IOException, ElementAlreadyExistsException {
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.PRICING);
 		JsonArray arr = jsonObject.getAsJsonArray(pricing.getType());
 		
 		if(arr==null) {
@@ -93,7 +94,7 @@ public class PricingService {
 		arr.add(pricing.getJson());
 		jsonObject.add(pricing.getType(), arr);
 
-        DataAccessService.setData(DataTypes.PRICING, jsonObject);
+		dataAccessService.setData(DataTypes.PRICING, jsonObject);
 		
 	}
 	public static Double calculatePricing(Reservation reservation) throws IOException, NoPricingException {
@@ -111,7 +112,7 @@ public class PricingService {
 			services[++i] = service;
 		}
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.PRICING);
 		
 		for(String service:services) {
 			if(!jsonObject.has(service)) {
@@ -143,7 +144,7 @@ public class PricingService {
 	}
 	public static double getRoomPricingForDate(Room room, String date) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.PRICING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.PRICING);
 		String roomType = room.getType();
 		
 		JsonArray roomJsonArr = jsonObject.getAsJsonArray(roomType);

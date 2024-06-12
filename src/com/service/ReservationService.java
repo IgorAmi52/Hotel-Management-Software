@@ -21,17 +21,18 @@ import com.models.Room;
 
 public class ReservationService {
 	
+	private static DataAccessImpl dataAccessService = new DataAccessImpl();
 	private static Gson gson = new Gson();
 	
 	public static void requestReservation(Reservation reservation) throws IOException {
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
  		jsonObject.get(reservation.getStatus()).getAsJsonArray().add(reservation.getJson());
-		DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+ 		dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	}
 	
 	public static Reservation[] getReservations(User user) throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		Role role = user.getRole();
 		List<Reservation> resArrayList = new ArrayList<Reservation>();
 		
@@ -54,7 +55,7 @@ public class ReservationService {
 	}
 	public static void cancelReservation(Reservation reservation) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray arrPending = jsonObject.getAsJsonArray("Pending");
 		JsonArray arrCancelled = jsonObject.getAsJsonArray("Cancelled");
         for (int i = 0; i < arrPending.size(); i++) {
@@ -71,13 +72,13 @@ public class ReservationService {
         jsonObject.add("Pending", arrPending);
         jsonObject.add("Cancelled", arrCancelled);
         
-        DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+        dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationCancelled();
 	}
 	
 	public static Reservation[] getTodaysCheckInReservations() throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		
 		ArrayList<Reservation> retArrList = new ArrayList<Reservation>();
@@ -104,7 +105,7 @@ public class ReservationService {
 	}
 	public static Reservation[] getTodaysCheckOutReservations() throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		
 		ArrayList<Reservation> retArrList = new ArrayList<Reservation>();
@@ -128,7 +129,7 @@ public class ReservationService {
 	}
 	public static void proccessReservation(Reservation reservation) throws IOException, NoRoomAvailableException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		JsonObject roomsObject = jsonObject.getAsJsonObject("rooms");
 		
 		if (!roomsObject.has(reservation.getRoomType())){
@@ -137,7 +138,7 @@ public class ReservationService {
 		JsonObject typeObject = roomsObject.getAsJsonObject(reservation.getRoomType());
 		Set<String> ids = typeObject.keySet();
 		
-		jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		JsonArray pendingArr = jsonObject.getAsJsonArray("Pending");
 
@@ -177,13 +178,13 @@ public class ReservationService {
         jsonObject.add("Pending", pendingArr);
         jsonObject.add("Confirmed", confirmedArr);
         
-        DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+        dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationConfirmed(reservation);
 	}
 	
 	public static void rejectReservation(Reservation reservation, Boolean isDated) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray rejectedArr = jsonObject.getAsJsonArray("Rejected");
 		String resStageStr = "Pending";
 		if(isDated) {
@@ -203,12 +204,12 @@ public class ReservationService {
 		jsonObject.add(resStageStr, loopArr);
 		jsonObject.add("Rejected", rejectedArr);
 		
-	    DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+		dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
         ReportsService.reservationRejected();
 	}
 	public static void checkInReservation(Reservation reservation,String[] addServices) throws IOException, NoPricingException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 
 		for(int i=0; i<confirmedArr.size();i++) {
@@ -226,11 +227,11 @@ public class ReservationService {
 			}
 		}
 		jsonObject.add("Confirmed", confirmedArr);
-	    DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+		dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	}
 	public static void archiveReservation(Reservation reservation) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		JsonArray confirmedArr = jsonObject.getAsJsonArray("Confirmed");
 		JsonArray archiveArr = jsonObject.getAsJsonArray("Archive");
 
@@ -244,7 +245,7 @@ public class ReservationService {
 		archiveArr.add(reservation.getJson());
 		jsonObject.add("Confirmed", confirmedArr);
 		jsonObject.add("Archive", archiveArr);
-		DataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
+		dataAccessService.setData(DataTypes.RESERVATIONS, jsonObject);
 	
 	}
 }

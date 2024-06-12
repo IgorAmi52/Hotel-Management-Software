@@ -25,14 +25,12 @@ import com.models.enums.RoomStatus;
 
 public class RoomService {
 	
+	private static DataAccessImpl dataAccessService = new DataAccessImpl();
 	private static Gson gson = new Gson();
-	private static FileReader reader;
-	private static FileWriter writer;
-
 	
 	public static int getNextRoomID() throws IOException {
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		int nextID = jsonObject.getAsJsonPrimitive("next ID").getAsInt();
 		return nextID;
 	}
@@ -40,7 +38,7 @@ public class RoomService {
 
 	public static void addRoom(Room room) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
         if (jsonObject.getAsJsonObject("rooms").has(room.getType())) {
             // Room type exists, add the new room to the existing type
         	jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
@@ -53,23 +51,23 @@ public class RoomService {
 		int nextID = getNextRoomID()+1;
 		jsonObject.addProperty("next ID", nextID);
 		
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
 	}
 	public static void deleteRoom(Room room) throws IOException {
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).remove(room.getID());
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static void addRoomType(String type)throws IOException{
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		jsonObject.get("roomTypes").getAsJsonArray().add(type);
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 
 	public static void deleteRoomType(String name) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		JsonArray jsonArr = jsonObject.getAsJsonArray("roomTypes");
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
@@ -81,12 +79,12 @@ public class RoomService {
 	          break;
 	        }
 		}
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static String[] getRoomTypes() throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		JsonArray jsonArray = jsonObject.getAsJsonArray("roomTypes");
 		
         String[]roomTypes = new String[jsonArray.size()];
@@ -101,7 +99,7 @@ public class RoomService {
 
 	public static Room[] getRooms() throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
 		List<Room> roomArrList = new ArrayList<Room>();
 
 		for(String type: jsonObject.keySet()) {
@@ -121,7 +119,7 @@ public class RoomService {
 	}
 	public static void addAddService(String name) throws IOException, ElementAlreadyExistsException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
 
 		//check if already exists
@@ -133,12 +131,12 @@ public class RoomService {
 			}
 		}
 		jsonObject.getAsJsonArray("services").add(name);
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static void deleteAddService(String name) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ADD_SERVICES);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ADD_SERVICES);
 		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
 		
 		for(int i = 0; i < jsonArr.size(); i++) {
@@ -150,11 +148,11 @@ public class RoomService {
 	          break;
 	        }
 		}
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);	
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);	
 	}
 	
 	public static String[] getRoomIDs() throws IOException{
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS).getAsJsonObject("rooms");
 		List<String> idsArrayList = new ArrayList<String>();
 		for(String type: jsonObject.keySet()) {
 			JsonObject typeObject = jsonObject.getAsJsonObject(type);
@@ -173,7 +171,7 @@ public class RoomService {
 	
 	public static String[][] getAddServices() throws IOException{
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ADD_SERVICES);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ADD_SERVICES);
 		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
 
 		String[][] ret = new String [jsonArr.size()][];
@@ -203,31 +201,31 @@ public class RoomService {
  	}
 	public static void checkInRoom(Room room) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		room.changeStatus(RoomStatus.BUSY);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
 	}
 	public static void checkOutRoom(Room room) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 
 		room.changeStatus(RoomStatus.CLEANING);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
 		
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
 		assignCleaner(room);
 	}
 	
 	public static void cleanRoom(Room room, User cleaner) throws IOException {
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 
 		room.changeStatus(RoomStatus.AVAILABLE);
 		jsonObject.getAsJsonObject("rooms").getAsJsonObject(room.getType()).add(room.getID(), room.getJson());
 		
-		DataAccessService.setData(DataTypes.ROOMS, jsonObject);
+		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
 		
-		jsonObject = DataAccessService.getData(DataTypes.CLEANING);
+		jsonObject = dataAccessService.getData(DataTypes.CLEANING);
 		JsonArray cleanerArr = jsonObject.getAsJsonArray(cleaner.getUserName());
 		
 		for(int i = 0; i < cleanerArr.size();i++) {
@@ -239,12 +237,12 @@ public class RoomService {
 		}
 		jsonObject.add(cleaner.getUserName(), cleanerArr);
 		
-		DataAccessService.setData(DataTypes.CLEANING, jsonObject);
+		dataAccessService.setData(DataTypes.CLEANING, jsonObject);
 		
 	}
 	private static void assignCleaner(Room room) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.USERS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.USERS);
 
 		Map<String, Integer> cleaners = new HashMap<>();
 	
@@ -255,7 +253,7 @@ public class RoomService {
 				cleaners.put(cleaner.getUserName(), 0);
 			}
 		}
-		jsonObject = DataAccessService.getData(DataTypes.CLEANING);
+		jsonObject = dataAccessService.getData(DataTypes.CLEANING);
 
 		Staff selectedCleaner;
 		
@@ -280,13 +278,13 @@ public class RoomService {
         }
         selectedCleaner = UserService.getStaff(cleaner);
 
-		DataAccessService.setData(DataTypes.CLEANING, jsonObject);
+        dataAccessService.setData(DataTypes.CLEANING, jsonObject);
 		ReportsService.cleaningAssigned(selectedCleaner);
 	}
 	
 	public static Room[] getCleanersRooms(User cleaner) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.CLEANING);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.CLEANING);
 
 		if(!jsonObject.has(cleaner.getUserName())) {
 			return new Room[0];

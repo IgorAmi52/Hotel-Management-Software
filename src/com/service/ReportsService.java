@@ -20,6 +20,8 @@ import com.models.enums.DataTypes;
 
 public class ReportsService {
 	
+	private static DataAccessImpl dataAccessService = new DataAccessImpl();
+	
 	private String fromDate="";
 	private String toDate="";
 	private int confirmedNumber = 0;
@@ -36,7 +38,7 @@ public class ReportsService {
 		this.cleaners.clear();
 		this.rooms.clear();
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		Set<String> dateRange = DateLabelFormatter.getDateRange(this.fromDate, this.toDate);
 		
 		for(String date: jsonObject.keySet()) {
@@ -91,7 +93,7 @@ public class ReportsService {
 		double[] temp = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 		ret.put("total", temp);
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		
 		for(String date: jsonObject.keySet()) {
 			if(date.equals("lastDate")) {
@@ -127,7 +129,7 @@ public class ReportsService {
 		
 		Set<String> intervalSet = DateLabelFormatter.getDateRange(startDate, todaysDate);
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		
 		for(String date: jsonObject.keySet()) {
 			if(!intervalSet.contains(date)) {
@@ -168,7 +170,7 @@ public class ReportsService {
 		
 		Set<String> intervalSet = DateLabelFormatter.getDateRange(startDate, todaysDate);
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.RESERVATIONS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.RESERVATIONS);
 		
 		for(String status: jsonObject.keySet()) {
 			JsonArray statusArray = jsonObject.getAsJsonArray(status);
@@ -239,7 +241,7 @@ public class ReportsService {
 
 		createMissingReports(reservation.getCheckOutDate());
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
@@ -270,7 +272,7 @@ public class ReportsService {
 			}
 			jsonObject.add(currentDate, currentJson);
 		}	
-		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
+		dataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 	
 	public static void reservationCancelled() throws IOException {
@@ -278,13 +280,13 @@ public class ReportsService {
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		
 		todaysJson.addProperty("Cancelled", todaysJson.get("Cancelled").getAsInt()+1);		
 		jsonObject.add(todaysDate, todaysJson);
 		 
-		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
+		dataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 	
 	public static void reservationRejected() throws IOException {
@@ -292,13 +294,13 @@ public class ReportsService {
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		todaysJson.addProperty("Rejected", todaysJson.get("Rejected").getAsInt()+1);
 		
 		jsonObject.add(todaysDate, todaysJson);
 		 
-		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
+		dataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 	
 	public static void cleaningAssigned(Staff cleaner) throws IOException {
@@ -306,7 +308,7 @@ public class ReportsService {
 		String todaysDate = DateLabelFormatter.getTodaysDateStr();
 		createMissingReports(todaysDate);
 
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		JsonObject todaysJson = jsonObject.getAsJsonObject(todaysDate);
 		JsonObject cleanersJson = todaysJson.getAsJsonObject("cleaners");
 		
@@ -322,12 +324,12 @@ public class ReportsService {
 		todaysJson.add("cleaners", cleanersJson);
 		jsonObject.add(todaysDate, todaysJson);
 		
-		DataAccessService.setData(DataTypes.REPORTS, jsonObject);
+		dataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 	
 	public static void createMissingReports(String lastDate) throws IOException {
 		
-		JsonObject jsonObject = DataAccessService.getData(DataTypes.REPORTS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.REPORTS);
 		String lastDateCreated = jsonObject.get("lastDate").getAsString();
 
 		if(!DateLabelFormatter.isFirstDateGreater(lastDate, lastDateCreated)) {
@@ -348,7 +350,7 @@ public class ReportsService {
         }
         jsonObject.addProperty("lastDate", lastDate);
         
-       DataAccessService.setData(DataTypes.REPORTS, jsonObject);
+        dataAccessService.setData(DataTypes.REPORTS, jsonObject);
 	}
 	
 }
