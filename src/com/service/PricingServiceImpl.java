@@ -66,11 +66,11 @@ public class PricingServiceImpl implements PricingServiceInterface {
 
 			if (currentPricing.equals(pricing)) {
 				arr.remove(i);
-				break;
+				jsonObject.add(pricing.getType(), arr);
+				dataAccessService.setData(DataTypes.PRICING, jsonObject);
+				return;
 			}
 		}
-		jsonObject.add(pricing.getType(), arr);
-		dataAccessService.setData(DataTypes.PRICING, jsonObject);
 	}
 
 	public void addPricing(Pricing pricing) throws IOException, ElementAlreadyExistsException {

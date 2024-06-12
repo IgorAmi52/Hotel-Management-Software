@@ -37,6 +37,7 @@ public class AuthServiceTest {
 
 	@InjectMocks
 	private AuthService authService;
+
 	private JsonObject mockData;
 
 	@Before
