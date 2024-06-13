@@ -36,7 +36,7 @@ public class RoomServiceImpl implements RoomServiceInterface {
 
 		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		int nextID = jsonObject.getAsJsonPrimitive("next ID").getAsInt();
-		return 2;
+		return nextID;
 	}
 
 	public void addRoom(Room room) throws IOException {
@@ -150,7 +150,7 @@ public class RoomServiceImpl implements RoomServiceInterface {
 
 			if (elementString.equals(name)) {
 				jsonObject.getAsJsonArray("services").remove(element);
-				dataAccessService.setData(DataTypes.ROOMS, jsonObject);
+				dataAccessService.setData(DataTypes.ADD_SERVICES, jsonObject);
 				return;
 			}
 		}

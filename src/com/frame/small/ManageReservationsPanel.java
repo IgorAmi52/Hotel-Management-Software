@@ -309,6 +309,7 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 		ArrayList<Reservation> filteredResArrayList = new ArrayList<Reservation>();
 
 		for (Reservation reservation : reservations) {
+
 			double price = reservation.getPrice();
 			if (fromPrice > price || toPrice < price) {
 				continue;
@@ -320,6 +321,9 @@ public class ManageReservationsPanel extends JPanel implements Panel {
 				}
 			}
 			if (roomIDFilter) {
+				if (reservation.getRoom() == null) {
+					continue;
+				}
 				String ID = reservation.getRoom().getID();
 				if (!isInArray(roomIDs, ID)) {
 					continue;

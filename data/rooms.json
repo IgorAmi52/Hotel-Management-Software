@@ -1,10 +1,10 @@
 {
-	"next ID": 9,
+	"next ID": 10,
 	"rooms": {
 		"one bed": {
 			"1": {
 				"type": "one bed",
-				"status": "CLEANING",
+				"status": "BUSY",
 				"ID": 1
 			},
 			"5": {
@@ -19,11 +19,6 @@
 			}
 		},
 		"two beds": {
-			"2": {
-				"type": "two beds",
-				"status": "AVAILABLE",
-				"ID": 2
-			}
 		},
 		"two-bedded": {
 			"3": {
@@ -35,18 +30,28 @@
 				"type": "two-bedded",
 				"status": "AVAILABLE",
 				"ID": 8
+			},
+			"2": {
+				"type": "two-bedded",
+				"status": "AVAILABLE",
+				"ID": 2
 			}
 		},
 		"two-bedded+one bed": {
 			"4": {
 				"type": "two-bedded+one bed",
-				"status": "AVAILABLE",
+				"status": "BUSY",
 				"ID": 4
 			},
 			"7": {
 				"type": "two-bedded+one bed",
 				"status": "AVAILABLE",
 				"ID": 7
+			},
+			"9": {
+				"type": "two-bedded+one bed",
+				"status": "AVAILABLE",
+				"ID": 9
 			}
 		}
 	},

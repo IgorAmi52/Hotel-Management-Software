@@ -208,5 +208,9 @@ public class ReportsPanel extends JPanel implements Panel {
 		cancelledNumberLabel.setText("");
 		rejectedNumberLabel.setText("");
 		errorLabel.setText("");
+		roomArr = new String[0][];
+		cleanerArr = new String[0][];
+		roomTable.setModel(new DefaultTableModel(roomArr, roomColumnNames));
+		cleanerTable.setModel(new DefaultTableModel(cleanerArr, cleanerColumnNames));
 	}
 }
