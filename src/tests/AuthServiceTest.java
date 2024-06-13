@@ -42,7 +42,6 @@ public class AuthServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		authService = new AuthService(dataAccessService);
 		mockData = new JsonObject();
 
 		JsonObject validGuest = new JsonObject();

@@ -36,7 +36,7 @@ public class Holder {
 			UserService userService = new UserService(dataAccessService);
 			PricingServiceInterface pricingService = new PricingServiceImpl(dataAccessService);
 			ReportsServiceInterface reportService = new ReportsServiceImpl(dataAccessService);
-			RoomServiceInterface roomService = new RoomServiceImpl(dataAccessService, reportService);
+			RoomServiceInterface roomService = new RoomServiceImpl(dataAccessService, reportService, userService);
 			ReservationService reservationService = new ReservationService(dataAccessService, pricingService,
 					reportService);
 

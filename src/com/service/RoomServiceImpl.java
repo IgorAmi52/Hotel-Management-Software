@@ -25,16 +25,18 @@ public class RoomServiceImpl implements RoomServiceInterface {
 	private UserService userService;
 	private Gson gson = new Gson();
 
-	public RoomServiceImpl(DataAccessInterface dataAccessService, ReportsServiceInterface reportsService) {
+	public RoomServiceImpl(DataAccessInterface dataAccessService, ReportsServiceInterface reportsService,
+			UserService userService) {
 		this.dataAccessService = dataAccessService;
 		this.reportsService = reportsService;
+		this.userService = userService;
 	}
 
 	public int getNextRoomID() throws IOException {
 
 		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
 		int nextID = jsonObject.getAsJsonPrimitive("next ID").getAsInt();
-		return nextID;
+		return 2;
 	}
 
 	public void addRoom(Room room) throws IOException {
@@ -49,7 +51,7 @@ public class RoomServiceImpl implements RoomServiceInterface {
 			newRoomType.add(room.getID(), room.getJson());
 			jsonObject.getAsJsonObject("rooms").add(room.getType(), newRoomType);
 		}
-		int nextID = getNextRoomID() + 1;
+		int nextID = this.getNextRoomID() + 1;
 		jsonObject.addProperty("next ID", nextID);
 
 		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
@@ -122,7 +124,7 @@ public class RoomServiceImpl implements RoomServiceInterface {
 
 	public void addAddService(String name) throws IOException, ElementAlreadyExistsException {
 
-		JsonObject jsonObject = dataAccessService.getData(DataTypes.ROOMS);
+		JsonObject jsonObject = dataAccessService.getData(DataTypes.ADD_SERVICES);
 		JsonArray jsonArr = jsonObject.getAsJsonArray("services");
 
 		// check if already exists
@@ -134,7 +136,7 @@ public class RoomServiceImpl implements RoomServiceInterface {
 			}
 		}
 		jsonObject.getAsJsonArray("services").add(name);
-		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
+		dataAccessService.setData(DataTypes.ADD_SERVICES, jsonObject);
 	}
 
 	public void deleteAddService(String name) throws IOException {
@@ -148,10 +150,10 @@ public class RoomServiceImpl implements RoomServiceInterface {
 
 			if (elementString.equals(name)) {
 				jsonObject.getAsJsonArray("services").remove(element);
-				break;
+				dataAccessService.setData(DataTypes.ROOMS, jsonObject);
+				return;
 			}
 		}
-		dataAccessService.setData(DataTypes.ROOMS, jsonObject);
 	}
 
 	public String[] getRoomIDs() throws IOException {

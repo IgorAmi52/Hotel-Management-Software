@@ -40,7 +40,6 @@ public class PricingServiceImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		pricingService = new PricingServiceImpl(dataAccessService);
 		mockData = new JsonObject();
 		JsonObject pricing = new JsonObject();
 		pricing.addProperty("price", 100);
