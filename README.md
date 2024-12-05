@@ -47,7 +47,7 @@ The **Hotel Management Software** aims to provide a comprehensive system to mana
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/YourUsername/Hotel-Management-Software.git
+   git clone https://github.com/IgorAmi52/Hotel-Management-Software.git
    ```
 2. **Navigate to the Project Directory**:
    ```bash
