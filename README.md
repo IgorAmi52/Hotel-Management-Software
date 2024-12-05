@@ -1,6 +1,6 @@
 # Hotel Management Software
 
-This is an open-source **Hotel Management Software** developed using **Java** and **Java Swing** to demonstrate Object-Oriented Programming (OOP) principles. The project simulates real-world hotel management scenarios, allowing various users to perform tasks such as booking rooms, managing schedules, and more. It was created as part of my **Object-Oriented Programming course**.
+This is an open-source **Hotel Management Software** developed using **Java** to demonstrate Object-Oriented Programming (OOP) principles. The project simulates real-world hotel management scenarios, allowing various users to perform tasks such as booking rooms, managing schedules, and more. It was created as part of my **Object-Oriented Programming course**.
 
 ---
 
